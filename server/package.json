@@ -1,0 +1,20 @@
+{
+  "name": "dylt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "QuentinBrohan <brohan.quentin@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon dist/index.js",
+    "start": "node dist/index.js",
+    "start2": "ts-node src/index.ts",
+    "dev2": "nodemon --exec ts-node src/index.ts",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "@types/node": "^14.6.2",
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  }
+}
