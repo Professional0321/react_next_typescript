@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Form,
     Input,
@@ -7,17 +7,26 @@ import {
     Tooltip,
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { type } from 'os';
 
 const { Title } = Typography;
 
 interface registerProps {
-
 }
 
-const Register: React.FC<registerProps> = ({ }) => {
-    const [form] = Form.useForm();
+type formProps = {
+    username: string,
+    email: string,
+    password: string,
+    confirm: string,
+}
 
-    const onFinish = values => {
+const Register: React.FC<registerProps> = () => {
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false)
+
+    const onFinish = (values: formProps) => {
+        setLoading(true);
         console.log('Received values of form: ', values);
     };
 
@@ -56,7 +65,7 @@ const Register: React.FC<registerProps> = ({ }) => {
                         },
                         {
                             required: true,
-                            message: 'Veuillez saisir votre e-mail !',
+                            message: 'Veuillez saisir votre adresse e-mail !',
                         },
                     ]}
                 >
@@ -102,7 +111,7 @@ const Register: React.FC<registerProps> = ({ }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={loading}>
                         S'inscrire
               </Button>
                 </Form.Item>

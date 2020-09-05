@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <Component {...pageProps} />
                 </div>
               </Content>
-              <Footer style={{ textAlign: 'center' }}>Dylt ©2020 Created by Quentin Brohan</Footer>
+              <Footer style={{ textAlign: 'center' }}>Dylt ©2020. Quentin Brohan</Footer>
             </LayoutAD>
           </LayoutAD>
         );
