@@ -8,6 +8,14 @@ import {
     Space,
 } from 'antd';
 import { HomeFilled, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { Provider, createClient} from 'urql';
+
+const client = createClient({
+  url: 'http://localhost:4000/graphql',
+  fetchOptions: {
+    credentials: 'include',
+  },
+ });
 
 const { Header, Content, Footer, Sider } = LayoutAD;
 
@@ -16,6 +24,7 @@ import '../styles/components/layout.less';
 
 function MyApp({ Component, pageProps }: AppProps) {
         return (
+          <Provider value={client}>
             <LayoutAD style={{ minHeight: '100vh', overflow: 'auto' }}>
             <Sider
               breakpoint="lg"
@@ -57,6 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Footer style={{ textAlign: 'center' }}>Dylt ©2020. Quentin Brohan</Footer>
             </LayoutAD>
           </LayoutAD>
+          </Provider>
         );
 }
 

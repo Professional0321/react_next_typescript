@@ -7,7 +7,7 @@ import {
     Tooltip,
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useRegisterMutation } from '../src/generated/graphql';
+import { useMutation } from 'urql';
 
 const { Title } = Typography;
 
@@ -21,11 +21,26 @@ type formProps = {
     confirm: string,
 }
 
+const REGISTER_MUT = `
+mutation Register($username: String!, $password: String! ) {
+    register(options: { username: $username, password: $password }) {
+      errors {
+        field
+        message
+      }
+      user {
+        id
+        username
+      }
+    }
+  }
+  `
+
 const Register: React.FC<registerProps> = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
-    const [, register] = useRegisterMutation();
+    const [, register] = useMutation(REGISTER_MUT);
     
     const onFinish = async (values: formProps) => {
         setLoading(true);
