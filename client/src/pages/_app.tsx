@@ -8,14 +8,14 @@ import {
     Space,
 } from 'antd';
 import { HomeFilled, SearchOutlined, UserOutlined } from '@ant-design/icons';
-import { Provider, createClient} from 'urql';
+import { Provider, createClient } from 'urql';
 
 const client = createClient({
   url: 'http://localhost:4000/graphql',
   fetchOptions: {
     credentials: 'include',
   },
- });
+});
 
 const { Header, Content, Footer, Sider } = LayoutAD;
 
@@ -68,6 +68,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           </LayoutAD>
           </Provider>
         );
-}
+};
 
 export default MyApp;

@@ -7,7 +7,8 @@ import {
     Tooltip,
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useMutation } from 'urql';
+import { useRegisterMutation } from '../generated/graphql';
+import { useRouter } from 'next/router';
 
 const { Title } = Typography;
 
@@ -21,31 +22,29 @@ type formProps = {
     confirm: string,
 }
 
-const REGISTER_MUT = `
-mutation Register($username: String!, $password: String! ) {
-    register(options: { username: $username, password: $password }) {
-      errors {
-        field
-        message
-      }
-      user {
-        id
-        username
-      }
-    }
-  }
-  `
-
 const Register: React.FC<registerProps> = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState([]);
 
-    const [, register] = useMutation(REGISTER_MUT);
+    const [, register] = useRegisterMutation();
+    const router = useRouter();
     
     const onFinish = async (values: formProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await register(values);
+        console.log(response);
+        // On error
+        if (response.data?.register.errors) {
+            setLoading(false);
+            console.log(response.data.register.errors)
+            // TODO: setFields error (username taken, password length too short, etc)
+            // On success
+        } else if (response.data?.register.user) {
+            setLoading(false);
+            router.push('/');
+        };
     };
 
 

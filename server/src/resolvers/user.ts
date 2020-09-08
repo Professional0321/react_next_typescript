@@ -11,6 +11,7 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entities/User";
 import argon2 from 'argon2';
+import { EntityManager } from '@mikro-orm/postgresql';
 
 @InputType()
 class UsernamePasswordInput {
@@ -69,7 +70,7 @@ export class UserResolver {
                     ]
                 }
             }
-
+            // TODO: push multiple field/message into errors
             if (options.password.length <= 5 ) {
                 return {
                     errors: [
@@ -82,12 +83,19 @@ export class UserResolver {
             }
 
             const hashedPassword = await argon2.hash(options.password);
-            const user = em.create(User, {
-                username: options.username,
-                password: hashedPassword,
-            });
+            let user;
             try {
-                await em.persistAndFlush(user);
+              const result = await (em as EntityManager)
+                .createQueryBuilder(User)
+                .getKnexQuery()
+                .insert({
+                  username: options.username,
+                  password: hashedPassword,
+                  created_at: new Date(),
+                  updated_at: new Date(),
+                })
+                .returning("*");
+              user = result[0];
             } catch(error) {
                 // ERROR: Duplicate username
                 if (error.code === '23505') { // || error.detail.includes('already exists')) {
@@ -105,9 +113,7 @@ export class UserResolver {
             // Login after register (store userId in session - set cookie of user)
             req.session.userId = user.id;
 
-            return {
-                user,
-            };
+            return { user };
     }
 
     @Mutation(() => UserResponse)
@@ -140,8 +146,6 @@ export class UserResolver {
 
             req.session.userId = user.id;
 
-            return {
-                user,
-            };
+            return { user };
     }
 };
