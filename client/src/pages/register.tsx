@@ -25,7 +25,7 @@ type formProps = {
 const Register: React.FC<registerProps> = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState([]);
+    // const [errors, setErrors] = useState([]);
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
@@ -34,7 +34,6 @@ const Register: React.FC<registerProps> = () => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await register(values);
-        console.log(response);
         // On error
         if (response.data?.register.errors) {
             setLoading(false);
@@ -50,7 +49,7 @@ const Register: React.FC<registerProps> = () => {
 
     return (
         <>
-            <Title>Inscription</Title>
+            <Title style={{ textAlign: 'center'}}>Inscription</Title>
             <Form
                 {...formItemLayout}
                 form={form}
@@ -69,7 +68,7 @@ const Register: React.FC<registerProps> = () => {
             </Tooltip>
           </span>
         }
-        rules={[{ required: true, message: 'Veuillez entrer votre nom d\'utilisatuer !', whitespace: true }]}
+        rules={[{ required: true, message: 'Veuillez entrer votre nom d\'utilisateur !', whitespace: true }]}
       >
         <Input />
       </Form.Item>
