@@ -12,6 +12,8 @@ import { useRouter } from 'next/router';
 
 const { Title } = Typography;
 
+import '../styles/components/register.less';
+
 interface registerProps {
 }
 
@@ -54,7 +56,7 @@ const Register: React.FC<registerProps> = () => {
                 {...formItemLayout}
                 form={form}
                 layout="vertical"
-                name="register"
+                className="register-form"
                 onFinish={onFinish}
                 scrollToFirstError
             >

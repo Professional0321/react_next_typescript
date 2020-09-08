@@ -4,7 +4,7 @@ import {
     Input,
     Button,
     Typography,
-    Checkbox,
+    // Checkbox,
 } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useLoginMutation } from '../generated/graphql';
@@ -15,8 +15,8 @@ const { Title } = Typography;
 import '../styles/components/login.less';
 
 
-interface loginProps {
-}
+// interface loginProps {
+// }
 
 type formProps = {
     username: string,

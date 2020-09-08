@@ -4,11 +4,12 @@ import React from 'react';
 import {
     Layout as LayoutAD,
     Menu,
-    Button,
-    Space,
 } from 'antd';
 import { HomeFilled, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import { Provider, createClient } from 'urql';
+import Link from 'next/link';
+
+import { TopNavBar } from '../components/TopNavBar';
 
 const client = createClient({
   url: 'http://localhost:4000/graphql',
@@ -40,23 +41,26 @@ function MyApp({ Component, pageProps }: AppProps) {
               <div className="logo" style={{color: 'white', fontSize: '2rem', textAlign: 'center' }}>Dylt</div>
               <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
                 <Menu.Item key="1" icon={<HomeFilled />}>
-                  Accueil
+                  <Link href="/">
+                    Accueil
+                  </Link>
                   
                 </Menu.Item>
                 <Menu.Item key="2" icon={<SearchOutlined />}>
-                  Explorer
+                <Link href="/explore">
+                    Explorer
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="3" icon={<UserOutlined />}>
-                  Mon profil
+                <Link href="/profile">
+                    Mon profil
+                  </Link>
                 </Menu.Item>
               </Menu>
             </Sider>
             <LayoutAD>
               <Header className="site-layout-sub-header-background">
-                  <Space>
-                  <Button>Inscription</Button>
-                  <Button type="primary">Connexion</Button>
-                  </Space>
+                <TopNavBar />
               </Header>
               <Content style={{ margin: '24px 16px 0' }}>
                 <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
