@@ -1,8 +1,17 @@
-import { Resolver, Arg, InputType, Field, Mutation, Ctx, ObjectType } from 'type-graphql';
+import {
+    Resolver,
+    Arg,
+    InputType,
+    Field,
+    Mutation,
+    Ctx,
+    ObjectType,
+    Query,
+} from 'type-graphql';
 import { MyContext } from "../types";
 import { User } from "../entities/User";
 import argon2 from 'argon2';
-import { constants } from 'crypto';
+import { EntityManager } from '@mikro-orm/postgresql';
 
 @InputType()
 class UsernamePasswordInput {
@@ -33,40 +42,60 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+    @Query(() => User, { nullable: true })
+    async me(
+        @Ctx() { req, em }: MyContext
+    ) {
+        // Not logged in
+        if (!req.session.userId) {
+            return null;
+        }
+
+        const user = await em.findOne(User, { id: req.session.userId });
+        return user;
+    }
+
     @Mutation(() => UserResponse)
     async register(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() { em }: MyContext
+        @Ctx() { em, req }: MyContext
         ) : Promise<UserResponse> {
             if (options.username.length <= 2 ) {
                 return {
                     errors: [
                         {
                             field: 'username',
-                            message: 'Le nom d\'utilisateur doit comporter au moins 3 caractères'
+                            message: 'Le nom d\'utilisateur doit comporter au moins 3 caractères.'
                         }
                     ]
                 }
             }
-
+            // TODO: push multiple field/message into errors
             if (options.password.length <= 5 ) {
                 return {
                     errors: [
                         {
                             field: 'password',
-                            message: 'Le mot de passe doit comporter au moins 6 caractères'
+                            message: 'Le mot de passe doit comporter au moins 6 caractères.'
                         }
                     ]
                 }
             }
 
             const hashedPassword = await argon2.hash(options.password);
-            const user = em.create(User, {
-                username: options.username,
-                password: hashedPassword,
-            });
+            let user;
             try {
-                await em.persistAndFlush(user);
+              const result = await (em as EntityManager)
+                .createQueryBuilder(User)
+                .getKnexQuery()
+                .insert({
+                  username: options.username,
+                  password: hashedPassword,
+                  created_at: new Date(),
+                  updated_at: new Date(),
+                })
+                .returning("*");
+              user = result[0];
             } catch(error) {
                 // ERROR: Duplicate username
                 if (error.code === '23505') { // || error.detail.includes('already exists')) {
@@ -74,21 +103,23 @@ export class UserResolver {
                         errors: [
                             {
                                 field: 'username',
-                                message: 'Ce nom d\'utilisateur existe déjà',
+                                message: 'Ce nom d\'utilisateur existe déjà.',
                             },
                         ],
                     };
                 }
             };
-            return {
-                user,
-            };
+
+            // Login after register (store userId in session - set cookie of user)
+            req.session.userId = user.id;
+
+            return { user };
     }
 
     @Mutation(() => UserResponse)
     async login(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() { em }: MyContext
+        @Ctx() { em, req }: MyContext
         ) : Promise<UserResponse> {
             const user = await em.findOne(User, { username: options.username });
             if (!user) {
@@ -96,7 +127,7 @@ export class UserResolver {
                     errors: [
                         {
                             field: 'username',
-                            message: 'Cet utilisateur n\'existe pas',
+                            message: 'Cet utilisateur n\'existe pas.',
                         },
                     ],
                 };
@@ -107,13 +138,14 @@ export class UserResolver {
                     errors: [
                         {
                             field: 'password',
-                            message: 'Nom d\'utilisateur ou mot de passe incorrect',
+                            message: 'Nom d\'utilisateur ou mot de passe incorrect.',
                         },
                     ],
                 };
             }
-            return {
-                user,
-            };
+
+            req.session.userId = user.id;
+
+            return { user };
     }
 };
