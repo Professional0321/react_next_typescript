@@ -12,9 +12,9 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
   const [{ data, fetching }] = useMeQuery();
   let body = null;
 
-  // data is loading
+  // Data is loading
   if (fetching) {
-    // user not logged in
+    // User not logged in
   } else if (!data?.me) {
     body = (
       <>
@@ -28,7 +28,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
         </Space>
       </>
     );
-    // user is logged in
+    // User is logged in
   } else {
     body = (
       <>

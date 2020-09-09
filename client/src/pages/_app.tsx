@@ -3,13 +3,11 @@ import type { AppProps /*, AppContext */ } from 'next/app'
 import React from 'react';
 import {
     Layout as LayoutAD,
-    Menu,
 } from 'antd';
-import { HomeFilled, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import { Provider, createClient } from 'urql';
-import Link from 'next/link';
 
 import { TopNavBar } from '../components/TopNavBar';
+import { NavBar } from '../components/NavBar';
 
 const client = createClient({
   url: 'http://localhost:4000/graphql',
@@ -18,9 +16,14 @@ const client = createClient({
   },
 });
 
-const { Header, Content, Footer, Sider } = LayoutAD;
+const {
+  Header,
+  Content,
+  // Footer,
+  Sider,
+} = LayoutAD;
 
-import '../styles/components/layout.less';
+import '../styles/index.less';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -39,27 +42,12 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               {/* <div className="logo" /> */}
               <div className="logo" style={{color: 'white', fontSize: '2rem', textAlign: 'center' }}>Dylt</div>
-              <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-                <Menu.Item key="1" icon={<HomeFilled />}>
-                  <Link href="/">
-                    Accueil
-                  </Link>
-                  
-                </Menu.Item>
-                <Menu.Item key="2" icon={<SearchOutlined />}>
-                <Link href="/explore">
-                    Explorer
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="3" icon={<UserOutlined />}>
-                <Link href="/profile">
-                    Mon profil
-                  </Link>
-                </Menu.Item>
-              </Menu>
+                {/* Left NavBar component */}
+              <NavBar />
             </Sider>
             <LayoutAD>
               <Header className="site-layout-sub-header-background">
+                {/* Login/Logout component */}
                 <TopNavBar />
               </Header>
               <Content style={{ margin: '24px 16px 0' }}>
@@ -67,7 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <Component {...pageProps} />
                 </div>
               </Content>
-              <Footer style={{ textAlign: 'center' }}>Dylt ©2020. Quentin Brohan</Footer>
+              {/* <Footer style={{ textAlign: 'center' }}>Dylt ©2020. Quentin Brohan</Footer> */}
             </LayoutAD>
           </LayoutAD>
           </Provider>
