@@ -25,7 +25,6 @@ const {
 
 import '../styles/index.less';
 
-
 function MyApp({ Component, pageProps }: AppProps) {
         return (
           <Provider value={client}>

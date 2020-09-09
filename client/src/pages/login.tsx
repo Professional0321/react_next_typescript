@@ -9,6 +9,7 @@ import {
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useLoginMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const { Title } = Typography;
 
@@ -53,7 +54,7 @@ const Login: React.FC<{}> = () => {
 
     return (
         <>
-            <Title style={{ textAlign: 'center'}}>Connexion</Title>
+            <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Connexion</Title>
             <Form
                 name="normal_login"
                 className="login-form"
@@ -82,18 +83,19 @@ const Login: React.FC<{}> = () => {
                         <Checkbox>Se souvenir de moi</Checkbox>
                     </Form.Item> */}
 
-                    <a className="login-form-forgot" href="">
-                        Mot de passe oublié ?
-        </a>
+                    <Link href="">
+                        <a className="login-form-forgot">
+                            Mot de passe oublié ?
+                        </a>
+                    </Link>
                 </Form.Item>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
                         Se connecter
         </Button>
-        Ou <a href="">S'inscrire maintenant !</a>
+        Ou <Link href="/register">S'inscrire maintenant !</Link>
                 </Form.Item>
-                {/* KKKKKKKKKK */}
             </Form>
         </>
     );
