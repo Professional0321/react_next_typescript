@@ -26,8 +26,8 @@ type formProps = {
 
 const Register: React.FC<registerProps> = () => {
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
-    // const [errors, setErrors] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    // const [errors, setErrors] = useState<Array>([]);
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
