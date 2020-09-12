@@ -28,8 +28,8 @@ type formProps = {
 
 const Login: React.FC<{}> = () => {
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
-    // const [errors, setErrors] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    // const [errors, setErrors] = useState<Array>([]);
 
     const [, login] = useLoginMutation();
     const router = useRouter();
