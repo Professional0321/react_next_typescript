@@ -17,6 +17,7 @@ import {
   LoginMutation,
   MeQuery,
   RegisterMutation,
+  LogoutMutation,
 } from '../generated/graphql';
 
 import { TopNavBar } from '../components/TopNavBar';
@@ -49,6 +50,14 @@ const client = createClient({
     cacheExchange({
       updates: {
         Mutation: {
+          logout: (_result, args, cache, info) => {
+            cachingUpdateQuery<LogoutMutation, MeQuery>(
+              cache,
+              { query: MeDocument },
+              _result,
+              () => ({ me: null })
+            );
+          },
           login: (_result, args, cache, info) => {
             cachingUpdateQuery<LoginMutation, MeQuery>(
               cache,
