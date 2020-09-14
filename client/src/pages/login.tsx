@@ -14,6 +14,8 @@ import Link from 'next/link';
 const { Title } = Typography;
 
 import '../styles/components/login.less';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 
 // interface loginProps {
@@ -101,4 +103,4 @@ const Login: React.FC<{}> = () => {
     );
 }
 
-export default Login;
+export default withUrqlClient(createUrqlClient)(Login);
