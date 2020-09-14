@@ -4,12 +4,13 @@ import {
   Space,
 } from 'antd';
 import Link from "next/link";
-import { useMeQuery } from "../generated/graphql";
+import { useMeQuery, useLogoutMutation } from "../generated/graphql";
 
 interface TopNavBarProps { }
 
 export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
   const [{ data, fetching }] = useMeQuery();
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   let body = null;
 
   // Data is loading
@@ -34,9 +35,13 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
       <>
         <Space>
           <div>{data.me.username}</div>
-          <Link href="/logout">
-            <Button type="primary">Déconnexion</Button>
-          </Link>
+          <Button
+            type="primary"
+            onClick={() => {logout()}}
+            loading={logoutFetching}
+            >
+            Déconnexion
+          </Button>
         </Space>
       </>
     );
