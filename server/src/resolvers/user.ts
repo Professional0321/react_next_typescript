@@ -12,7 +12,7 @@ import { User } from "../entities/User";
 import argon2 from 'argon2';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { COOKIE_NAME } from '../constants';
-import { UsernamePasswordInput } from './UsernamePasswordInput';
+import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput';
 import { validateRegister } from '../utils/validateRegister';
 
 @ObjectType()
@@ -60,14 +60,14 @@ export class UserResolver {
 
     @Mutation(() => UserResponse)
     async register(
-        @Arg('options') options: UsernamePasswordInput,
+        @Arg('options') options: UsernameEmailPasswordInput,
         @Ctx() { em, req }: MyContext
         ) : Promise<UserResponse> {
             const errors = validateRegister(options);
             if (errors) {
                 return { errors };
             }
-            
+
             const hashedPassword = await argon2.hash(options.password);
             let user;
             try {

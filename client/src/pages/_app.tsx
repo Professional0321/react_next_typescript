@@ -5,6 +5,8 @@ import React from 'react';
 import { NavBar } from '../components/NavBar';
 import { TopNavBar } from '../components/TopNavBar';
 import '../styles/index.less';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 const {
   Header,
@@ -47,4 +49,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 };
 
-export default MyApp;
+// withUrqlClient disable Automatic Static Optimization
+// TODO: must only use withUrqlClient with navbars here
+export default withUrqlClient(createUrqlClient)(MyApp);
