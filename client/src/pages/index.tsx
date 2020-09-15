@@ -1,6 +1,6 @@
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import { usePostsQuery } from '../generated/graphql';
+import { useTracksQuery } from '../generated/graphql';
 
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -8,7 +8,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const Index = () => {
-  const [{ data }] = usePostsQuery();
+  const [{ data }] = useTracksQuery();
   return (
     <div>
       Hell-O World
@@ -16,7 +16,7 @@ const Index = () => {
       {!data ? (
       <Spin indicator={loadingIcon} />
       ) : (
-        data.posts.map((p) => <div key={p.id}>{p.title}</div>)
+        data.tracks.map((p) => <div key={p.id}>{p.name}</div>)
         )}
     </div>
   )

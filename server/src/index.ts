@@ -6,7 +6,7 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/hello';
-import { PostResolver } from './resolvers/post';
+import { TrackResolver } from './resolvers/track';
 import { UserResolver } from './resolvers/user';
 import redis from 'redis';
 import session from 'express-session';
@@ -50,7 +50,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, PostResolver, UserResolver],
+            resolvers: [HelloResolver, TrackResolver, UserResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ em: orm.em, req, res }),
