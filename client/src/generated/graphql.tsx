@@ -15,22 +15,22 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  posts: Array<Post>;
-  post?: Maybe<Post>;
+  tracks: Array<Track>;
+  track?: Maybe<Track>;
   me?: Maybe<User>;
 };
 
 
-export type QueryPostArgs = {
+export type QueryTrackArgs = {
   id: Scalars['Float'];
 };
 
-export type Post = {
-  __typename?: 'Post';
+export type Track = {
+  __typename?: 'Track';
   id: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
-  title: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type User = {
@@ -44,27 +44,27 @@ export type User = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createPost: Post;
-  updatePost?: Maybe<Post>;
-  deletePost: Scalars['Boolean'];
+  createTrack: Track;
+  updateTrack?: Maybe<Track>;
+  deleteTrack: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
 };
 
 
-export type MutationCreatePostArgs = {
-  title: Scalars['String'];
+export type MutationCreateTrackArgs = {
+  name: Scalars['String'];
 };
 
 
-export type MutationUpdatePostArgs = {
-  title?: Maybe<Scalars['String']>;
+export type MutationUpdateTrackArgs = {
+  name?: Maybe<Scalars['String']>;
   id: Scalars['Float'];
 };
 
 
-export type MutationDeletePostArgs = {
+export type MutationDeleteTrackArgs = {
   id: Scalars['Float'];
 };
 
@@ -158,14 +158,14 @@ export type MeQuery = (
   )> }
 );
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type TracksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PostsQuery = (
+export type TracksQuery = (
   { __typename?: 'Query' }
-  & { posts: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title'>
+  & { tracks: Array<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name'>
   )> }
 );
 
@@ -229,17 +229,17 @@ export const MeDocument = gql`
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
-export const PostsDocument = gql`
-    query Posts {
-  posts {
+export const TracksDocument = gql`
+    query Tracks {
+  tracks {
     id
     createdAt
     updatedAt
-    title
+    name
   }
 }
     `;
 
-export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
+export function useTracksQuery(options: Omit<Urql.UseQueryArgs<TracksQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<TracksQuery>({ query: TracksDocument, ...options });
 };
