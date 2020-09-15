@@ -19,15 +19,6 @@ export const validateRegister = (options: UsernamePasswordInput) => {
     ];
   }
 
-  if (options.username.includes("@")) {
-    return [
-      {
-        field: "username",
-        message: "Le nom d'utilisateur ne peut pas contenir de signe @.",
-      },
-    ];
-  }
-
   // TODO: push multiple field/message into errors
   if (options.password.length <= 5) {
     return [

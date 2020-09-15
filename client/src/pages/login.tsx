@@ -22,10 +22,8 @@ import { createUrqlClient } from '../utils/createUrqlClient';
 // }
 
 type formProps = {
-    username: string,
-    email: string,
+    usernameOrEmail: string,
     password: string,
-    confirm: string,
 }
 
 const Login: React.FC<{}> = () => {
@@ -39,7 +37,7 @@ const Login: React.FC<{}> = () => {
     const onFinish = async (values: formProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        const response = await login({ options: values });
+        const response = await login(values);
         console.log(response);
         // On error
         if (response.data?.login.errors) {
@@ -65,10 +63,10 @@ const Login: React.FC<{}> = () => {
                 scrollToFirstError
             >
                 <Form.Item
-                    name="username"
+                    name="usernameOrEmail"
                     rules={[{ required: true, message: 'Veuillez entrer votre nom d\'utilisateur !' }]}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nom d'utilisateur" />
+                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nom d'utilisateur ou e-mail" />
                 </Form.Item>
                 <Form.Item
                     name="password"
