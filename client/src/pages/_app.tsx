@@ -50,5 +50,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 };
 
 // withUrqlClient disable Automatic Static Optimization
-// TODO: must only use withUrqlClient with navbars here
+// TODO: must only use withUrqlClient with NavBar and TopNavBar components here !
 export default withUrqlClient(createUrqlClient)(MyApp);
