@@ -22,7 +22,7 @@ export async function sendEmail(to: string, html: string) {
   let info = await transporter.sendMail({
     from: '"Dylt 💿" <email@dylt.fr>', // sender address
     to: to, // list of receivers
-    subject: "Changer votre mot de passe", // Subject line
+    subject: "Réinitialiser votre mot de passe", // Subject line
     html,
   });
 

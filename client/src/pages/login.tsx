@@ -70,7 +70,7 @@ const Login: React.FC<{}> = () => {
                 </Form.Item>
                 <Form.Item
                     name="password"
-                    rules={[{ required: true, message: 'Veuillez confirmer votre mot de passe !' }]}
+                    rules={[{ required: true, message: 'Veuillez entre votre mot de passe !' }]}
                 >
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
@@ -83,7 +83,7 @@ const Login: React.FC<{}> = () => {
                         <Checkbox>Se souvenir de moi</Checkbox>
                     </Form.Item> */}
 
-                    <Link href="">
+                    <Link href="/forgot-password">
                         <a className="login-form-forgot">
                             Mot de passe oublié ?
                         </a>
