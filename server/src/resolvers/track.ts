@@ -3,8 +3,23 @@ import {
     Query,
     Arg,
     Mutation,
+    InputType,
+    Field,
+    Ctx,
+    UseMiddleware,
 } from 'type-graphql';
 import { Track } from '../entities/Track';
+import { MyContext } from '../types';
+import { isAuth } from '../middleware/isAuth';
+
+@InputType()
+class TrackInput {
+    @Field()
+    name: string;
+
+    @Field()
+    url: string;
+}
 
 @Resolver()
 export class TrackResolver {
@@ -24,10 +39,15 @@ export class TrackResolver {
 
     // Create new track
     @Mutation(() => Track)
+    @UseMiddleware(isAuth)
     async createTrack(
-        @Arg('name') name: string,
+        @Arg('input') input: TrackInput,
+        @Ctx() { req }: MyContext,
         ): Promise<Track> {
-            return Track.create({ name }).save();
+            return Track.create({
+                ...input,
+                creatorId: req.session.userId,
+            }).save();
     }
 
     // Find update track by id

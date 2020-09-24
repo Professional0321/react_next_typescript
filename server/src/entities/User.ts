@@ -6,7 +6,9 @@ import {
   UpdateDateColumn,
   Column,
   BaseEntity,
+  OneToMany,
 } from 'typeorm';
+import { Track } from './Track';
 
 @ObjectType()
 @Entity()
@@ -14,14 +16,6 @@ export class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
-
-  @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @Field()
   @Column({ unique: true })
@@ -34,4 +28,15 @@ export class User extends BaseEntity {
   @Field()
   @Column()
   password!: string;
+
+  @OneToMany(() => Track, track => track.creator)
+  tracks: Track[];
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
