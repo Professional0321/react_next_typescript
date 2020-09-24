@@ -1,33 +1,53 @@
-import { Resolver, Query, Ctx, Arg, Mutation } from 'type-graphql';
+import {
+    Resolver,
+    Query,
+    Arg,
+    Mutation,
+    InputType,
+    Field,
+    Ctx,
+    UseMiddleware,
+} from 'type-graphql';
 import { Track } from '../entities/Track';
 import { MyContext } from '../types';
+import { isAuth } from '../middleware/isAuth';
+
+@InputType()
+class TrackInput {
+    @Field()
+    name: string;
+
+    @Field()
+    url: string;
+}
 
 @Resolver()
 export class TrackResolver {
     // Find all tracks
     @Query(() => [Track])
-    tracks(@Ctx() { em }: MyContext): Promise<Track[]> {
-        return em.find(Track, {});
+    async tracks(): Promise<Track[]> {
+        return Track.find();
     }
 
     // Find track by id
     @Query(() => Track, { nullable: true })
     track(
         @Arg('id') id: number,
-        @Ctx() { em }: MyContext
-        ): Promise<Track | null> {
-            return em.findOne(Track, { id });
+        ): Promise<Track | undefined> {
+            return Track.findOne(id);
     }
 
     // Create new track
     @Mutation(() => Track)
+    @UseMiddleware(isAuth)
     async createTrack(
-        @Arg('name') name: string,
-        @Ctx() { em }: MyContext
+        @Arg('input') input: TrackInput,
+        @Ctx() { req }: MyContext,
         ): Promise<Track> {
-            const track = em.create(Track, { name });
-            await em.persistAndFlush(track);
-            return track;
+            return Track.create({
+                ...input,
+                creatorId: req.session.userId,
+            }).save();
     }
 
     // Find update track by id
@@ -35,15 +55,13 @@ export class TrackResolver {
     async updateTrack(
         @Arg('id') id: number,
         @Arg('name', () => String, { nullable: true }) name: string,
-        @Ctx() { em }: MyContext
         ): Promise<Track | null> {
-            const track = await em.findOne(Track, { id });
+            const track = await Track.findOne(id);
             if (!track) {
                 return null;
             }
             if (typeof name !== 'undefined') {
-                track.name = name
-                await em.persistAndFlush(track);
+                await Track.update({ id }, { name });
             }
             return track;
     }
@@ -52,13 +70,8 @@ export class TrackResolver {
     @Mutation(() => Boolean)
     async deleteTrack(
         @Arg('id') id: number,
-        @Ctx() { em }: MyContext
         ): Promise<boolean> {
-            try {
-                await em.nativeDelete(Track, { id });
-            } catch {
-                return false;
-            }
+            await Track.delete(id);
             return true;
     }
 };

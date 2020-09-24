@@ -13,6 +13,8 @@ import { useRouter } from 'next/router';
 const { Title } = Typography;
 
 import '../styles/components/register.less';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 interface registerProps {
 }
@@ -31,12 +33,13 @@ const Register: React.FC<registerProps> = () => {
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
-    
+
     const onFinish = async (values: formProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        const response = await register(values);
+        const response = await register({ options: values });
         // On error
+        console.log(response);
         if (response.data?.register.errors) {
             setLoading(false);
             console.log(response.data.register.errors)
@@ -159,4 +162,4 @@ const formItemLayout = {
 };
 
 
-export default Register;
+export default withUrqlClient(createUrqlClient)(Register);
