@@ -4,5 +4,6 @@ query Tracks {
     createdAt
     updatedAt
     name
+    url
   }
 }

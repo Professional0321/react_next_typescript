@@ -1,6 +1,8 @@
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useTracksQuery } from '../generated/graphql';
+import ReactPlayer from 'react-player'
+import Link from 'next/link';
 
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -14,9 +16,19 @@ const Index = () => {
       Hell-O World
       <br />
       {!data ? (
-      <Spin indicator={loadingIcon} />
+        <Spin indicator={loadingIcon} />
       ) : (
-        data.tracks.map((p) => <div key={p.id}>{p.name}</div>)
+          data.tracks.map((track) => (
+            <div key={track.id}>
+              <ReactPlayer
+                url={track.url}
+                width="200px"
+                height="150px"
+              />
+              <Link href="#">
+                <strong>{track.name}</strong>
+              </Link>
+            </div>))
         )}
     </div>
   )

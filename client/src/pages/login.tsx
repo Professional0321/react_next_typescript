@@ -17,10 +17,6 @@ import '../styles/components/login.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
-
-// interface loginProps {
-// }
-
 type formProps = {
     usernameOrEmail: string,
     password: string,
