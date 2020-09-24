@@ -155,6 +155,19 @@ export type ChangePasswordMutation = (
   ) }
 );
 
+export type CreateTrackMutationVariables = Exact<{
+  input: TrackInput;
+}>;
+
+
+export type CreateTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { createTrack: (
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  ) }
+);
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -255,6 +268,23 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
+export const CreateTrackDocument = gql`
+    mutation CreateTrack($input: TrackInput!) {
+  createTrack(input: $input) {
+    id
+    name
+    url
+    votes
+    creatorId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCreateTrackMutation() {
+  return Urql.useMutation<CreateTrackMutation, CreateTrackMutationVariables>(CreateTrackDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {

@@ -1,0 +1,11 @@
+mutation CreateTrack($input: TrackInput!) {
+  createTrack(input: $input) {
+    id
+    name
+    url
+    votes
+    creatorId
+    createdAt
+    updatedAt
+  }
+}

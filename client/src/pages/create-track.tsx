@@ -3,40 +3,41 @@ import {
     Button,
     Form,
     Input,
-    Typography,
+    Typography
 } from 'antd';
+import { withUrqlClient } from 'next-urql';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useCreateTrackMutation } from '../generated/graphql';
+import { createUrqlClient } from '../utils/createUrqlClient';
+import { useIsAuth } from '../utils/useIsAuth';
 
 const { Title } = Typography;
 
-type formProps = {
+type TrackInput = {
     name: string,
     url: string,
 }
 
 const CreateTrack: React.FC<{}> = ({ }) => {
+    const router = useRouter();
+    useIsAuth();
+
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);
 
-    // const [, login] = useLoginMutation();
-    // const router = useRouter();
+    const [, createTrack] = useCreateTrackMutation();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: TrackInput) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        // const response = await login(values);
-        // console.log(response);
-        // // On error
-        // if (response.data?.login.errors) {
-        //     setLoading(false);
-        //     console.log(response.data.login.errors)
-        //     // TODO: setFields error (username taken, password length too short, etc)
-        //     // On success
-        // } else if (response.data?.login.user) {
-        //     setLoading(false);
-        //     router.push('/');
-        // };
+        const { error } = await createTrack({ input: values });
+
+        if(!error) {
+            setLoading(false);
+            router.push('/');
+        }
     };
 
     return (
@@ -82,4 +83,4 @@ const CreateTrack: React.FC<{}> = ({ }) => {
 
 }
 
-export default CreateTrack;
+export default withUrqlClient(createUrqlClient)(CreateTrack);

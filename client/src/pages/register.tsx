@@ -16,9 +16,6 @@ import '../styles/components/register.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
-interface registerProps {
-}
-
 type formProps = {
     username: string,
     email: string,
