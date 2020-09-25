@@ -5,7 +5,7 @@ import {
 import Link from "next/link";
 import { useMeQuery } from "../generated/graphql";
 
-import { HomeFilled, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeFilled, SearchOutlined, UserOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 interface NavBarProps { }
 
@@ -36,14 +36,18 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
           <Link href="/">
             Accueil
             </Link>
-
         </Menu.Item>
         <Menu.Item key="2" icon={<SearchOutlined />}>
           <Link href="/explore">
             Explorer
             </Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<UserOutlined />}>
+        <Menu.Item key="3" icon={<PlusCircleOutlined  />}>
+          <Link href="/create-track">
+            Ajouter une musique
+            </Link>
+        </Menu.Item>
+        <Menu.Item key="4" icon={<UserOutlined />}>
           <Link href="/profile">
             Mon profil
             </Link>

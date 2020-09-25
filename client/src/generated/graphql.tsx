@@ -28,19 +28,22 @@ export type QueryTrackArgs = {
 export type Track = {
   __typename?: 'Track';
   id: Scalars['Float'];
+  name: Scalars['String'];
+  url: Scalars['String'];
+  votes: Scalars['Float'];
+  creatorId: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
-  name: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
   username: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type Mutation = {
@@ -57,7 +60,7 @@ export type Mutation = {
 
 
 export type MutationCreateTrackArgs = {
-  name: Scalars['String'];
+  input: TrackInput;
 };
 
 
@@ -91,6 +94,11 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
+};
+
+export type TrackInput = {
+  name: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type UserResponse = {
@@ -144,6 +152,19 @@ export type ChangePasswordMutation = (
   & { changePassword: (
     { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
+  ) }
+);
+
+export type CreateTrackMutationVariables = Exact<{
+  input: TrackInput;
+}>;
+
+
+export type CreateTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { createTrack: (
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -210,7 +231,7 @@ export type TracksQuery = (
   { __typename?: 'Query' }
   & { tracks: Array<(
     { __typename?: 'Track' }
-    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name'>
+    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name' | 'url' | 'votes'>
   )> }
 );
 
@@ -247,6 +268,23 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
+export const CreateTrackDocument = gql`
+    mutation CreateTrack($input: TrackInput!) {
+  createTrack(input: $input) {
+    id
+    name
+    url
+    votes
+    creatorId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCreateTrackMutation() {
+  return Urql.useMutation<CreateTrackMutation, CreateTrackMutationVariables>(CreateTrackDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
@@ -306,6 +344,8 @@ export const TracksDocument = gql`
     createdAt
     updatedAt
     name
+    url
+    votes
   }
 }
     `;

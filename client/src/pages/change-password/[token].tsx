@@ -35,7 +35,7 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         console.log('Received values of form: ', values);
         const response = await changePassword({
             newPassword: values.newPassword,
-            token
+            token: router.query.token === 'string' ? router.query.token : '',
         });
         // // On error
         if (response.data?.changePassword.errors) {
@@ -126,11 +126,5 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         </>
     );
 }
-
-ChangePassword.getInitialProps = ({ query }) => {
-    return {
-        token: query.token as string,
-    };
-};
 
 export default withUrqlClient(createUrqlClient)(ChangePassword);
