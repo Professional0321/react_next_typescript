@@ -21,7 +21,7 @@ const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 const Index = () => {
   const [{ data }] = useTracksQuery({
     variables: {
-      limit: 10,
+      limit: 8,
     }
   });
   return (
