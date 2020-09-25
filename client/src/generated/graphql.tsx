@@ -231,7 +231,7 @@ export type TracksQuery = (
   { __typename?: 'Query' }
   & { tracks: Array<(
     { __typename?: 'Track' }
-    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name' | 'url'>
+    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name' | 'url' | 'votes'>
   )> }
 );
 
@@ -345,6 +345,7 @@ export const TracksDocument = gql`
     updatedAt
     name
     url
+    votes
   }
 }
     `;
