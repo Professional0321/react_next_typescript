@@ -28,7 +28,7 @@ export class TrackResolver {
   // Find all tracks
   @Query(() => [Track])
   async tracks(
-    @Arg("limit") limit: number,
+    @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
   ): Promise<Track[]> {
     const realLimit = Math.min(50, limit);
@@ -37,7 +37,7 @@ export class TrackResolver {
       .createQueryBuilder("t")
       .orderBy('"createdAt"', "DESC")
       .take(realLimit);
-      
+
     if (cursor) {
       queryBuiler.where('"createdAt" < :cursor', {
         cursor: new Date(parseInt(cursor)),

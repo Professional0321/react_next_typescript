@@ -1,4 +1,4 @@
-query Tracks {
+query Tracks($limit: Int!, $cursor: String!) {
   tracks {
     id
     createdAt
