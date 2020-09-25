@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { useCreateTrackMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useIsAuth } from '../utils/useIsAuth';
+import '../styles/components/createTrack.less';
 
 const { Title } = Typography;
 
@@ -73,7 +74,7 @@ const CreateTrack: React.FC<{}> = ({ }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
+                    <Button type="primary" htmlType="submit" className="create-track-form-button" loading={loading}>
                         Ajouter la musique
                     </Button>
                 </Form.Item>

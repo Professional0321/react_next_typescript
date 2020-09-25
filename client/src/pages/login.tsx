@@ -43,7 +43,11 @@ const Login: React.FC<{}> = () => {
             // On success
         } else if (response.data?.login.user) {
             setLoading(false);
-            router.push('/');
+            if (typeof router.query.next === 'string') {
+                router.push(router.query.next);
+            } else {
+                router.push('/');
+            }
         };
     };
 

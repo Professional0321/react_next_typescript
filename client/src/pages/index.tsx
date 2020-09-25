@@ -1,10 +1,9 @@
 import {
-  EditOutlined,
-  EllipsisOutlined,
-  LoadingOutlined,
-  DeleteOutlined,
-  ArrowUpOutlined,
   ArrowDownOutlined,
+  ArrowUpOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { Card, Spin, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
@@ -15,7 +14,7 @@ import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
 const { Title } = Typography;
-const { Meta } = Card;
+// const { Meta } = Card;
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
