@@ -1,10 +1,11 @@
-query Tracks {
-  tracks {
+query Tracks($limit: Int!, $cursor: String) {
+  tracks(limit: $limit, cursor: $cursor) {
     id
-    createdAt
-    updatedAt
     name
     url
     votes
+    creatorId
+    createdAt
+    updatedAt
   }
 }

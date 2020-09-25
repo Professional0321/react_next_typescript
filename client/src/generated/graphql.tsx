@@ -21,6 +21,12 @@ export type Query = {
 };
 
 
+export type QueryTracksArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryTrackArgs = {
   id: Scalars['Float'];
 };
@@ -224,14 +230,17 @@ export type MeQuery = (
   )> }
 );
 
-export type TracksQueryVariables = Exact<{ [key: string]: never; }>;
+export type TracksQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type TracksQuery = (
   { __typename?: 'Query' }
   & { tracks: Array<(
     { __typename?: 'Track' }
-    & Pick<Track, 'id' | 'createdAt' | 'updatedAt' | 'name' | 'url' | 'votes'>
+    & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
   )> }
 );
 
@@ -338,14 +347,15 @@ export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'q
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
 export const TracksDocument = gql`
-    query Tracks {
-  tracks {
+    query Tracks($limit: Int!, $cursor: String) {
+  tracks(limit: $limit, cursor: $cursor) {
     id
-    createdAt
-    updatedAt
     name
     url
     votes
+    creatorId
+    createdAt
+    updatedAt
   }
 }
     `;

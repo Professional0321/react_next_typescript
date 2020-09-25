@@ -19,7 +19,11 @@ const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const Index = () => {
-  const [{ data }] = useTracksQuery();
+  const [{ data }] = useTracksQuery({
+    variables: {
+      limit: 8,
+    }
+  });
   return (
     <div>
       <Title style={{ color: '#f3f5f9' }}>🔥 Derniers partages</Title>
