@@ -1,11 +1,14 @@
 query Tracks($limit: Int!, $cursor: String) {
   tracks(limit: $limit, cursor: $cursor) {
-    id
-    name
-    url
-    votes
-    creatorId
-    createdAt
-    updatedAt
+    hasMore
+    tracks {
+      id
+      name
+      url
+      votes
+      creatorId
+      createdAt
+      updatedAt
+    }
   }
 }

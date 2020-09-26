@@ -42,6 +42,10 @@ const Index = () => {
     variables,
   });
 
+  if (!fetching && !data) {
+    return <div>Une erreur est survenue dans la requête.</div>;
+  }
+
   return (
     <div>
       <Title style={{ color: '#f3f5f9' }}>🔥 Derniers partages</Title>
@@ -49,7 +53,7 @@ const Index = () => {
         {!data && fetching ? (
           <Spin indicator={loadingIcon} />
         ) : (
-            data!.tracks.map((track: trackProps) => (
+            data!.tracks.tracks.map((track: trackProps) => (
               <Card
                 key={track.id}
                 actions={[
@@ -74,7 +78,7 @@ const Index = () => {
               </Card>))
           )}
       </div>
-      {data && (
+      {data && data.tracks.hasMore && (
         <div className="load-more">
           <Button
             type="primary"
@@ -82,7 +86,7 @@ const Index = () => {
             onClick={() => {
               setVariables({
                 limit: variables.limit,
-                cursor: data.tracks[data.tracks.length - 1].createdAt,
+                cursor: data.tracks.tracks[data.tracks.tracks.length - 1].createdAt,
               })
             }}
           >
