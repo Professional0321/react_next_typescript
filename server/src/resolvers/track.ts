@@ -8,6 +8,7 @@ import {
   Ctx,
   UseMiddleware,
   Int,
+  ObjectType,
 } from "type-graphql";
 import { Track } from "../entities/Track";
 import { MyContext } from "../types";
@@ -23,20 +24,31 @@ class TrackInput {
   url: string;
 }
 
+@ObjectType()
+class PaginatedTracks {
+  @Field(() => [Track])
+  tracks: Track[];
+
+  @Field()
+  hasMore: boolean;
+}
+
 @Resolver()
 export class TrackResolver {
   // Find all tracks
-  @Query(() => [Track])
+  @Query(() => PaginatedTracks)
   async tracks(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-  ): Promise<Track[]> {
+  ): Promise<PaginatedTracks> {
+    // Fetch 1 more track
     const realLimit = Math.min(50, limit);
+    const realLimitPlusOne = realLimit + 1;
     const queryBuiler = getConnection()
       .getRepository(Track)
       .createQueryBuilder("t")
       .orderBy('"createdAt"', "DESC")
-      .take(realLimit);
+      .take(realLimitPlusOne);
 
     if (cursor) {
       queryBuiler.where('"createdAt" < :cursor', {
@@ -44,7 +56,14 @@ export class TrackResolver {
       });
     }
 
-    return queryBuiler.getMany();
+    const tracks = await queryBuiler.getMany();
+
+    // Fetch 1 more track to check if hasMore === true
+    // else end of tracks
+    return {
+      tracks: tracks.slice(0, realLimit),
+      hasMore: tracks.length === realLimitPlusOne,
+    };
   }
 
   // Find track by id
