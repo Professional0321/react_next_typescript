@@ -17,6 +17,7 @@ import ReactPlayer from 'react-player/lazy';
 import { useTracksQuery } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { useState } from 'react';
 
 const { Title } = Typography;
 // const { Meta } = Card;
@@ -31,16 +32,21 @@ type trackProps = {
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const Index = () => {
-  const [{ data, fetching }] = useTracksQuery({
-    variables: {
-      limit: 8,
-    }
+  const [variables, setVariables] = useState({
+    limit: 8,
+    cursor: null as null | string,
   });
+  // console.log(variables);
+
+  const [{ data, fetching }] = useTracksQuery({
+    variables,
+  });
+
   return (
     <div>
       <Title style={{ color: '#f3f5f9' }}>🔥 Derniers partages</Title>
       <div className="home-track-container">
-        {fetching && !data ? (
+        {!data && fetching ? (
           <Spin indicator={loadingIcon} />
         ) : (
             data!.tracks.map((track: trackProps) => (
@@ -70,7 +76,18 @@ const Index = () => {
       </div>
       {data && (
         <div className="load-more">
-          <Button type="primary" loading={fetching}>Voir plus</Button>
+          <Button
+            type="primary"
+            loading={fetching}
+            onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor: data.tracks[data.tracks.length - 1].createdAt,
+              })
+            }}
+          >
+            Voir plus
+              </Button>
         </div>
       )}
     </div>
