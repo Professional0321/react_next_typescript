@@ -15,7 +15,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  tracks: Array<Track>;
+  tracks: PaginatedTracks;
   track?: Maybe<Track>;
   me?: Maybe<User>;
 };
@@ -29,6 +29,12 @@ export type QueryTracksArgs = {
 
 export type QueryTrackArgs = {
   id: Scalars['Float'];
+};
+
+export type PaginatedTracks = {
+  __typename?: 'PaginatedTracks';
+  tracks: Array<Track>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Track = {
@@ -238,10 +244,14 @@ export type TracksQueryVariables = Exact<{
 
 export type TracksQuery = (
   { __typename?: 'Query' }
-  & { tracks: Array<(
-    { __typename?: 'Track' }
-    & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
-  )> }
+  & { tracks: (
+    { __typename?: 'PaginatedTracks' }
+    & Pick<PaginatedTracks, 'hasMore'>
+    & { tracks: Array<(
+      { __typename?: 'Track' }
+      & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+    )> }
+  ) }
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -349,13 +359,16 @@ export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'q
 export const TracksDocument = gql`
     query Tracks($limit: Int!, $cursor: String) {
   tracks(limit: $limit, cursor: $cursor) {
-    id
-    name
-    url
-    votes
-    creatorId
-    createdAt
-    updatedAt
+    hasMore
+    tracks {
+      id
+      name
+      url
+      votes
+      creatorId
+      createdAt
+      updatedAt
+    }
   }
 }
     `;

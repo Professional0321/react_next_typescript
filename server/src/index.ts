@@ -22,12 +22,14 @@ const main = async () => {
         username: 'etudiant',
         password: 'postgres',
         logging: true,
-        synchronize: true,
+        synchronize: false,
         migrations: [path.join(__dirname, './migrations/*')],
         entities: [Track, User],
     });
 
     await connection.runMigrations();
+
+    // await Track.delete({});
 
     const app = express();
 
