@@ -14,20 +14,13 @@ import {
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
-import { useTracksQuery, useMeQuery, useVoteMutation } from '../generated/graphql';
+import { useTracksQuery, useMeQuery, useVoteMutation, TrackSnippetFragment } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
 
 const { Title } = Typography;
 // const { Meta } = Card;
-
-type trackProps = {
-  name: string,
-  id: number,
-  votes: number,
-  url: string,
-};
 
 type voteLoad = 'upvote-loading' | 'downvote-loading' | 'not-loading';
 
@@ -61,7 +54,7 @@ const Index = () => {
         {!data && fetching ? (
           <Spin indicator={loadingIcon} />
         ) : (
-            data!.tracks.tracks.map((track: trackProps) => (
+            data!.tracks.tracks.map((track: TrackSnippetFragment) => (
               <Card
                 key={track.id}
                 // loading={voteLoading !== 'not-loading'}

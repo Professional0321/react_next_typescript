@@ -22,7 +22,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
     // User not logged in
   } else if (!data?.me) {
     body = (
-      <>
         <Space>
           <Link href="/register">
             <Button>Inscription</Button>
@@ -31,12 +30,10 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
             <Button type="primary">Connexion</Button>
           </Link>
         </Space>
-      </>
     );
     // User is logged in
   } else {
     body = (
-      <>
         <Space>
           <div>{data.me.username}</div>
           <Button
@@ -47,7 +44,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({ }) => {
             Déconnexion
           </Button>
         </Space>
-      </>
     );
   }
 
