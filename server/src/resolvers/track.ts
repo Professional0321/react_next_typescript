@@ -14,6 +14,7 @@ import { Track } from "../entities/Track";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
+import { Upvote } from '../entities/Upvote';
 
 @InputType()
 class TrackInput {
@@ -33,8 +34,37 @@ class PaginatedTracks {
   hasMore: boolean;
 }
 
-@Resolver()
+@Resolver(Track)
 export class TrackResolver {
+  // Upvote
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async vote(
+    @Arg('trackId', () => Int) trackId: number,
+    @Arg('value', () => Int) value: number,
+    @Ctx() { req }: MyContext
+  ) {
+    const isUpvote = value !== -1;
+    const realValue = isUpvote ? 1 : -1;
+    const { userId } = req.session;
+
+    await getConnection().query(
+      `
+      START TRANSACTION;
+
+      insert into upvote ("userId", "trackId", value)
+      values (${userId}, ${trackId}, ${realValue});
+
+      update track
+      set votes = votes + ${realValue}
+      where id = ${trackId};
+
+      COMMIT;
+      `
+    )
+    return true;
+  }
+
   // Find all tracks
   @Query(() => PaginatedTracks)
   async tracks(

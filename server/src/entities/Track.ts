@@ -7,8 +7,10 @@ import {
   Column,
   BaseEntity,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { User } from './User';
+import { Upvote } from './Upvote';
 
 @ObjectType()
 @Entity()
@@ -34,8 +36,11 @@ export class Track extends BaseEntity {
   creatorId: number;
 
   @Field()
-  @ManyToOne(() => User, user => user.tracks)
+  @ManyToOne(() => User, (user) => user.tracks)
   creator: User;
+
+  @OneToMany(() => Upvote, (upvote) => upvote.track)
+  upvotes: Upvote[];
 
   @Field(() => String)
   @CreateDateColumn()
