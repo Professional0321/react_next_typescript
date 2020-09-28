@@ -43,6 +43,7 @@ export type Track = {
   name: Scalars['String'];
   url: Scalars['String'];
   votes: Scalars['Float'];
+  voteStatus?: Maybe<Scalars['Int']>;
   creatorId: Scalars['Float'];
   creator: User;
   createdAt: Scalars['String'];
@@ -163,7 +164,7 @@ export type RegularUserResponseFragment = (
 
 export type TrackSnippetFragment = (
   { __typename?: 'Track' }
-  & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt' | 'voteStatus'>
   & { creator: (
     { __typename?: 'User' }
     & Pick<User, 'username' | 'id' | 'email' | 'createdAt'>
@@ -314,6 +315,7 @@ export const TrackSnippetFragmentDoc = gql`
   creatorId
   createdAt
   updatedAt
+  voteStatus
   creator {
     username
     id

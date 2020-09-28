@@ -12,9 +12,11 @@ import {
   MeDocument,
   MeQuery,
   RegisterMutation,
+  VoteMutationVariables,
 } from "../generated/graphql";
 import { cachingUpdateQuery } from "./cachingUpdateQuery";
 import Router from "next/router";
+import gql from "graphql-tag";
 
 const errorExchange: Exchange = ({ forward }) => ops$ => {
   return pipe(
@@ -86,6 +88,40 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          vote: (_result, args, cache, info) => {
+            const { trackId, value } = args as VoteMutationsVariables;
+            const data = cache.readFragment(
+              gql`
+              fragment _ on Track {
+                id
+                votes
+                voteStatus
+              }
+              `,
+              { id: trackId } as any
+            );
+            // console.log('data :', data)
+            if (data) {
+              if (data.voteStatus === value) {
+                return;
+              };
+
+              const newVotes = (data.votes as number) + (!data.voteStatus ? 1 : 2) * value;
+              cache.writeFragment(
+                gql`
+                  fragment __ on Track {
+                    votes
+                    voteStatus
+                  }
+                `,
+                {
+                  id: trackId,
+                  votes: newVotes,
+                  voteStatus: value,
+                } as any
+              );
+            }
+          },
           createTrack: (_result, args, cache, info) => {
             const allFields = cache.inspectFields('Query');
             // console.log("allFields: ", allFields);

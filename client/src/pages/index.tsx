@@ -64,11 +64,17 @@ const Index = () => {
             data!.tracks.tracks.map((track: trackProps) => (
               <Card
                 key={track.id}
-                loading={voteLoading !== 'not-loading'}
+                // loading={voteLoading !== 'not-loading'}
                 actions={[
                   <ArrowUpOutlined
                     key="upvote"
+                    style={{ color: track.voteStatus === 1 ? 'green' : undefined }}
+                    spin={voteLoading === 'upvote-loading'}
                     onClick={async () => {
+                      if (track.voteStatus === 1) {
+                        return;
+                      };
+
                       setVoteLoading('upvote-loading');
                       await vote({
                         value: 1,
@@ -80,7 +86,13 @@ const Index = () => {
                   <div>{track.votes}</div>,
                   <ArrowDownOutlined
                     key="downvote"
+                    style={{ color: track.voteStatus === -1 ? '#e42a2d' : undefined }}
+                    spin={voteLoading === 'downvote-loading'}
                     onClick={async () => {
+                      if (track.voteStatus === -1) {
+                        return;
+                      };
+
                       setVoteLoading('downvote-loading');
                       await vote({
                         value: -1,
