@@ -48,16 +48,58 @@ export class TrackResolver {
     const realValue = isUpvote ? 1 : -1;
     const { userId } = req.session;
 
+    // Check vote
+    // Already voted
+    const upvote = await Upvote.findOne({ where: { trackId, userId }});
+
+    if (upvote && upvote.value !== realValue) {
+      await getConnection().transaction(async (transManager) => {
+        await transManager.query(
+          `
+          update upvote
+          set value = $1
+          where "trackId" = $2 and "userId" = $3
+          `,
+          [realValue, trackId, userId]
+        );
+
+        await transManager.query(
+          `
+          update track
+          set votes = votes + $1
+          where id = $2
+          `,
+          [2* realValue, trackId]
+        );
+      });
+      // Never voted
+    } else if (!upvote) {
+      await getConnection().transaction(async (transManager) => {
+        await transManager.query(
+          `
+          insert into upvote ("userId", "trackId", value)
+          values ($1, $2, $3)
+          `,
+          [userId, trackId, value]
+          );
+
+          await transManager.query(
+            `
+            update track
+            set votes = votes + $1
+            where id = $2;
+            `,
+            [realValue, trackId]
+          );
+      })
+
+    }
+
     await getConnection().query(
       `
       START TRANSACTION;
 
-      insert into upvote ("userId", "trackId", value)
-      values (${userId}, ${trackId}, ${realValue});
 
-      update track
-      set votes = votes + ${realValue}
-      where id = ${trackId};
 
       COMMIT;
       `
