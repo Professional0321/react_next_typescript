@@ -44,19 +44,52 @@ export class TrackResolver {
     // Fetch 1 more track
     const realLimit = Math.min(50, limit);
     const realLimitPlusOne = realLimit + 1;
-    const queryBuiler = getConnection()
-      .getRepository(Track)
-      .createQueryBuilder("t")
-      .orderBy('"createdAt"', "DESC")
-      .take(realLimitPlusOne);
+
+    const replacements: any[] = [realLimitPlusOne];
 
     if (cursor) {
-      queryBuiler.where('"createdAt" < :cursor', {
-        cursor: new Date(parseInt(cursor)),
-      });
+      replacements.push(new Date(parseInt(cursor)));
     }
 
-    const tracks = await queryBuiler.getMany();
+    const tracks = await getConnection().query(
+      `
+    select t.*,
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'createdAt', u."createdAt",
+      'updatedAt', u."updatedAt"
+      ) creator
+    from track t
+    inner join public.user u on u.id = t."creatorId"
+    ${cursor ? `where t."createdAt" < $2` : ""}
+    order by t."createdAt" DESC
+    limit $1
+    `,
+      replacements
+    );
+
+    // const queryBuiler = getConnection()
+    //   .getRepository(Track)
+    //   .createQueryBuilder("t")
+    //   .innerJoinAndSelect(
+    //     't.creator',
+    //     'user',
+    //     'user.id = t."creatorId"',
+    //   )
+    //   .orderBy('t."createdAt"', "DESC")
+    //   .take(realLimitPlusOne);
+
+    // if (cursor) {
+    //   queryBuiler.where('t."createdAt" < :cursor', {
+    //     cursor: new Date(parseInt(cursor)),
+    //   });
+    // }
+
+    // const tracks = await queryBuiler.getMany();
+
+    console.log('tracks: ', tracks);
 
     // Fetch 1 more track to check if hasMore === true
     // else end of tracks

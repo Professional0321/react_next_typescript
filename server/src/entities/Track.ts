@@ -33,6 +33,7 @@ export class Track extends BaseEntity {
   @Column()
   creatorId: number;
 
+  @Field()
   @ManyToOne(() => User, user => user.tracks)
   creator: User;
 
