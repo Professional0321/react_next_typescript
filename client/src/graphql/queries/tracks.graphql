@@ -2,17 +2,7 @@ query Tracks($limit: Int!, $cursor: String) {
   tracks(limit: $limit, cursor: $cursor) {
     hasMore
     tracks {
-      id
-      name
-      url
-      votes
-      creatorId
-      createdAt
-      updatedAt
-      creator {
-        id
-        username
-      }
+      ...TrackSnippet
     }
   }
 }

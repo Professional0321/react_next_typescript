@@ -161,6 +161,15 @@ export type RegularUserResponseFragment = (
   )> }
 );
 
+export type TrackSnippetFragment = (
+  { __typename?: 'Track' }
+  & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  & { creator: (
+    { __typename?: 'User' }
+    & Pick<User, 'username' | 'id' | 'email' | 'createdAt'>
+  ) }
+);
+
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
@@ -233,6 +242,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type VoteMutationVariables = Exact<{
+  value: Scalars['Int'];
+  trackId: Scalars['Int'];
+}>;
+
+
+export type VoteMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'vote'>
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -257,11 +277,7 @@ export type TracksQuery = (
     & Pick<PaginatedTracks, 'hasMore'>
     & { tracks: Array<(
       { __typename?: 'Track' }
-      & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
-      & { creator: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ) }
+      & TrackSnippetFragment
     )> }
   ) }
 );
@@ -289,6 +305,23 @@ export const RegularUserResponseFragmentDoc = gql`
 }
     ${RegularErrorFragmentDoc}
 ${RegularUserFragmentDoc}`;
+export const TrackSnippetFragmentDoc = gql`
+    fragment TrackSnippet on Track {
+  id
+  name
+  url
+  votes
+  creatorId
+  createdAt
+  updatedAt
+  creator {
+    username
+    id
+    email
+    createdAt
+  }
+}
+    `;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newPassword: String!) {
   changePassword(token: $token, newPassword: $newPassword) {
@@ -357,6 +390,15 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const VoteDocument = gql`
+    mutation Vote($value: Int!, $trackId: Int!) {
+  vote(value: $value, trackId: $trackId)
+}
+    `;
+
+export function useVoteMutation() {
+  return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument);
+};
 export const MeDocument = gql`
     query Me {
   me {
@@ -373,21 +415,11 @@ export const TracksDocument = gql`
   tracks(limit: $limit, cursor: $cursor) {
     hasMore
     tracks {
-      id
-      name
-      url
-      votes
-      creatorId
-      createdAt
-      updatedAt
-      creator {
-        id
-        username
-      }
+      ...TrackSnippet
     }
   }
 }
-    `;
+    ${TrackSnippetFragmentDoc}`;
 
 export function useTracksQuery(options: Omit<Urql.UseQueryArgs<TracksQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<TracksQuery>({ query: TracksDocument, ...options });

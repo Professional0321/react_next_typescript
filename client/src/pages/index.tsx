@@ -14,13 +14,13 @@ import {
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
-import { useTracksQuery, useMeQuery } from '../generated/graphql';
+import { useTracksQuery, useMeQuery, useVoteMutation } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
 
 const { Title } = Typography;
-const { Meta } = Card;
+// const { Meta } = Card;
 
 type trackProps = {
   name: string,
@@ -28,6 +28,8 @@ type trackProps = {
   votes: number,
   url: string,
 };
+
+type voteLoad = 'upvote-loading' | 'downvote-loading' | 'not-loading';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -44,7 +46,9 @@ const Index = () => {
 
   const [{data: meData}] = useMeQuery();
   const trackCreator = meData?.me?.username;
-  console.log(trackCreator);
+
+  const [voteLoading, setVoteLoading] = useState<voteLoad>('not-loading');
+  const [, vote] = useVoteMutation();
 
   if (!fetching && !data) {
     return <div>Une erreur est survenue dans la requête.</div>;
@@ -60,10 +64,31 @@ const Index = () => {
             data!.tracks.tracks.map((track: trackProps) => (
               <Card
                 key={track.id}
+                loading={voteLoading !== 'not-loading'}
                 actions={[
-                  <ArrowUpOutlined key="upvote" />,
+                  <ArrowUpOutlined
+                    key="upvote"
+                    onClick={async () => {
+                      setVoteLoading('upvote-loading');
+                      await vote({
+                        value: 1,
+                        trackId: track.id,
+                      });
+                      setVoteLoading('not-loading');
+                    }}
+                  />,
                   <div>{track.votes}</div>,
-                  <ArrowDownOutlined key="downvote" />,
+                  <ArrowDownOutlined
+                    key="downvote"
+                    onClick={async () => {
+                      setVoteLoading('downvote-loading');
+                      await vote({
+                        value: -1,
+                        trackId: track.id,
+                      });
+                      setVoteLoading('not-loading');
+                    }}
+                  />,
                 <>{track.creator.username === trackCreator ? <EditOutlined key="edit" /> : ''}</>,
                 <>{track.creator.username === trackCreator ? <DeleteOutlined key="delete" /> : ''}</>,
                   // <EditOutlined key="edit" />,
