@@ -9,6 +9,10 @@ query Tracks($limit: Int!, $cursor: String) {
       creatorId
       createdAt
       updatedAt
+      creator {
+        id
+        username
+      }
     }
   }
 }

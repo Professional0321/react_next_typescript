@@ -20,14 +20,14 @@ import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
 
 const { Title } = Typography;
-// const { Meta } = Card;
+const { Meta } = Card;
 
 type trackProps = {
   name: string,
   id: number,
   votes: number,
   url: string,
-}
+};
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -74,8 +74,9 @@ const Index = () => {
                 <Link href="#">
                   <a><strong>{track.name}</strong></a>
                 </Link>
-                {/* <Meta title={track.name} /> */}
-              </Card>))
+                {/* <Meta description={`Ajouté par ${track.creator.username}`} /> */}
+              </Card>
+            ))
           )}
       </div>
       {data && data.tracks.hasMore && (

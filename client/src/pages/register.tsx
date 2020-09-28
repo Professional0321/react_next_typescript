@@ -23,7 +23,7 @@ type formProps = {
     confirm: string,
 }
 
-const Register: React.FC<registerProps> = () => {
+const Register: React.FC<formProps> = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);

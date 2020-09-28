@@ -44,6 +44,7 @@ export type Track = {
   url: Scalars['String'];
   votes: Scalars['Float'];
   creatorId: Scalars['Float'];
+  creator: User;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -60,6 +61,7 @@ export type User = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  vote: Scalars['Boolean'];
   createTrack: Track;
   updateTrack?: Maybe<Track>;
   deleteTrack: Scalars['Boolean'];
@@ -68,6 +70,12 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+};
+
+
+export type MutationVoteArgs = {
+  value: Scalars['Int'];
+  trackId: Scalars['Int'];
 };
 
 
@@ -250,6 +258,10 @@ export type TracksQuery = (
     & { tracks: Array<(
       { __typename?: 'Track' }
       & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
     )> }
   ) }
 );
@@ -368,6 +380,10 @@ export const TracksDocument = gql`
       creatorId
       createdAt
       updatedAt
+      creator {
+        id
+        username
+      }
     }
   }
 }
