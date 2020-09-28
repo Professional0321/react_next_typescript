@@ -14,7 +14,7 @@ import {
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
-import { useTracksQuery } from '../generated/graphql';
+import { useTracksQuery, useMeQuery } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
@@ -42,6 +42,10 @@ const Index = () => {
     variables,
   });
 
+  const [{data: meData}] = useMeQuery();
+  const trackCreator = meData?.me?.username;
+  console.log(trackCreator);
+
   if (!fetching && !data) {
     return <div>Une erreur est survenue dans la requête.</div>;
   }
@@ -60,8 +64,10 @@ const Index = () => {
                   <ArrowUpOutlined key="upvote" />,
                   <div>{track.votes}</div>,
                   <ArrowDownOutlined key="downvote" />,
-                  <EditOutlined key="edit" />,
-                  <DeleteOutlined key="delete" />,
+                <>{track.creator.username === trackCreator ? <EditOutlined key="edit" /> : ''}</>,
+                <>{track.creator.username === trackCreator ? <DeleteOutlined key="delete" /> : ''}</>,
+                  // <EditOutlined key="edit" />,
+                  // <DeleteOutlined key="delete" />,
                 ]}
 
               >
