@@ -14,6 +14,7 @@ import { Track } from "../entities/Track";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
+import { Upvote } from '../entities/Upvote';
 
 @InputType()
 class TrackInput {
@@ -33,8 +34,79 @@ class PaginatedTracks {
   hasMore: boolean;
 }
 
-@Resolver()
+@Resolver(Track)
 export class TrackResolver {
+  // Upvote
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async vote(
+    @Arg('trackId', () => Int) trackId: number,
+    @Arg('value', () => Int) value: number,
+    @Ctx() { req }: MyContext
+  ) {
+    const isUpvote = value !== -1;
+    const realValue = isUpvote ? 1 : -1;
+    const { userId } = req.session;
+
+    // Check vote
+    // Already voted
+    const upvote = await Upvote.findOne({ where: { trackId, userId }});
+
+    if (upvote && upvote.value !== realValue) {
+      await getConnection().transaction(async (transManager) => {
+        await transManager.query(
+          `
+          update upvote
+          set value = $1
+          where "trackId" = $2 and "userId" = $3
+          `,
+          [realValue, trackId, userId]
+        );
+
+        await transManager.query(
+          `
+          update track
+          set votes = votes + $1
+          where id = $2
+          `,
+          [2* realValue, trackId]
+        );
+      });
+      // Never voted
+    } else if (!upvote) {
+      await getConnection().transaction(async (transManager) => {
+        await transManager.query(
+          `
+          insert into upvote ("userId", "trackId", value)
+          values ($1, $2, $3)
+          `,
+          [userId, trackId, value]
+          );
+
+          await transManager.query(
+            `
+            update track
+            set votes = votes + $1
+            where id = $2;
+            `,
+            [realValue, trackId]
+          );
+      })
+
+    }
+
+    await getConnection().query(
+      `
+      START TRANSACTION;
+
+
+
+      COMMIT;
+      `
+    )
+    return true;
+  }
+
   // Find all tracks
   @Query(() => PaginatedTracks)
   async tracks(
@@ -44,19 +116,52 @@ export class TrackResolver {
     // Fetch 1 more track
     const realLimit = Math.min(50, limit);
     const realLimitPlusOne = realLimit + 1;
-    const queryBuiler = getConnection()
-      .getRepository(Track)
-      .createQueryBuilder("t")
-      .orderBy('"createdAt"', "DESC")
-      .take(realLimitPlusOne);
+
+    const replacements: any[] = [realLimitPlusOne];
 
     if (cursor) {
-      queryBuiler.where('"createdAt" < :cursor', {
-        cursor: new Date(parseInt(cursor)),
-      });
+      replacements.push(new Date(parseInt(cursor)));
     }
 
-    const tracks = await queryBuiler.getMany();
+    const tracks = await getConnection().query(
+      `
+    select t.*,
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'createdAt', u."createdAt",
+      'updatedAt', u."updatedAt"
+      ) creator
+    from track t
+    inner join public.user u on u.id = t."creatorId"
+    ${cursor ? `where t."createdAt" < $2` : ""}
+    order by t."createdAt" DESC
+    limit $1
+    `,
+      replacements
+    );
+
+    // const queryBuiler = getConnection()
+    //   .getRepository(Track)
+    //   .createQueryBuilder("t")
+    //   .innerJoinAndSelect(
+    //     't.creator',
+    //     'user',
+    //     'user.id = t."creatorId"',
+    //   )
+    //   .orderBy('t."createdAt"', "DESC")
+    //   .take(realLimitPlusOne);
+
+    // if (cursor) {
+    //   queryBuiler.where('t."createdAt" < :cursor', {
+    //     cursor: new Date(parseInt(cursor)),
+    //   });
+    // }
+
+    // const tracks = await queryBuiler.getMany();
+
+    console.log('tracks: ', tracks);
 
     // Fetch 1 more track to check if hasMore === true
     // else end of tracks

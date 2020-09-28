@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Track } from './Track';
+import { Upvote } from './Upvote';
 
 @ObjectType()
 @Entity()
@@ -29,8 +30,11 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @OneToMany(() => Track, track => track.creator)
+  @OneToMany(() => Track, (track) => track.creator)
   tracks: Track[];
+
+  @OneToMany(() => Upvote, (upvote) => upvote.user)
+  upvotes: Upvote[];
 
   @Field(() => String)
   @CreateDateColumn()

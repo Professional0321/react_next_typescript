@@ -14,6 +14,7 @@ import { createConnection } from 'typeorm';
 import { Track } from './entities/Track';
 import { User } from './entities/User';
 import path from 'path';
+import { Upvote } from './entities/Upvote';
 
 const main = async () => {
     const connection = await createConnection({
@@ -22,9 +23,9 @@ const main = async () => {
         username: 'etudiant',
         password: 'postgres',
         logging: true,
-        synchronize: false,
+        synchronize: true,
         migrations: [path.join(__dirname, './migrations/*')],
-        entities: [Track, User],
+        entities: [Track, User, Upvote],
     });
 
     await connection.runMigrations();

@@ -1,0 +1,15 @@
+fragment TrackSnippet on Track {
+  id
+  name
+  url
+  votes
+  creatorId
+  createdAt
+  updatedAt
+  creator {
+    username
+    id
+    email
+    createdAt
+  }
+}
