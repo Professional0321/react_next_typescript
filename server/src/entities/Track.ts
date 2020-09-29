@@ -1,4 +1,4 @@
-import { ObjectType, Field } from 'type-graphql';
+import { ObjectType, Field, Int } from 'type-graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -30,6 +30,9 @@ export class Track extends BaseEntity {
   @Field()
   @Column({ type: 'int', default: 0 })
   votes!: number;
+
+  @Field(() => Int, { nullable: true })
+  voteStatus: number | null; // 1 || -1 || null
 
   @Field()
   @Column()

@@ -14,7 +14,7 @@ import { Track } from "../entities/Track";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
-import { Upvote } from '../entities/Upvote';
+import { Upvote } from "../entities/Upvote";
 
 @InputType()
 class TrackInput {
@@ -40,8 +40,8 @@ export class TrackResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async vote(
-    @Arg('trackId', () => Int) trackId: number,
-    @Arg('value', () => Int) value: number,
+    @Arg("trackId", () => Int) trackId: number,
+    @Arg("value", () => Int) value: number,
     @Ctx() { req }: MyContext
   ) {
     const isUpvote = value !== -1;
@@ -50,7 +50,7 @@ export class TrackResolver {
 
     // Check vote
     // Already voted
-    const upvote = await Upvote.findOne({ where: { trackId, userId }});
+    const upvote = await Upvote.findOne({ where: { trackId, userId } });
 
     if (upvote && upvote.value !== realValue) {
       await getConnection().transaction(async (transManager) => {
@@ -69,7 +69,7 @@ export class TrackResolver {
           set votes = votes + $1
           where id = $2
           `,
-          [2* realValue, trackId]
+          [2 * realValue, trackId]
         );
       });
       // Never voted
@@ -81,29 +81,19 @@ export class TrackResolver {
           values ($1, $2, $3)
           `,
           [userId, trackId, value]
-          );
+        );
 
-          await transManager.query(
-            `
+        await transManager.query(
+          `
             update track
             set votes = votes + $1
             where id = $2;
             `,
-            [realValue, trackId]
-          );
-      })
-
+          [realValue, trackId]
+        );
+      });
     }
 
-    await getConnection().query(
-      `
-      START TRANSACTION;
-
-
-
-      COMMIT;
-      `
-    )
     return true;
   }
 
@@ -111,7 +101,8 @@ export class TrackResolver {
   @Query(() => PaginatedTracks)
   async tracks(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Ctx() { req }: MyContext
   ): Promise<PaginatedTracks> {
     // Fetch 1 more track
     const realLimit = Math.min(50, limit);
@@ -119,8 +110,14 @@ export class TrackResolver {
 
     const replacements: any[] = [realLimitPlusOne];
 
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
+    };
+
+    let cursorIndex = 3;
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+      cursorIndex = replacements.length;
     }
 
     const tracks = await getConnection().query(
@@ -132,36 +129,22 @@ export class TrackResolver {
       'email', u.email,
       'createdAt', u."createdAt",
       'updatedAt', u."updatedAt"
-      ) creator
+      ) creator,
+      ${
+        req.session.userId
+          ? '(select value from upvote where "userId" = $2 and "trackId" = t.id) "voteStatus"'
+          : 'null as "voteStatus"'
+      }
     from track t
     inner join public.user u on u.id = t."creatorId"
-    ${cursor ? `where t."createdAt" < $2` : ""}
+    ${cursor ? `where t."createdAt" < ${cursorIndex}` : ""}
     order by t."createdAt" DESC
     limit $1
     `,
       replacements
     );
 
-    // const queryBuiler = getConnection()
-    //   .getRepository(Track)
-    //   .createQueryBuilder("t")
-    //   .innerJoinAndSelect(
-    //     't.creator',
-    //     'user',
-    //     'user.id = t."creatorId"',
-    //   )
-    //   .orderBy('t."createdAt"', "DESC")
-    //   .take(realLimitPlusOne);
-
-    // if (cursor) {
-    //   queryBuiler.where('t."createdAt" < :cursor', {
-    //     cursor: new Date(parseInt(cursor)),
-    //   });
-    // }
-
-    // const tracks = await queryBuiler.getMany();
-
-    console.log('tracks: ', tracks);
+    console.log("tracks: ", tracks);
 
     // Fetch 1 more track to check if hasMore === true
     // else end of tracks

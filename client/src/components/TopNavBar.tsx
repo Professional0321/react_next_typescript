@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 
 import { useMeQuery, useLogoutMutation } from "../generated/graphql";
-import { isServer } from '../utils/isServer';
+import { isServer } from "../utils/isServer";
 
 interface TopNavBarProps { }
 
