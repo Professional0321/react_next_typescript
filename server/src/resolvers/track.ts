@@ -161,38 +161,42 @@ export class TrackResolver {
 
     // Update track by id
     @Mutation(() => Track, { nullable: true })
+    @UseMiddleware(isAuth)
     async updateTrack(
         @Arg('id') id: number,
-        @Arg('name', () => String, { nullable: true }) name: string,
+        @Arg('name') name: string,
+        @Arg('url') url: string,
+        @Ctx() { req }: MyContext,
     ): Promise<Track | null> {
-        const track = await Track.findOne(id);
-        if (!track) {
-            return null;
-        }
-        if (typeof name !== 'undefined') {
-            await Track.update({ id }, { name });
-        }
-        return track;
+        const result = await getConnection()
+            .createQueryBuilder()
+            .update(Track)
+            .set({ name, url })
+            .where('id = :id and "creatorId" = :creatorId', {
+                id,
+                creatorId: req.session.userId,
+            })
+            .returning('*')
+            .execute();
+
+            return result.raw[0];
     }
 
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(
-        @Arg('id', () => Int) id: number,
-        @Ctx() { req }: MyContext
-        ): Promise<boolean> {
-            const track = await Track.findOne(id);
-            if (!track) {
-                return false;
-            }
-            if (track.creatorId !== req.session.userId) {
-                throw new Error('Non autorisé.');
-            }
-
-            await Upvote.delete({ trackId: id });
-            await Track.delete({ id });
-
-            return true;
+    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
+        const track = await Track.findOne(id);
+        if (!track) {
+            return false;
         }
+        if (track.creatorId !== req.session.userId) {
+            throw new Error('Non autorisé.');
+        }
+
+        await Upvote.delete({ trackId: id });
+        await Track.delete({ id });
+
+        return true;
+    }
 }
