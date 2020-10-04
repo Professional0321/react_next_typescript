@@ -18,6 +18,7 @@ import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
+import { createUpvoteLoader } from 'src/utils/createUpvoteLoader';
 
 @InputType()
 class TrackInput {
@@ -40,10 +41,25 @@ class PaginatedTracks {
 @Resolver(Track)
 export class TrackResolver {
     @FieldResolver(() => User)
-    creator(
-        @Root() track: Track,
-        @Ctx() { userLoader }: MyContext) {
+
+    // Run only if query contains "creator"
+    creator(@Root() track: Track, @Ctx() { userLoader }: MyContext) {
         return userLoader.load(track.creatorId);
+    }
+
+    // Run only if query contains "voteStatus"
+    @FieldResolver(() => Int, { nullable: true })
+    async voteStatus(@Root() track: Track, @Ctx() { upvoteLoader, req }: MyContext) {
+        if (!req.session.userId) {
+            return null;
+        }
+
+        const upvote = await upvoteLoader.load({
+            trackId: track.id,
+            userId: req.session.userId,
+        });
+
+        return upvote ? upvote.value : null;
     }
 
     // Upvote
@@ -120,27 +136,15 @@ export class TrackResolver {
 
         const replacements: any[] = [realLimitPlusOne];
 
-        if (req.session.userId) {
-            replacements.push(req.session.userId);
-        }
-
-        let cursorIndex = 3;
         if (cursor) {
             replacements.push(new Date(parseInt(cursor)));
-            cursorIndex = replacements.length;
         }
 
         const tracks = await getConnection().query(
             `
-    select t.*,
-
-      ${
-          req.session.userId
-              ? '(select value from upvote where "userId" = $2 and "trackId" = t.id) "voteStatus"'
-              : 'null as "voteStatus"'
-      }
+    select t.*
     from track t
-    ${cursor ? `where t."createdAt" < ${cursorIndex}` : ''}
+    ${cursor ? `where t."createdAt" < $2` : ''}
     order by t."createdAt" DESC
     limit $1
     `,
@@ -166,10 +170,7 @@ export class TrackResolver {
     // Create new track
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
-    async createTrack(
-        @Arg('input') input: TrackInput,
-        @Ctx() { req }: MyContext,
-        ): Promise<Track> {
+    async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
         return Track.create({
             ...input,
             creatorId: req.session.userId,
@@ -202,10 +203,7 @@ export class TrackResolver {
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(
-        @Arg('id', () => Int) id: number,
-        @Ctx() { req }: MyContext,
-        ): Promise<boolean> {
+    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
         const track = await Track.findOne(id);
         if (!track) {
             return false;

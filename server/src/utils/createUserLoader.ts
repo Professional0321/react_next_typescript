@@ -3,6 +3,7 @@ import { User } from '../entities/User';
 
 // Fetch individual fields
 // Group creatorIds in 1 array to make it only 2 queries in TrackResolver
+// [1, 2, 3, 4] => [{id: 1, username: 'Q'}]
 export const createUserLoader = () =>
     new DataLoader<number, User>(async (userIds) => {
         const users = await User.findByIds(userIds as number[]);
