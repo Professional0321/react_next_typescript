@@ -6,4 +6,4 @@ export class HelloResolver {
     hello() {
         return 'Hell-O World';
     }
-};
+}

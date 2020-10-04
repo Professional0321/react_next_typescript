@@ -1,0 +1,18 @@
+query Track($id: Int!) {
+  track(id: $id) {
+    id
+    name
+    url
+    votes
+    creatorId
+    createdAt
+    updatedAt
+    voteStatus
+    creator {
+      username
+      id
+      email
+      createdAt
+    }
+  }
+}

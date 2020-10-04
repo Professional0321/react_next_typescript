@@ -1,7 +1,6 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class FakeTracks1601133281118 implements MigrationInterface {
-
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
         insert into track (name, url, "creatorId", "createdAt") values ('For The Fallen Dreams - Stone', 'https://www.youtube.com/watch?v=-7dDTEYkdvE', 1, '2020-02-06T09:20:02Z');
@@ -34,10 +33,8 @@ export class FakeTracks1601133281118 implements MigrationInterface {
         insert into track (name, url, "creatorId", "createdAt") values ('Fit For A King - When Everything Means Nothing', 'https://www.youtube.com/watch?v=cMbLDpUi3yE', 1, '2020-02-20T02:24:02Z');
         insert into track (name, url, "creatorId", "createdAt") values ('ANNISOKAY - Good Stories', 'https://www.youtube.com/watch?v=_qABWE9VBnw', 1, '2020-02-21T01:20:02Z');
         insert into track (name, url, "creatorId", "createdAt") values ('Architects - Doomsday', 'https://www.youtube.com/watch?v=RvWbcK3YQ_o', 1, '2020-02-21T02:20:02Z');
-`)
+`);
     }
 
-    public async down(_: QueryRunner): Promise<void> {
-    }
-
+    public async down(_: QueryRunner): Promise<void> {}
 }

@@ -1,10 +1,5 @@
 import { LinkOutlined } from '@ant-design/icons';
-import {
-    Button,
-    Form,
-    Input,
-    Typography
-} from 'antd';
+import { Button, Form, Input, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
@@ -16,11 +11,11 @@ import '../styles/components/createTrack.less';
 const { Title } = Typography;
 
 type TrackInput = {
-    name: string,
-    url: string,
-}
+    name: string;
+    url: string;
+};
 
-const CreateTrack: React.FC<{}> = ({ }) => {
+const CreateTrack: React.FC<{}> = ({}) => {
     const router = useRouter();
     useIsAuth();
 
@@ -35,7 +30,7 @@ const CreateTrack: React.FC<{}> = ({ }) => {
         console.log('Received values of form: ', values);
         const { error } = await createTrack({ input: values });
 
-        if(!error) {
+        if (!error) {
             setLoading(false);
             router.push('/');
         }
@@ -54,10 +49,13 @@ const CreateTrack: React.FC<{}> = ({ }) => {
                 <Form.Item
                     name="name"
                     label="Nom - Titre"
-                    rules={[{
-                        required: true,
-                        message: 'Veuillez entrer le nom et titre de la musique séparé par un " - " (comme titré ou copier/collé du lien). !'
-                    }]}
+                    rules={[
+                        {
+                            required: true,
+                            message:
+                                'Veuillez entrer le nom et titre de la musique séparé par un " - " (comme titré ou copier/collé du lien). !',
+                        },
+                    ]}
                 >
                     <Input placeholder="Nom - Titre de la musique" />
                 </Form.Item>
@@ -80,8 +78,7 @@ const CreateTrack: React.FC<{}> = ({ }) => {
                 </Form.Item>
             </Form>
         </>
-    )
-
-}
+    );
+};
 
 export default withUrqlClient(createUrqlClient)(CreateTrack);
