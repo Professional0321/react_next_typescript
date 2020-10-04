@@ -7,7 +7,6 @@ import {
     Table,
     Typography,
     Popconfirm,
-    message,
 } from 'antd';
 import {
     PlayCircleOutlined,
@@ -58,10 +57,6 @@ const Track = ({ }) => {
     // , [data, fetching]);
 
     const text = 'Êtes-vous sûr de vouloir supprimer cette musique ?';
-
-    function confirm() {
-        message.info('Musique supprimée !');
-    }
 
     const columns = [
         {
@@ -154,8 +149,11 @@ const Track = ({ }) => {
                                 <Popconfirm
                                     placement="top"
                                     title={text}
-                                    onConfirm={() => {
-                                        deleteTrack({ id: intId });
+                                    onConfirm={async () => {
+                                        const { error} = await deleteTrack({ id: intId });
+                                        if (!error) {
+                                            router.push('/');
+                                        };
                                     }}
                                     okText="Supprimer"
                                     cancelText="Non"

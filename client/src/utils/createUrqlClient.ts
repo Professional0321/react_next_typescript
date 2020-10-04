@@ -8,6 +8,7 @@ import {
     MeQuery,
     RegisterMutation,
     VoteMutationVariables,
+    DeleteTrackMutationVariables,
 } from '../generated/graphql';
 import { cachingUpdateQuery } from './cachingUpdateQuery';
 import Router from 'next/router';
@@ -89,6 +90,12 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 },
                 updates: {
                     Mutation: {
+                        deleteTrack: (_result, args, cache, info) => {
+                            cache.invalidate({
+                                __typename: 'Track',
+                                id: (args as DeleteTrackMutationVariables).id
+                            });
+                        },
                         vote: (_result, args, cache, info) => {
                             const { trackId, value } = args as VoteMutationVariables;
                             const data = cache.readFragment(
