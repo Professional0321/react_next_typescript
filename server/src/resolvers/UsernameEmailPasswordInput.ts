@@ -3,14 +3,14 @@ import { InputType, Field } from 'type-graphql';
 @InputType()
 export class UsernameEmailPasswordInput {
     @Field()
-    username: string;
+    username!: string;
 
     @Field()
-    email: string;
+    email!: string;
 
     @Field()
-    password: string;
+    password!: string;
 
     @Field()
-    confirm: string;
+    confirm!: string;
 }

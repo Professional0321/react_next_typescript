@@ -1,4 +1,4 @@
-import { cacheExchange, Resolver } from '@urql/exchange-graphcache';
+import { cacheExchange, Resolver, Cache } from '@urql/exchange-graphcache';
 import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql';
 import { pipe, tap } from 'wonka';
 import {
@@ -24,6 +24,14 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
             }
         }),
     );
+};
+
+const invalidateAllTracks = (cache: Cache) => {
+    const allFields = cache.inspectFields('Query');
+    const fieldInfos = allFields.filter((info) => info.fieldName === 'tracks');
+    fieldInfos.forEach((field) => {
+        cache.invalidate('Query', 'tracks', field.arguments || {});
+    });
 };
 
 // Cursor Pagination
@@ -93,7 +101,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                         deleteTrack: (_result, args, cache, info) => {
                             cache.invalidate({
                                 __typename: 'Track',
-                                id: (args as DeleteTrackMutationVariables).id
+                                id: (args as DeleteTrackMutationVariables).id,
                             });
                         },
                         vote: (_result, args, cache, info) => {
@@ -131,12 +139,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                             }
                         },
                         createTrack: (_result, args, cache, info) => {
-                            const allFields = cache.inspectFields('Query');
-                            // console.log("allFields: ", allFields);
-                            const fieldInfos = allFields.filter((info) => info.fieldName === 'tracks');
-                            fieldInfos.forEach((field) => {
-                                cache.invalidate('Query', 'tracks', field.arguments || {});
-                            });
+                            invalidateAllTracks(cache);
                         },
                         logout: (_result, args, cache, info) => {
                             cachingUpdateQuery<LogoutMutation, MeQuery>(cache, { query: MeDocument }, _result, () => ({
@@ -158,6 +161,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                                     }
                                 },
                             );
+                            invalidateAllTracks(cache);
                         },
                         register: (_result, args, cache, info) => {
                             cachingUpdateQuery<RegisterMutation, MeQuery>(

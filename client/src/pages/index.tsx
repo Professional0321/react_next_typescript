@@ -41,7 +41,7 @@ const Index = () => {
     });
     // console.log(variables);
 
-    const [{ data, fetching }] = useTracksQuery({
+    const [{ data, error, fetching }] = useTracksQuery({
         variables,
     });
 
@@ -54,7 +54,13 @@ const Index = () => {
     const [, deleteTrack] = useDeleteTrackMutation();
 
     if (!fetching && !data) {
-        return <div>Une erreur est survenue dans la requête.</div>;
+        return (<div>
+            <div>
+                Une erreur est survenue dans la requête.
+            </div>);
+            <div>{error?.message}</div>
+        </div>
+        );
     }
 
     return (
