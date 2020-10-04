@@ -1,35 +1,30 @@
-import { LoadingOutlined } from '@ant-design/icons';
 import {
-    Button,
-    Result,
-    Space,
-    Spin,
-    Table,
-    Typography,
-    Popconfirm,
-} from 'antd';
-import {
-    PlayCircleOutlined,
-    HeartOutlined,
-    HeartFilled,
     DeleteOutlined,
     EditOutlined,
+    HeartOutlined,
+    LoadingOutlined,
+    PlayCircleOutlined,
 } from '@ant-design/icons';
+import {
+    Button,
+    Popconfirm,
+    Result,
+    Spin,
+    Typography,
+} from 'antd';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReactPlayer from 'react-player/lazy';
-import { useTrackQuery, useDeleteTrackMutation } from '../../generated/graphql';
+import { useDeleteTrackMutation } from '../../generated/graphql';
+import '../../styles/components/track.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
+import { useGetTrackFromUrl } from '../../utils/useGetTrackFromUrl';
+import { useGetIntId } from '../../utils/useGetIntId';
+import { useRouter } from 'next/dist/client/router';
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-import '../../styles/components/track.less';
-
-// interface Track {
-
-// }
 
 const fakeData = [
     {
@@ -40,14 +35,8 @@ const fakeData = [
 
 const Track = ({ }) => {
     const router = useRouter();
-    const intId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1;
-
-    const [{ data, fetching, error }] = useTrackQuery({
-        pause: intId === -1,
-        variables: {
-            id: intId,
-        },
-    });
+    const intId = useGetIntId();
+    const [{ data, fetching, error }] = useGetTrackFromUrl();
     const [, deleteTrack] = useDeleteTrackMutation();
 
     // const [playingTrack, setPlayingTrack] = useState<string>();
@@ -86,7 +75,7 @@ const Track = ({ }) => {
                 <img
                     className="table-cover"
                     alt={url}
-                    src={`https://img.youtube.com/vi/${getYouTubeId(data?.track?.url)}/0.jpg`}
+                    src={data?.track?.url ? `https://img.youtube.com/vi/${getYouTubeId(data.track.url)}/0.jpg` : ''}
                 />
             ),
         },

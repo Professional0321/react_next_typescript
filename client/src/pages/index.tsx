@@ -25,6 +25,7 @@ import {
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
+import NextLink from 'next/link';
 
 const { Title } = Typography;
 // const { Meta } = Card;
@@ -45,7 +46,7 @@ const Index = () => {
     });
 
     const [{ data: meData }] = useMeQuery();
-    const trackCreator = meData?.me?.username;
+    const trackCreator = meData?.me?.id;
 
     const [voteLoading, setVoteLoading] = useState<voteLoad>('not-loading');
     const [, vote] = useVoteMutation();
@@ -104,8 +105,17 @@ const Index = () => {
                                                 setVoteLoading('not-loading');
                                             }}
                                         />,
-                                        <>{track.creator.username === trackCreator ? <EditOutlined key="edit" /> : ''}</>,
-                                        <>{track.creator.username === trackCreator ? (
+                                        <>{track.creator.id === trackCreator ? (
+                                            <NextLink
+                                                href="/track/edit/[id]"
+                                                as={`/track/edit/${track.id}`}
+                                            >
+                                                <EditOutlined
+                                                    key="edit"
+                                                />
+                                            </NextLink>
+                                        ) : ''}</>,
+                                        <>{track.creator.id === trackCreator ? (
                                             <Popconfirm
                                                 placement="top"
                                                 title="Êtes-vous sûr de vouloir supprimer cette musique ?"

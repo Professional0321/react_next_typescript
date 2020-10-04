@@ -163,9 +163,9 @@ export class TrackResolver {
     @Mutation(() => Track, { nullable: true })
     @UseMiddleware(isAuth)
     async updateTrack(
-        @Arg('id') id: number,
-        @Arg('name') name: string,
-        @Arg('url') url: string,
+        @Arg('id', () => Int) id: number,
+        @Arg('name', () => String) name: string,
+        @Arg('url', () => String) url: string,
         @Ctx() { req }: MyContext,
     ): Promise<Track | null> {
         const result = await getConnection()

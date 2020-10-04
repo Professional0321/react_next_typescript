@@ -86,8 +86,9 @@ export type MutationCreateTrackArgs = {
 
 
 export type MutationUpdateTrackArgs = {
-  name?: Maybe<Scalars['String']>;
-  id: Scalars['Float'];
+  url: Scalars['String'];
+  name: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
@@ -251,6 +252,21 @@ export type RegisterMutation = (
     { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
   ) }
+);
+
+export type UpdateTrackMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  url: Scalars['String'];
+}>;
+
+
+export type UpdateTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTrack?: Maybe<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'name' | 'url'>
+  )> }
 );
 
 export type VoteMutationVariables = Exact<{
@@ -427,6 +443,19 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const UpdateTrackDocument = gql`
+    mutation UpdateTrack($id: Int!, $name: String!, $url: String!) {
+  updateTrack(id: $id, name: $name, url: $url) {
+    id
+    name
+    url
+  }
+}
+    `;
+
+export function useUpdateTrackMutation() {
+  return Urql.useMutation<UpdateTrackMutation, UpdateTrackMutationVariables>(UpdateTrackDocument);
 };
 export const VoteDocument = gql`
     mutation Vote($value: Int!, $trackId: Int!) {

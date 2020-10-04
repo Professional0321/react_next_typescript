@@ -1,48 +1,84 @@
-import { LinkOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Typography } from 'antd';
+import { LinkOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+    Button,
+    Form,
+    Input,
+    Spin,
+    Typography,
+} from 'antd';
 import { withUrqlClient } from 'next-urql';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
-import { useCreateTrackMutation } from '../generated/graphql';
-import { createUrqlClient } from '../utils/createUrqlClient';
-import { useIsAuth } from '../utils/useIsAuth';
-import '../styles/components/createTrack.less';
+import { useTrackQuery, useUpdateTrackMutation } from '../../../generated/graphql';
+import { createUrqlClient } from '../../../utils/createUrqlClient';
+import { useGetIntId } from '../../../utils/useGetIntId';
+import '../../../styles/components/editTrack.less';
+
+const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+
 
 const { Title } = Typography;
 
-type TrackInput = {
+type EditTrackProps = {
     name: string;
     url: string;
 };
 
-const CreateTrack: React.FC<{}> = ({ }) => {
+const EditTrack = ({ }) => {
     const router = useRouter();
-    useIsAuth();
+    const intId = useGetIntId();
 
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
+
+    const [{ data, fetching }] = useTrackQuery({
+        pause: intId === -1,
+        variables: {
+            id: intId,
+        },
+    });
+    const [, updateTrack] = useUpdateTrackMutation();
     // const [errors, setErrors] = useState<Array>([]);
 
-    const [, createTrack] = useCreateTrackMutation();
 
-    const onFinish = async (values: TrackInput) => {
+    const onFinish = async (values: EditTrackProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        const { error } = await createTrack({ input: values });
+        const { error } = await updateTrack({
+            id: intId,
+            ...values
+        });
 
         if (!error) {
             setLoading(false);
-            router.push('/');
+            router.back();
         }
     };
 
+    if (fetching) {
+        return (
+            <Spin indicator={loadingIcon} />
+        )
+    };
+
+    if (!data?.track) {
+        return (
+            <div>Musique introuvable.</div>
+        )
+    }
+
     return (
         <>
-            <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Ajouter une musique</Title>
+            <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Modifier une musique</Title>
             <Form
                 name="create_track"
-                className="create-track-form"
+                className="edit-track-form"
                 layout="vertical"
+                initialValues={{
+                    name: data.track.name,
+                    url: data.track.url,
+                }}
                 onFinish={onFinish}
                 scrollToFirstError
             >
@@ -72,8 +108,8 @@ const CreateTrack: React.FC<{}> = ({ }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="create-track-form-button" loading={loading}>
-                        Ajouter la musique
+                    <Button type="primary" htmlType="submit" className="edit-track-form-button" loading={loading}>
+                        Modifier la musique
                     </Button>
                 </Form.Item>
             </Form>
@@ -81,4 +117,4 @@ const CreateTrack: React.FC<{}> = ({ }) => {
     );
 };
 
-export default withUrqlClient(createUrqlClient)(CreateTrack);
+export default withUrqlClient(createUrqlClient)(EditTrack)
