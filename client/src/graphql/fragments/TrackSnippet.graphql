@@ -6,6 +6,7 @@ fragment TrackSnippet on Track {
   creatorId
   createdAt
   updatedAt
+  voteStatus
   creator {
     username
     id

@@ -28,7 +28,7 @@ export type QueryTracksArgs = {
 
 
 export type QueryTrackArgs = {
-  id: Scalars['Float'];
+  id: Scalars['Int'];
 };
 
 export type PaginatedTracks = {
@@ -43,6 +43,7 @@ export type Track = {
   name: Scalars['String'];
   url: Scalars['String'];
   votes: Scalars['Float'];
+  voteStatus?: Maybe<Scalars['Int']>;
   creatorId: Scalars['Float'];
   creator: User;
   createdAt: Scalars['String'];
@@ -85,13 +86,14 @@ export type MutationCreateTrackArgs = {
 
 
 export type MutationUpdateTrackArgs = {
-  name?: Maybe<Scalars['String']>;
-  id: Scalars['Float'];
+  url: Scalars['String'];
+  name: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
 export type MutationDeleteTrackArgs = {
-  id: Scalars['Float'];
+  id: Scalars['Int'];
 };
 
 
@@ -163,7 +165,7 @@ export type RegularUserResponseFragment = (
 
 export type TrackSnippetFragment = (
   { __typename?: 'Track' }
-  & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt' | 'voteStatus'>
   & { creator: (
     { __typename?: 'User' }
     & Pick<User, 'username' | 'id' | 'email' | 'createdAt'>
@@ -195,6 +197,16 @@ export type CreateTrackMutation = (
     { __typename?: 'Track' }
     & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt'>
   ) }
+);
+
+export type DeleteTrackMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type DeleteTrackMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteTrack'>
 );
 
 export type ForgotPasswordMutationVariables = Exact<{
@@ -242,6 +254,21 @@ export type RegisterMutation = (
   ) }
 );
 
+export type UpdateTrackMutationVariables = Exact<{
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  url: Scalars['String'];
+}>;
+
+
+export type UpdateTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTrack?: Maybe<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'name' | 'url'>
+  )> }
+);
+
 export type VoteMutationVariables = Exact<{
   value: Scalars['Int'];
   trackId: Scalars['Int'];
@@ -261,6 +288,23 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & RegularUserFragment
+  )> }
+);
+
+export type TrackQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type TrackQuery = (
+  { __typename?: 'Query' }
+  & { track?: Maybe<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt' | 'voteStatus'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'id' | 'email' | 'createdAt'>
+    ) }
   )> }
 );
 
@@ -314,6 +358,7 @@ export const TrackSnippetFragmentDoc = gql`
   creatorId
   createdAt
   updatedAt
+  voteStatus
   creator {
     username
     id
@@ -349,6 +394,15 @@ export const CreateTrackDocument = gql`
 
 export function useCreateTrackMutation() {
   return Urql.useMutation<CreateTrackMutation, CreateTrackMutationVariables>(CreateTrackDocument);
+};
+export const DeleteTrackDocument = gql`
+    mutation DeleteTrack($id: Int!) {
+  deleteTrack(id: $id)
+}
+    `;
+
+export function useDeleteTrackMutation() {
+  return Urql.useMutation<DeleteTrackMutation, DeleteTrackMutationVariables>(DeleteTrackDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
@@ -390,6 +444,19 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const UpdateTrackDocument = gql`
+    mutation UpdateTrack($id: Int!, $name: String!, $url: String!) {
+  updateTrack(id: $id, name: $name, url: $url) {
+    id
+    name
+    url
+  }
+}
+    `;
+
+export function useUpdateTrackMutation() {
+  return Urql.useMutation<UpdateTrackMutation, UpdateTrackMutationVariables>(UpdateTrackDocument);
+};
 export const VoteDocument = gql`
     mutation Vote($value: Int!, $trackId: Int!) {
   vote(value: $value, trackId: $trackId)
@@ -409,6 +476,30 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};
+export const TrackDocument = gql`
+    query Track($id: Int!) {
+  track(id: $id) {
+    id
+    name
+    url
+    votes
+    creatorId
+    createdAt
+    updatedAt
+    voteStatus
+    creator {
+      username
+      id
+      email
+      createdAt
+    }
+  }
+}
+    `;
+
+export function useTrackQuery(options: Omit<Urql.UseQueryArgs<TrackQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<TrackQuery>({ query: TrackDocument, ...options });
 };
 export const TracksDocument = gql`
     query Tracks($limit: Int!, $cursor: String) {

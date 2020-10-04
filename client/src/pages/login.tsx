@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
     Form,
     Input,
@@ -18,9 +18,9 @@ import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
 type formProps = {
-    usernameOrEmail: string,
-    password: string,
-}
+    usernameOrEmail: string;
+    password: string;
+};
 
 const Login: React.FC<{}> = () => {
     const [form] = Form.useForm();
@@ -38,7 +38,7 @@ const Login: React.FC<{}> = () => {
         // On error
         if (response.data?.login.errors) {
             setLoading(false);
-            console.log(response.data.login.errors)
+            console.log(response.data.login.errors);
             // TODO: setFields error (username taken, password length too short, etc)
             // On success
         } else if (response.data?.login.user) {
@@ -48,9 +48,8 @@ const Login: React.FC<{}> = () => {
             } else {
                 router.push('/');
             }
-        };
+        }
     };
-
 
     return (
         <>
@@ -64,14 +63,14 @@ const Login: React.FC<{}> = () => {
             >
                 <Form.Item
                     name="usernameOrEmail"
-                    rules={[{ required: true, message: 'Veuillez entrer votre nom d\'utilisateur !' }]}
+                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !" }]}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Nom d'utilisateur ou e-mail" />
+                    <Input
+                        prefix={<UserOutlined className="site-form-item-icon" />}
+                        placeholder="Nom d'utilisateur ou e-mail"
+                    />
                 </Form.Item>
-                <Form.Item
-                    name="password"
-                    rules={[{ required: true, message: 'Veuillez entre votre mot de passe !' }]}
-                >
+                <Form.Item name="password" rules={[{ required: true, message: 'Veuillez entre votre mot de passe !' }]}>
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
                         type="password"
@@ -84,21 +83,19 @@ const Login: React.FC<{}> = () => {
                     </Form.Item> */}
 
                     <Link href="/forgot-password">
-                        <a className="login-form-forgot">
-                            Mot de passe oublié ?
-                        </a>
+                        <a className="login-form-forgot">Mot de passe oublié ?</a>
                     </Link>
                 </Form.Item>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
                         Se connecter
-        </Button>
-        Ou <Link href="/register">S'inscrire maintenant !</Link>
+                    </Button>
+                    Ou <Link href="/register">S'inscrire maintenant !</Link>
                 </Form.Item>
             </Form>
         </>
     );
-}
+};
 
 export default withUrqlClient(createUrqlClient)(Login);

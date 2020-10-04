@@ -41,26 +41,26 @@ const main = async () => {
         cors({
             origin: 'http://localhost:3000',
             credentials: true,
-        },
-    ));
+        }),
+    );
 
     app.use(
-    session({
-        name: COOKIE_NAME,
-        store: new RedisStore({
-            client: redis,
-            disableTouch: true,
+        session({
+            name: COOKIE_NAME,
+            store: new RedisStore({
+                client: redis,
+                disableTouch: true,
+            }),
+            cookie: {
+                maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
+                httpOnly: true,
+                sameSite: 'lax', // CSRF
+                secure: __prod__, // cookie only works in https
+            },
+            saveUninitialized: false,
+            secret: 'Sh3naN/g*ns2899',
+            resave: false,
         }),
-        cookie: {
-            maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
-            httpOnly: true,
-            sameSite: 'lax', // CSRF
-            secure: __prod__ // cookie only works in https
-        },
-        saveUninitialized: false,
-        secret: 'Sh3naN/g*ns2899',
-        resave: false,
-    })
     );
 
     const apolloServer = new ApolloServer({
@@ -78,9 +78,9 @@ const main = async () => {
 
     app.listen(4000, () => {
         console.log('Server started on localhost:4000');
-    })
+    });
 };
 
 main().catch((error) => {
-    console.log(error)
+    console.log(error);
 });

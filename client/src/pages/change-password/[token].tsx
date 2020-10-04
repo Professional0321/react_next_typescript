@@ -1,13 +1,7 @@
-import {
-    Alert,
-    Button,
-    Form,
-    Input,
-    Typography,
-} from 'antd';
+import { Alert, Button, Form, Input, Typography } from 'antd';
 import { NextPage } from 'next';
 import { withUrqlClient } from 'next-urql';
-import NextLink from "next/link";
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useChangePasswordMutation } from '../../generated/graphql';
@@ -17,15 +11,15 @@ import { createUrqlClient } from '../../utils/createUrqlClient';
 const { Title } = Typography;
 
 type formProps = {
-    newPassword: string,
-    confirm: string,
-}
+    newPassword: string;
+    confirm: string;
+};
 
 export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);
-    const [tokenError, setTokenError] = useState<String>('');
+    const [tokenError, setTokenError] = useState<string>('');
 
     const [, changePassword] = useChangePasswordMutation();
     const router = useRouter();
@@ -45,14 +39,14 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
                 if ('token' === error.field) {
                     setTokenError(error.message);
                 }
-            })
+            });
             setLoading(false);
             // TODO: setFields error
             // On success
         } else if (response.data?.changePassword.user) {
             setLoading(false);
             router.push('/');
-        };
+        }
     };
 
     return (
@@ -95,7 +89,9 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
                                     return Promise.resolve();
                                 }
 
-                                return Promise.reject('Les deux mots de passe que vous avez saisis ne correspondent pas !');
+                                return Promise.reject(
+                                    'Les deux mots de passe que vous avez saisis ne correspondent pas !',
+                                );
                             },
                         }),
                     ]}
@@ -106,25 +102,23 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
                         Changer le mot de passe
-        </Button>
+                    </Button>
                 </Form.Item>
 
-                {tokenError &&
+                {tokenError && (
                     <Alert
                         type="error"
                         message={tokenError}
                         description={
                             <>
-                                <NextLink href="/forgot-password">
-                                    Cliquer ici pour en obtenir un nouveau.
-                                  </NextLink>
+                                <NextLink href="/forgot-password">Cliquer ici pour en obtenir un nouveau.</NextLink>
                             </>
-                        } />}
-
+                        }
+                    />
+                )}
             </Form>
-
         </>
     );
-}
+};
 
 export default withUrqlClient(createUrqlClient)(ChangePassword);

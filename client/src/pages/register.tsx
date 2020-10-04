@@ -1,11 +1,5 @@
-import React, { useState } from 'react'
-import {
-    Form,
-    Input,
-    Button,
-    Typography,
-    Tooltip,
-} from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Typography, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useRegisterMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
@@ -17,11 +11,11 @@ import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
 type formProps = {
-    username: string,
-    email: string,
-    password: string,
-    confirm: string,
-}
+    username: string;
+    email: string;
+    password: string;
+    confirm: string;
+};
 
 const Register: React.FC<formProps> = () => {
     const [form] = Form.useForm();
@@ -39,15 +33,14 @@ const Register: React.FC<formProps> = () => {
         console.log(response);
         if (response.data?.register.errors) {
             setLoading(false);
-            console.log(response.data.register.errors)
+            console.log(response.data.register.errors);
             // TODO: setFields error (username taken, password length too short, etc)
             // On success
         } else if (response.data?.register.user) {
             setLoading(false);
             router.push('/');
-        };
+        }
     };
-
 
     return (
         <>
@@ -60,20 +53,20 @@ const Register: React.FC<formProps> = () => {
                 onFinish={onFinish}
                 scrollToFirstError
             >
-      <Form.Item
-        name="username"
-        label={
-          <span>
-            Nom d'utilisateur&nbsp;
-            <Tooltip title="Comment voulez-vous que les autres vous appellent ?">
-              <QuestionCircleOutlined />
-            </Tooltip>
-          </span>
-        }
-        rules={[{ required: true, message: 'Veuillez entrer votre nom d\'utilisateur !', whitespace: true }]}
-      >
-        <Input />
-      </Form.Item>
+                <Form.Item
+                    name="username"
+                    label={
+                        <span>
+                            Nom d'utilisateur&nbsp;
+                            <Tooltip title="Comment voulez-vous que les autres vous appellent ?">
+                                <QuestionCircleOutlined />
+                            </Tooltip>
+                        </span>
+                    }
+                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !", whitespace: true }]}
+                >
+                    <Input />
+                </Form.Item>
                 <Form.Item
                     name="email"
                     label="E-mail"
@@ -121,7 +114,9 @@ const Register: React.FC<formProps> = () => {
                                     return Promise.resolve();
                                 }
 
-                                return Promise.reject('Les deux mots de passe que vous avez saisis ne correspondent pas !');
+                                return Promise.reject(
+                                    'Les deux mots de passe que vous avez saisis ne correspondent pas !',
+                                );
                             },
                         }),
                     ]}
@@ -132,12 +127,12 @@ const Register: React.FC<formProps> = () => {
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading}>
                         S'inscrire
-              </Button>
+                    </Button>
                 </Form.Item>
             </Form>
         </>
     );
-}
+};
 
 const formItemLayout = {
     labelCol: {
@@ -157,6 +152,5 @@ const formItemLayout = {
         },
     },
 };
-
 
 export default withUrqlClient(createUrqlClient)(Register);

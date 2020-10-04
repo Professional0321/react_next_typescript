@@ -1,13 +1,7 @@
 import { UserOutlined } from '@ant-design/icons';
-import {
-    Button,
-    Form,
-    Input,
-
-    Result, Typography
-} from 'antd';
+import { Button, Form, Input, Result, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
-import NextLink from "next/link";
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useForgotPasswordMutation } from '../generated/graphql';
@@ -17,10 +11,10 @@ import { createUrqlClient } from '../utils/createUrqlClient';
 const { Title } = Typography;
 
 type formProps = {
-    email: string,
-}
+    email: string;
+};
 
-export const ForgotPassword: React.FC<{}> = ({ }) => {
+export const ForgotPassword: React.FC<{}> = ({}) => {
     const [form] = Form.useForm();
     const [complete, setComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +29,6 @@ export const ForgotPassword: React.FC<{}> = ({ }) => {
         await forgotPassword(values);
         setComplete(true);
         setLoading(false);
-
     };
 
     return (
@@ -49,17 +42,14 @@ export const ForgotPassword: React.FC<{}> = ({ }) => {
                 onFinish={onFinish}
                 scrollToFirstError
             >
-                <Form.Item
-                    name="email"
-                    rules={[{ required: true, message: 'Veuillez entrer votre e-mail !' }]}
-                >
+                <Form.Item name="email" rules={[{ required: true, message: 'Veuillez entrer votre e-mail !' }]}>
                     <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
                 </Form.Item>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
                         J'ai oublié mon mot de passe
-        </Button>
+                    </Button>
                 </Form.Item>
 
                 {complete && (
@@ -71,13 +61,12 @@ export const ForgotPassword: React.FC<{}> = ({ }) => {
                             <NextLink href="/">
                                 <Button type="primary" key="console">
                                     Retourner à l'accueil
-                            </Button>
+                                </Button>
                             </NextLink>
                         }
                     />
                 )}
             </Form>
-
         </>
     );
 };
