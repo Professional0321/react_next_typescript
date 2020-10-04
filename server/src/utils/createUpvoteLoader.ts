@@ -1,12 +1,11 @@
 import DataLoader from 'dataloader';
-import { User } from '../entities/User';
 import { Upvote } from '../entities/Upvote';
 
 // Fetch individual fields
 // [{postId: 1, userId: 1}] => [{postId: 1, userId: 1, value: 1}]
 
 export const createUpvoteLoader = () =>
-    new DataLoader<{ trackId: number; userId: number }, number | null>(async (keys) => {
+    new DataLoader<{ trackId: number; userId: number }, Upvote | null>(async (keys) => {
         const upvotes = await Upvote.findByIds(keys as any);
         const upvoteIdToUpvote: Record<string, Upvote> = {};
         upvotes.forEach((upvote) => {

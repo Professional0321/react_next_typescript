@@ -6,17 +6,17 @@ import { Track } from './Track';
 @Entity()
 export class Upvote extends BaseEntity {
     @Column({ type: 'int' })
-    value: number;
+    value!: number;
 
     @PrimaryColumn()
-    userId: number;
+    userId!: number;
 
     @ManyToOne(() => User, (user) => user.upvotes)
-    user: User;
+    user!: User;
 
     @PrimaryColumn()
-    trackId: number;
+    trackId!: number;
 
     @ManyToOne(() => Track, (track) => track.upvotes)
-    track: Track;
+    track!: Track;
 }

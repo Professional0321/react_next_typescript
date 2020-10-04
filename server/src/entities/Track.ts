@@ -32,24 +32,24 @@ export class Track extends BaseEntity {
     votes!: number;
 
     @Field(() => Int, { nullable: true })
-    voteStatus: number | null; // 1 || -1 || null
+    voteStatus!: number | null; // 1 || -1 || null
 
     @Field()
     @Column()
-    creatorId: number;
+    creatorId!: number;
 
     @Field()
     @ManyToOne(() => User, (user) => user.tracks)
-    creator: User;
+    creator!: User;
 
     @OneToMany(() => Upvote, (upvote) => upvote.track)
-    upvotes: Upvote[];
+    upvotes!: Upvote[];
 
     @Field(() => String)
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt!: Date;
 
     @Field(() => String)
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt!: Date;
 }

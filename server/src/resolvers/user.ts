@@ -12,10 +12,10 @@ import { getConnection } from 'typeorm';
 @ObjectType()
 class FieldError {
     @Field()
-    field: string;
+    field!: string;
 
     @Field()
-    message: string;
+    message!: string;
 }
 
 @ObjectType()

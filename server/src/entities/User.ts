@@ -31,16 +31,16 @@ export class User extends BaseEntity {
     password!: string;
 
     @OneToMany(() => Track, (track) => track.creator)
-    tracks: Track[];
+    tracks!: Track[];
 
     @OneToMany(() => Upvote, (upvote) => upvote.user)
-    upvotes: Upvote[];
+    upvotes!: Upvote[];
 
     @Field(() => String)
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt!: Date;
 
     @Field(() => String)
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt!: Date;
 }

@@ -18,24 +18,23 @@ import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
-import { createUpvoteLoader } from 'src/utils/createUpvoteLoader';
 
 @InputType()
 class TrackInput {
     @Field()
-    name: string;
+    name!: string;
 
     @Field()
-    url: string;
+    url!: string;
 }
 
 @ObjectType()
 class PaginatedTracks {
     @Field(() => [Track])
-    tracks: Track[];
+    tracks!: Track[];
 
     @Field()
-    hasMore: boolean;
+    hasMore!: boolean;
 }
 
 @Resolver(Track)
@@ -128,7 +127,7 @@ export class TrackResolver {
     async tracks(
         @Arg('limit', () => Int) limit: number,
         @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
-        @Ctx() { req }: MyContext,
+        // @Ctx() { req }: MyContext,
     ): Promise<PaginatedTracks> {
         // Fetch 1 more track
         const realLimit = Math.min(50, limit);
