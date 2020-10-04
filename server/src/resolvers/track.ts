@@ -152,7 +152,10 @@ export class TrackResolver {
     // Create new track
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
-    async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
+    async createTrack(
+        @Arg('input') input: TrackInput,
+        @Ctx() { req }: MyContext,
+        ): Promise<Track> {
         return Track.create({
             ...input,
             creatorId: req.session.userId,
@@ -179,13 +182,16 @@ export class TrackResolver {
             .returning('*')
             .execute();
 
-            return result.raw[0];
+        return result.raw[0];
     }
 
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
+    async deleteTrack(
+        @Arg('id', () => Int) id: number,
+        @Ctx() { req }: MyContext,
+        ): Promise<boolean> {
         const track = await Track.findOne(id);
         if (!track) {
             return false;
