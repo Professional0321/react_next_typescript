@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Space } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { useMeQuery, useLogoutMutation } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
@@ -8,6 +9,7 @@ import { isServer } from '../utils/isServer';
 interface TopNavBarProps {}
 
 export const TopNavBar: React.FC<TopNavBarProps> = ({}) => {
+    const router = useRouter();
     const [{ data, fetching }] = useMeQuery({
         pause: isServer(),
     });
@@ -35,8 +37,9 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({}) => {
                 <div>{data.me.username}</div>
                 <Button
                     type="primary"
-                    onClick={() => {
-                        logout();
+                    onClick={async () => {
+                        await logout();
+                        router.reload();
                     }}
                     loading={logoutFetching}
                 >
