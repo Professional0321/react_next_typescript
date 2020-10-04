@@ -1,12 +1,27 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Result, Space, Spin, Table, Typography } from 'antd';
-import { PlayCircleOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
+import {
+    Button,
+    Result,
+    Space,
+    Spin,
+    Table,
+    Typography,
+    Popconfirm,
+    message,
+} from 'antd';
+import {
+    PlayCircleOutlined,
+    HeartOutlined,
+    HeartFilled,
+    DeleteOutlined,
+    EditOutlined,
+} from '@ant-design/icons';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactPlayer from 'react-player/lazy';
-import { useTrackQuery } from '../../generated/graphql';
+import { useTrackQuery, useDeleteTrackMutation } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
 const { Title } = Typography;
@@ -24,15 +39,29 @@ const fakeData = [
     },
 ];
 
-const Track = ({}) => {
+const Track = ({ }) => {
     const router = useRouter();
     const intId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1;
+
     const [{ data, fetching, error }] = useTrackQuery({
         pause: intId === -1,
         variables: {
             id: intId,
         },
     });
+    const [, deleteTrack] = useDeleteTrackMutation();
+
+    // const [playingTrack, setPlayingTrack] = useState<string>();
+
+    // useEffect(() =>
+    // setPlayingTrack(data?.track?.url)
+    // , [data, fetching]);
+
+    const text = 'Êtes-vous sûr de vouloir supprimer cette musique ?';
+
+    function confirm() {
+        message.info('Musique supprimée !');
+    }
 
     const columns = [
         {
@@ -43,13 +72,13 @@ const Track = ({}) => {
                     <Button type="text">
                         <PlayCircleOutlined
                             style={{ fontSize: '1.5rem' }}
-                            // onClick={}
+                        // onClick={}
                         />
                     </Button>
                     <Button type="text">
                         <HeartOutlined
                             style={{ fontSize: '1.5rem' }}
-                            // onClick={}
+                        // onClick={}
                         />
                     </Button>
                 </>
@@ -101,21 +130,42 @@ const Track = ({}) => {
             {!data && fetching ? (
                 <Spin indicator={loadingIcon} />
             ) : (
-                <>
-                    <Title style={{ color: '#f3f5f9' }}>{data.track.name}</Title>
-                    <div className="track-container">
-                        <div className="header">
-                            <div className="player-wrapper">
-                                <ReactPlayer
-                                    className="react-wrapper"
-                                    url={data.track.url}
-                                    width="100%"
-                                    height="100%"
-                                    controls
-                                />
+                    <>
+                        <Title style={{ color: '#f3f5f9' }}>{data.track.name}</Title>
+                        <div className="track-container">
+                            <div className="header">
+                                <div className="player-wrapper">
+                                    <ReactPlayer
+                                        className="react-wrapper"
+                                        url={data.track.url}
+                                        width="100%"
+                                        height="100%"
+                                        controls
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="list">
+                            <div className="creator-info">
+                                <p>Posté par {data.track.creator.username}.</p>
+                            </div>
+                            <div className="cta-actions">
+                                <Button>
+                                    <EditOutlined />
+                                </Button>
+                                <Popconfirm
+                                    placement="top"
+                                    title={text}
+                                    onConfirm={() => {
+                                        deleteTrack({ id: intId });
+                                    }}
+                                    okText="Supprimer"
+                                    cancelText="Non"
+                                >
+                                    <Button>
+                                        <DeleteOutlined />
+                                    </Button>
+                                </Popconfirm>
+                            </div>
+                            {/* <div className="list">
                             <Title level={2}>Même artiste</Title>
                             <Table
                                 columns={columns}
@@ -123,10 +173,10 @@ const Track = ({}) => {
                                 pagination={{ pageSize: 10 }}
                                 scroll={{ y: 240 }}
                             />
+                        </div> */}
                         </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )}
         </div>
     );
 };

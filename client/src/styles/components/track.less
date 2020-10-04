@@ -3,11 +3,16 @@
 .track-container {
   .header {
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+
     .player-wrapper {
       position: relative;
       display: flex;
       justify-content: center;
-      // padding-top: 56.25% /* Player ratio: 100 / (1280 / 720) */
+      // padding-top: 56.25%;/* Player ratio: 100 / (1280 / 720) */
+      width: 640px;
+      height: 360px;
     }
 
     .react-player {
@@ -22,5 +27,9 @@
       width: 2rem;
       height: 2rem;
     }
+  }
+
+  .cta-actions {
+    display: flex;
   }
 }

@@ -133,7 +133,7 @@ export class TrackResolver {
             replacements,
         );
 
-        console.log('tracks: ', tracks);
+        // console.log('tracks: ', tracks);
 
         // Fetch 1 more track to check if hasMore === true
         // else end of tracks
@@ -159,7 +159,7 @@ export class TrackResolver {
         }).save();
     }
 
-    // Find update track by id
+    // Update track by id
     @Mutation(() => Track, { nullable: true })
     async updateTrack(
         @Arg('id') id: number,
@@ -177,8 +177,22 @@ export class TrackResolver {
 
     // Delete track by id
     @Mutation(() => Boolean)
-    async deleteTrack(@Arg('id') id: number): Promise<boolean> {
-        await Track.delete(id);
-        return true;
-    }
+    @UseMiddleware(isAuth)
+    async deleteTrack(
+        @Arg('id', () => Int) id: number,
+        @Ctx() { req }: MyContext
+        ): Promise<boolean> {
+            const track = await Track.findOne(id);
+            if (!track) {
+                return false;
+            }
+            if (track.creatorId !== req.session.userId) {
+                throw new Error('Non autorisé.');
+            }
+
+            await Upvote.delete({ trackId: id });
+            await Track.delete({ id });
+
+            return true;
+        }
 }
