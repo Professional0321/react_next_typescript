@@ -1,9 +1,23 @@
-import { Resolver, Query, Arg, Mutation, InputType, Field, Ctx, UseMiddleware, Int, ObjectType } from 'type-graphql';
+import {
+    Resolver,
+    Query,
+    Arg,
+    Mutation,
+    InputType,
+    Field,
+    Ctx,
+    UseMiddleware,
+    Int,
+    ObjectType,
+    FieldResolver,
+    Root,
+} from 'type-graphql';
 import { Track } from '../entities/Track';
 import { MyContext } from '../types';
 import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
 import { Upvote } from '../entities/Upvote';
+import { User } from '../entities/User';
 
 @InputType()
 class TrackInput {
@@ -25,6 +39,13 @@ class PaginatedTracks {
 
 @Resolver(Track)
 export class TrackResolver {
+    @FieldResolver(() => User)
+    creator(
+        @Root() track: Track,
+        @Ctx() { userLoader }: MyContext) {
+        return userLoader.load(track.creatorId);
+    }
+
     // Upvote
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
@@ -112,20 +133,13 @@ export class TrackResolver {
         const tracks = await getConnection().query(
             `
     select t.*,
-    json_build_object(
-      'id', u.id,
-      'username', u.username,
-      'email', u.email,
-      'createdAt', u."createdAt",
-      'updatedAt', u."updatedAt"
-      ) creator,
+
       ${
           req.session.userId
               ? '(select value from upvote where "userId" = $2 and "trackId" = t.id) "voteStatus"'
               : 'null as "voteStatus"'
       }
     from track t
-    inner join public.user u on u.id = t."creatorId"
     ${cursor ? `where t."createdAt" < ${cursorIndex}` : ''}
     order by t."createdAt" DESC
     limit $1
@@ -146,7 +160,7 @@ export class TrackResolver {
     // Find track by id
     @Query(() => Track, { nullable: true })
     track(@Arg('id', () => Int) id: number): Promise<Track | undefined> {
-        return Track.findOne(id, { relations: ['creator'] });
+        return Track.findOne(id);
     }
 
     // Create new track

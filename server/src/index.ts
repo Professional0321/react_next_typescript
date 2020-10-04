@@ -15,6 +15,7 @@ import { Track } from './entities/Track';
 import { User } from './entities/User';
 import path from 'path';
 import { Upvote } from './entities/Upvote';
+import { createUserLoader } from './utils/createUserLoader';
 
 const main = async () => {
     const connection = await createConnection({
@@ -68,7 +69,12 @@ const main = async () => {
             resolvers: [HelloResolver, TrackResolver, UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ req, res, redis }),
+        context: ({ req, res }) => ({
+            req,
+            res,
+            redis,
+            userLoader: createUserLoader(),
+        }),
     });
 
     apolloServer.applyMiddleware({
