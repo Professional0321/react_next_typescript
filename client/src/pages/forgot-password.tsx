@@ -14,7 +14,7 @@ type formProps = {
     email: string;
 };
 
-export const ForgotPassword: React.FC<{}> = ({}) => {
+export const ForgotPassword = () => {
     const [form] = Form.useForm();
     const [complete, setComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -42,7 +42,15 @@ export const ForgotPassword: React.FC<{}> = ({}) => {
                 onFinish={onFinish}
                 scrollToFirstError
             >
-                <Form.Item name="email" rules={[{ required: true, message: 'Veuillez entrer votre e-mail !' }]}>
+                <Form.Item
+                    name="email"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entrer votre e-mail !',
+                        },
+                    ]}
+                >
                     <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
                 </Form.Item>
 

@@ -11,18 +11,18 @@ import { useLoginMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-const { Title } = Typography;
-
 import '../styles/components/login.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+
+const { Title } = Typography;
 
 type formProps = {
     usernameOrEmail: string;
     password: string;
 };
 
-const Login: React.FC<{}> = () => {
+const Login = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);
@@ -63,14 +63,27 @@ const Login: React.FC<{}> = () => {
             >
                 <Form.Item
                     name="usernameOrEmail"
-                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !" }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Veuillez entrer votre nom d'utilisateur !",
+                        },
+                    ]}
                 >
                     <Input
                         prefix={<UserOutlined className="site-form-item-icon" />}
                         placeholder="Nom d'utilisateur ou e-mail"
                     />
                 </Form.Item>
-                <Form.Item name="password" rules={[{ required: true, message: 'Veuillez entre votre mot de passe !' }]}>
+                <Form.Item
+                    name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entre votre mot de passe !',
+                        },
+                    ]}
+                >
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
                         type="password"

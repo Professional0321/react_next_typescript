@@ -15,7 +15,7 @@ type formProps = {
     confirm: string;
 };
 
-export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+export const ChangePassword: NextPage = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);
@@ -33,10 +33,10 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         });
         // // On error
         if (response.data?.changePassword.errors) {
-            const errors = response.data.changePassword.errors;
+            const { errors } = response.data.changePassword;
 
             errors.forEach((error) => {
-                if ('token' === error.field) {
+                if (error.field === 'token') {
                     setTokenError(error.message);
                 }
             });
@@ -110,9 +110,7 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
                         type="error"
                         message={tokenError}
                         description={
-                            <>
-                                <NextLink href="/forgot-password">Cliquer ici pour en obtenir un nouveau.</NextLink>
-                            </>
+                            <NextLink href="/forgot-password">Cliquer ici pour en obtenir un nouveau.</NextLink>
                         }
                     />
                 )}

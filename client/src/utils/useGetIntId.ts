@@ -1,4 +1,4 @@
-import { useRouter } from "next/dist/client/router";
+import { useRouter } from 'next/dist/client/router';
 
 export const useGetIntId = () => {
     const router = useRouter();

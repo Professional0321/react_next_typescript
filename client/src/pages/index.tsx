@@ -1,17 +1,6 @@
-import {
-    ArrowDownOutlined,
-    ArrowUpOutlined,
-    DeleteOutlined,
-    EditOutlined,
-    LoadingOutlined,
-} from '@ant-design/icons';
-import {
-    Button,
-    Card,
-    Spin,
-    Typography,
-    Popconfirm,
-} from 'antd';
+import React, { useState } from 'react';
+import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Card, Spin, Typography, Popconfirm } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
@@ -24,7 +13,7 @@ import {
 } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import { useState } from 'react';
+
 import NextLink from 'next/link';
 
 const { Title } = Typography;
@@ -54,12 +43,12 @@ const Index = () => {
     const [, deleteTrack] = useDeleteTrackMutation();
 
     if (!fetching && !data) {
-        return (<div>
+        return (
             <div>
-                Une erreur est survenue dans la requête.
-            </div>);
-            <div>{error?.message}</div>
-        </div>
+                <div>Une erreur est survenue dans la requête.</div>
+                );
+                <div>{error?.message}</div>
+            </div>
         );
     }
 
@@ -70,58 +59,58 @@ const Index = () => {
                 {!data && fetching ? (
                     <Spin indicator={loadingIcon} />
                 ) : (
-                        data!.tracks.tracks.map((track: TrackSnippetFragment) => (
-                            !track ? null :
-                                <Card
-                                    key={track.id}
-                                    // loading={voteLoading !== 'not-loading'}
-                                    actions={[
-                                        <ArrowUpOutlined
-                                            key="upvote"
-                                            style={{ color: track.voteStatus === 1 ? 'green' : undefined }}
-                                            spin={voteLoading === 'upvote-loading'}
-                                            onClick={async () => {
-                                                if (track.voteStatus === 1) {
-                                                    return;
-                                                }
+                    data!.tracks.tracks.map((track: TrackSnippetFragment) =>
+                        !track ? null : (
+                            <Card
+                                key={track.id}
+                                // loading={voteLoading !== 'not-loading'}
+                                actions={[
+                                    <ArrowUpOutlined
+                                        key="upvote"
+                                        style={{ color: track.voteStatus === 1 ? 'green' : undefined }}
+                                        spin={voteLoading === 'upvote-loading'}
+                                        onClick={async () => {
+                                            if (track.voteStatus === 1) {
+                                                return;
+                                            }
 
-                                                setVoteLoading('upvote-loading');
-                                                await vote({
-                                                    value: 1,
-                                                    trackId: track.id,
-                                                });
-                                                setVoteLoading('not-loading');
-                                            }}
-                                        />,
-                                        <div>{track.votes}</div>,
-                                        <ArrowDownOutlined
-                                            key="downvote"
-                                            style={{ color: track.voteStatus === -1 ? '#e42a2d' : undefined }}
-                                            spin={voteLoading === 'downvote-loading'}
-                                            onClick={async () => {
-                                                if (track.voteStatus === -1) {
-                                                    return;
-                                                }
+                                            setVoteLoading('upvote-loading');
+                                            await vote({
+                                                value: 1,
+                                                trackId: track.id,
+                                            });
+                                            setVoteLoading('not-loading');
+                                        }}
+                                    />,
+                                    <div key="votes">{track.votes}</div>,
+                                    <ArrowDownOutlined
+                                        key="downvote"
+                                        style={{ color: track.voteStatus === -1 ? '#e42a2d' : undefined }}
+                                        spin={voteLoading === 'downvote-loading'}
+                                        onClick={async () => {
+                                            if (track.voteStatus === -1) {
+                                                return;
+                                            }
 
-                                                setVoteLoading('downvote-loading');
-                                                await vote({
-                                                    value: -1,
-                                                    trackId: track.id,
-                                                });
-                                                setVoteLoading('not-loading');
-                                            }}
-                                        />,
-                                        <>{track.creator.id === trackCreator ? (
-                                            <NextLink
-                                                href="/track/edit/[id]"
-                                                as={`/track/edit/${track.id}`}
-                                            >
-                                                <EditOutlined
-                                                    key="edit"
-                                                />
+                                            setVoteLoading('downvote-loading');
+                                            await vote({
+                                                value: -1,
+                                                trackId: track.id,
+                                            });
+                                            setVoteLoading('not-loading');
+                                        }}
+                                    />,
+                                    <>
+                                        {track.creator.id === trackCreator ? (
+                                            <NextLink href="/track/edit/[id]" as={`/track/edit/${track.id}`}>
+                                                <EditOutlined key="edit" />
                                             </NextLink>
-                                        ) : ''}</>,
-                                        <>{track.creator.id === trackCreator ? (
+                                        ) : (
+                                            ''
+                                        )}
+                                    </>,
+                                    <>
+                                        {track.creator.id === trackCreator ? (
                                             <Popconfirm
                                                 placement="top"
                                                 title="Êtes-vous sûr de vouloir supprimer cette musique ?"
@@ -133,29 +122,25 @@ const Index = () => {
                                             >
                                                 <DeleteOutlined key="delete" />
                                             </Popconfirm>
-                                        ) : ''}</>,
-                                        // <EditOutlined key="edit" />,
-                                        // <DeleteOutlined key="delete" />,
-                                    ]}
-                                >
-                                    <ReactPlayer
-                                        url={track.url}
-                                        width="100%"
-                                        height="100%"
-                                        controls
-                                    // light
-                                    />
-                                    <Link href="/track/[id]" as={`/track/${track.id}`}>
-                                        <a>
-                                            <strong>{track.name}</strong>
-                                        </a>
-                                    </Link>
-                                    {/* <Meta description={`Ajouté par ${track.creator.username}`} /> */}
-                                </Card>
-                        ))
-                    )}
+                                        ) : null}
+                                    </>,
+                                    // <EditOutlined key="edit" />,
+                                    // <DeleteOutlined key="delete" />,
+                                ]}
+                            >
+                                <ReactPlayer url={track.url} width="100%" height="100%" controls />
+                                <Link href="/track/[id]" as={`/track/${track.id}`}>
+                                    <a>
+                                        <strong>{track.name}</strong>
+                                    </a>
+                                </Link>
+                                {/* <Meta description={`Ajouté par ${track.creator.username}`} /> */}
+                            </Card>
+                        ),
+                    )
+                )}
             </div>
-            {data && data.tracks.hasMore && (
+            {data?.tracks.hasMore ? (
                 <div className="load-more">
                     <Button
                         type="primary"
@@ -170,7 +155,7 @@ const Index = () => {
                         Voir plus
                     </Button>
                 </div>
-            )}
+            ) : null}
         </div>
     );
 };

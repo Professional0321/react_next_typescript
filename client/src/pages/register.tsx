@@ -4,11 +4,11 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useRegisterMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
 
-const { Title } = Typography;
-
 import '../styles/components/register.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+
+const { Title } = Typography;
 
 type formProps = {
     username: string;
@@ -17,7 +17,7 @@ type formProps = {
     confirm: string;
 };
 
-const Register: React.FC<formProps> = () => {
+const Register = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     // const [errors, setErrors] = useState<Array>([]);
@@ -63,7 +63,13 @@ const Register: React.FC<formProps> = () => {
                             </Tooltip>
                         </span>
                     }
-                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !", whitespace: true }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Veuillez entrer votre nom d'utilisateur !",
+                            whitespace: true,
+                        },
+                    ]}
                 >
                     <Input />
                 </Form.Item>

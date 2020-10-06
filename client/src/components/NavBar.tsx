@@ -1,13 +1,16 @@
 import React from 'react';
 import { Menu } from 'antd';
 import Link from 'next/link';
+import {
+    HomeFilled,
+    SearchOutlined,
+    UserOutlined,
+    PlusCircleOutlined,
+    BarsOutlined,
+} from '@ant-design/icons';
 import { useMeQuery } from '../generated/graphql';
 
-import { HomeFilled, SearchOutlined, UserOutlined, PlusCircleOutlined, BarsOutlined } from '@ant-design/icons';
-
-interface NavBarProps {}
-
-export const NavBar: React.FC<NavBarProps> = ({}) => {
+export const NavBar = () => {
     const [{ data, fetching }] = useMeQuery();
     let body = null;
 

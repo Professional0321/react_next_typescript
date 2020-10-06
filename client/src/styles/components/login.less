@@ -1,18 +1,23 @@
 .login-form {
     margin: 0 auto;
     max-width: 40%;
+
+    @media (max-width: 560px) {
+        max-width: 100%;
+    }
+
     .login-form {
         max-width: 300px;
     }
-    
+
     .login-form-forgot {
         // float: right;
     }
-    
+
     .ant-col-rtl .login-form-forgot {
         float: left;
     }
-    
+
     .login-form-button {
         width: 100%;
         margin-bottom: 1rem;

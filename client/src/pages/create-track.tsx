@@ -15,7 +15,7 @@ type TrackInput = {
     url: string;
 };
 
-const CreateTrack: React.FC<{}> = ({ }) => {
+const CreateTrack = () => {
     const router = useRouter();
     useIsAuth();
 
@@ -57,7 +57,7 @@ const CreateTrack: React.FC<{}> = ({ }) => {
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique" />
+                    <Input placeholder="Nom - Titre de la musique (Remix)" />
                 </Form.Item>
                 <Form.Item
                     name="url"
