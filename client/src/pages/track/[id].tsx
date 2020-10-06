@@ -11,6 +11,7 @@ import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
 import { useGetTrackFromUrl } from '../../utils/useGetTrackFromUrl';
 import { useGetIntId } from '../../utils/useGetIntId';
+import NextLink from 'next/link';
 
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -116,9 +117,11 @@ const Track = () => {
                         </div>
                         <div className="cta-actions">
                             <Space>
-                                <Button>
-                                    <EditOutlined />
-                                </Button>
+                                <NextLink href="/track/edit/[id]" as={`/track/edit/${intId}`}>
+                                    <Button>
+                                        <EditOutlined key="edit" />
+                                    </Button>
+                                </NextLink>
                                 <Popconfirm
                                     placement="top"
                                     title={text}

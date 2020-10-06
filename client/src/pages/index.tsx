@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
-import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Card, Spin, Typography, Popconfirm } from 'antd';
+import {
+    ArrowDownOutlined,
+    ArrowUpOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    LoadingOutlined,
+} from '@ant-design/icons';
+import {
+    Button,
+    Card,
+    Spin,
+    Typography,
+    Popconfirm,
+} from 'antd';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
@@ -64,6 +76,7 @@ const Index = () => {
                             <Card
                                 key={track.id}
                                 // loading={voteLoading !== 'not-loading'}
+                                // loading={fetching}
                                 actions={[
                                     <ArrowUpOutlined
                                         key="upvote"

@@ -71,15 +71,16 @@ const EditTrack = () => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix)"
+                    label="Nom - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
-                            message: 'Veuillez entrer le nom et titre de la musique séparé par un " - " (Remix). !',
+                            message:
+                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique (Remix)" />
+                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
@@ -87,7 +88,7 @@ const EditTrack = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Veuillez entre un lien Youtube vers la musique !',
+                            message: 'Veuillez entre un lien Youtube/SoundCloud vers la musique !',
                         },
                     ]}
                 >

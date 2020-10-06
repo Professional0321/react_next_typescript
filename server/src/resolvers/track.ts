@@ -41,11 +41,13 @@ class PaginatedTracks {
 export class TrackResolver {
     @FieldResolver(() => User)
 
+    // DataLoader
     // Run only if query contains "creator"
     creator(@Root() track: Track, @Ctx() { userLoader }: MyContext) {
         return userLoader.load(track.creatorId);
     }
 
+    // DataLoader
     // Run only if query contains "voteStatus"
     @FieldResolver(() => Int, { nullable: true })
     async voteStatus(@Root() track: Track, @Ctx() { upvoteLoader, req }: MyContext) {
@@ -169,7 +171,11 @@ export class TrackResolver {
     // Create new track
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
-    async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
+    async createTrack(
+        @Arg('input') input: TrackInput,
+        @Ctx() { req }: MyContext
+        ): Promise<Track> {
+            // TODO: Check if YouTube video ID already exists in DB before saving
         return Track.create({
             ...input,
             creatorId: req.session.userId,
@@ -202,7 +208,10 @@ export class TrackResolver {
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
+    async deleteTrack(
+        @Arg('id', () => Int) id: number,
+        @Ctx() { req }: MyContext
+        ): Promise<boolean> {
         const track = await Track.findOne(id);
         if (!track) {
             return false;

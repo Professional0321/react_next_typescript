@@ -1,4 +1,14 @@
-import { Resolver, Arg, Field, Mutation, Ctx, ObjectType, Query, FieldResolver, Root } from 'type-graphql';
+import {
+    Resolver,
+    Arg,
+    Field,
+    Mutation,
+    Ctx,
+    ObjectType,
+    Query,
+    FieldResolver,
+    Root,
+} from 'type-graphql';
 import { MyContext } from '../types';
 import { User } from '../entities/User';
 import argon2 from 'argon2';

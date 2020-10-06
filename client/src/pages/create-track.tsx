@@ -33,7 +33,8 @@ const CreateTrack = () => {
             input: {
                 name: values.name,
                 url: cleanYouTubeUrl(values.url),
-        } });
+            },
+        });
 
         if (!error) {
             setLoading(false);
@@ -53,26 +54,26 @@ const CreateTrack = () => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix)"
+                    label="Nom - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
                             message:
-                                'Veuillez entrer le nom et titre de la musique séparé par un " - " (comme titré ou copier/collé du lien). !',
+                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique (Remix)" />
+                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{ required: true, message: 'Veuillez entre un lien Youtube vers la musique !' }]}
+                    rules={[{ required: true, message: 'Veuillez entre un lien vers la musique !' }]}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube)"
+                        placeholder="Lien de la musique (YouTube/SoundCloud)"
                     />
                 </Form.Item>
 
