@@ -7,6 +7,7 @@ import { useCreateTrackMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useIsAuth } from '../utils/useIsAuth';
 import '../styles/components/createTrack.less';
+import { cleanYouTubeUrl } from '../utils/cleanYouTubeUrl';
 
 const { Title } = Typography;
 
@@ -28,7 +29,11 @@ const CreateTrack = () => {
     const onFinish = async (values: TrackInput) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        const { error } = await createTrack({ input: values });
+        const { error } = await createTrack({
+            input: {
+                name: values.name,
+                url: cleanYouTubeUrl(values.url),
+        } });
 
         if (!error) {
             setLoading(false);
@@ -67,7 +72,7 @@ const CreateTrack = () => {
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube/Soundcloud)"
+                        placeholder="Lien de la musique (YouTube)"
                     />
                 </Form.Item>
 
