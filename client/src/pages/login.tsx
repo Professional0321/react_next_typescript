@@ -22,10 +22,15 @@ type formProps = {
     password: string;
 };
 
+type errorProps = {
+    field?: string;
+    message?: string;
+};
+
 const Login = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    // const [errors, setErrors] = useState<Array>([]);
+    const [error, setError] = useState<errorProps | undefined>(undefined);
 
     const [, login] = useLoginMutation();
     const router = useRouter();
@@ -38,8 +43,7 @@ const Login = () => {
         // On error
         if (response.data?.login.errors) {
             setLoading(false);
-            console.log(response.data.login.errors);
-            // TODO: setFields error (username taken, password length too short, etc)
+            setError(response.data.login.errors[0]);
             // On success
         } else if (response.data?.login.user) {
             setLoading(false);
@@ -69,6 +73,10 @@ const Login = () => {
                             message: "Veuillez entrer votre nom d'utilisateur !",
                         },
                     ]}
+                    {...(error?.field === 'username' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input
                         prefix={<UserOutlined className="site-form-item-icon" />}
@@ -83,6 +91,10 @@ const Login = () => {
                             message: 'Veuillez entre votre mot de passe !',
                         },
                     ]}
+                    {...(error?.field === 'password' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
