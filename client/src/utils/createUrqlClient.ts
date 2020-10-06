@@ -1,10 +1,5 @@
 import { cacheExchange, Resolver, Cache } from '@urql/exchange-graphcache';
-import {
-    dedupExchange,
-    Exchange,
-    fetchExchange,
-    stringifyVariables,
-} from 'urql';
+import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql';
 import { pipe, tap } from 'wonka';
 import Router from 'next/router';
 import gql from 'graphql-tag';

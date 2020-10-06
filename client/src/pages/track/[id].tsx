@@ -5,13 +5,13 @@ import Link from 'next/link';
 import React from 'react';
 import ReactPlayer from 'react-player/lazy';
 import { useRouter } from 'next/dist/client/router';
+import NextLink from 'next/link';
 import { useDeleteTrackMutation } from '../../generated/graphql';
 import '../../styles/components/track.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
 import { useGetTrackFromUrl } from '../../utils/useGetTrackFromUrl';
 import { useGetIntId } from '../../utils/useGetIntId';
-import NextLink from 'next/link';
 
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -113,7 +113,7 @@ const Track = () => {
                             </div>
                         </div>
                         <div className="creator-info">
-                            <p>Posté par {data.track.creator.username}.</p>
+                            <p>Posté par{data.track.creator.username}.</p>
                         </div>
                         <div className="cta-actions">
                             <Space>
@@ -126,8 +126,8 @@ const Track = () => {
                                     placement="top"
                                     title={text}
                                     onConfirm={async () => {
-                                        const { error } = await deleteTrack({ id: intId });
-                                        if (!error) {
+                                        const { error: er } = await deleteTrack({ id: intId });
+                                        if (!er) {
                                             router.push('/');
                                         }
                                     }}

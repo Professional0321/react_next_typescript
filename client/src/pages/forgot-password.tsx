@@ -32,19 +32,19 @@ export const ForgotPassword = () => {
     };
 
     return (
-        <>
-            <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Mot de passe oublié</Title>
+      <>
+          <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Mot de passe oublié</Title>
 
-            <Form
-                name="normal_login"
-                className="login-form"
+          <Form
+              name="normal_login"
+              className="login-form"
                 // initialValues={{ remember: true }}
-                onFinish={onFinish}
-                scrollToFirstError
+              onFinish={onFinish}
+              scrollToFirstError
             >
-                <Form.Item
+              <Form.Item
                     name="email"
-                    rules={[
+                  rules={[
                         {
                             required: true,
                             message: 'Veuillez entrer votre e-mail !',
@@ -54,23 +54,23 @@ export const ForgotPassword = () => {
                     <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
                 </Form.Item>
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
-                        J'ai oublié mon mot de passe
+              <Form.Item>
+                  <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
+                      J'ai oublié mon mot de passe
                     </Button>
                 </Form.Item>
 
-                {complete && (
-                    <Result
-                        status="success"
-                        title="Opération éxécutée !"
-                        subTitle="Si un compte est associé à cette adresse, un email a été envoyé."
-                        extra={
+              {complete && (
+                <Result
+                      status="success"
+                      title="Opération éxécutée !"
+                      subTitle="Si un compte est associé à cette adresse, un email a été envoyé."
+                      extra={(
                             <NextLink href="/">
-                                <Button type="primary" key="console">
-                                    Retourner à l'accueil
+                          <Button type="primary" key="console">
+                                Retourner à l'accueil
                                 </Button>
-                            </NextLink>
+                        </NextLink>
                         }
                     />
                 )}

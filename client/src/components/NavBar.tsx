@@ -1,13 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import Link from 'next/link';
-import {
-    HomeFilled,
-    SearchOutlined,
-    UserOutlined,
-    PlusCircleOutlined,
-    BarsOutlined,
-} from '@ant-design/icons';
+import { HomeFilled, SearchOutlined, UserOutlined, PlusCircleOutlined, BarsOutlined } from '@ant-design/icons';
 import { useMeQuery } from '../generated/graphql';
 
 export const NavBar = () => {

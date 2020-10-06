@@ -8,11 +8,7 @@ import { TopNavBar } from '../components/TopNavBar';
 import '../styles/index.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
-const {
-    Header,
-    Content,
-    Sider,
-} = LayoutAD;
+const { Header, Content, Sider } = LayoutAD;
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (

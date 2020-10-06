@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
-import {
-    ArrowDownOutlined,
-    ArrowUpOutlined,
-    DeleteOutlined,
-    EditOutlined,
-    LoadingOutlined,
-} from '@ant-design/icons';
-import {
-    Button,
-    Card,
-    Spin,
-    Typography,
-    Popconfirm,
-} from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Card, Spin, Typography, Popconfirm } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
 import ReactPlayer from 'react-player/lazy';
