@@ -14,17 +14,13 @@ import Link from 'next/link';
 import '../styles/components/login.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { errorProps } from '../types/types';
 
 const { Title } = Typography;
 
 type formProps = {
     usernameOrEmail: string;
     password: string;
-};
-
-type errorProps = {
-    field?: string;
-    message?: string;
 };
 
 const Login = () => {
@@ -39,7 +35,7 @@ const Login = () => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await login(values);
-        console.log(response);
+        // console.log(response);
         // On error
         if (response.data?.login.errors) {
             setLoading(false);

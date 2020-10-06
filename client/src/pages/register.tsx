@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import '../styles/components/register.less';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { errorProps } from '../types/types';
 
 const { Title } = Typography;
 
@@ -20,7 +21,7 @@ type formProps = {
 const Register = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    // const [errors, setErrors] = useState<Array>([]);
+    const [error, setError] = useState<errorProps | undefined>(undefined);
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
@@ -34,6 +35,7 @@ const Register = () => {
         if (response.data?.register.errors) {
             setLoading(false);
             console.log(response.data.register.errors);
+            setError(response.data.register.errors[0]);
             // TODO: setFields error (username taken, password length too short, etc)
             // On success
         } else if (response.data?.register.user) {
@@ -70,6 +72,10 @@ const Register = () => {
                             whitespace: true,
                         },
                     ]}
+                    {...(error?.field === 'username' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input />
                 </Form.Item>
@@ -86,6 +92,10 @@ const Register = () => {
                             message: 'Veuillez saisir votre adresse e-mail !',
                         },
                     ]}
+                    {...(error?.field === 'email' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input />
                 </Form.Item>
@@ -100,6 +110,10 @@ const Register = () => {
                         },
                     ]}
                     hasFeedback
+                    {...(error?.field === 'password' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input.Password />
                 </Form.Item>

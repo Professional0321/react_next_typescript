@@ -157,14 +157,25 @@ export class UserResolver {
             user = result.raw[0];
         } catch (error) {
             console.log(error);
-            // ERROR: Duplicate username
-            if (error.code === '23505') {
+            // ERROR: Duplicate email
+            if (error.code === '23505' && error.detail.includes('email')) {
                 // || error.detail.includes('already exists') {
                 return {
                     errors: [
                         {
+                            field: 'email',
+                            message: "Cet email existe déjà.",
+                        },
+                    ],
+                };
+            };
+            // ERROR: Duplicate username
+            if (error.code === '23505' && error.detail.includes('username')) {
+                return {
+                    errors: [
+                        {
                             field: 'username',
-                            message: "Ce nom d'utilisateur existe déjà.",
+                            message: 'Ce nom d\'utilisateur existe déjà.',
                         },
                     ],
                 };
