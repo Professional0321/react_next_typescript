@@ -3,8 +3,8 @@ import { Layout as LayoutAD } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import type { AppProps /* , AppContext */ } from 'next/app';
 import React from 'react';
-import { NavBar } from '../components/NavBar';
-import { TopNavBar } from '../components/TopNavBar';
+import NavBar from '../components/NavBar';
+import TopNavBar from '../components/TopNavBar';
 import '../styles/index.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 

@@ -1,4 +1,4 @@
-export type errorProps = {
+export type ErrorProps = {
     field?: string;
     message?: string;
 };

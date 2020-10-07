@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { HomeFilled, SearchOutlined, UserOutlined, PlusCircleOutlined, BarsOutlined } from '@ant-design/icons';
 import { useMeQuery } from '../generated/graphql';
 
-export const NavBar = () => {
+const NavBar = () => {
     const [{ data, fetching }] = useMeQuery();
     let body = null;
 
@@ -44,3 +44,5 @@ export const NavBar = () => {
 
     return <>{body}</>;
 };
+
+export default NavBar;

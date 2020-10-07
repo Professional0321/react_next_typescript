@@ -10,7 +10,7 @@ import { createUrqlClient } from '../../utils/createUrqlClient';
 
 const { Title } = Typography;
 
-type formProps = {
+type FormProps = {
     newPassword: string;
     confirm: string;
 };
@@ -24,7 +24,7 @@ export const ChangePassword: NextPage = () => {
     const [, changePassword] = useChangePasswordMutation();
     const router = useRouter();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: FormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await changePassword({
@@ -90,7 +90,7 @@ export const ChangePassword: NextPage = () => {
                                 }
 
                                 return Promise.reject(
-                                    'Les deux mots de passe que vous avez saisis ne correspondent pas !',
+                                    new Error('Les deux mots de passe que vous avez saisis ne correspondent pas !'),
                                 );
                             },
                         }),

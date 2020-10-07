@@ -1,24 +1,17 @@
-import React, { useState } from 'react';
-import {
-    Form,
-    Input,
-    Button,
-    Typography,
-    // Checkbox,
-} from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useLoginMutation } from '../generated/graphql';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-
-import '../styles/components/login.less';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useLoginMutation } from '../generated/graphql';
+import '../styles/components/login.less';
+import { ErrorProps } from '../types/types';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import { errorProps } from '../types/types';
 
 const { Title } = Typography;
 
-type formProps = {
+type FormProps = {
     usernameOrEmail: string;
     password: string;
 };
@@ -26,12 +19,12 @@ type formProps = {
 const Login = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<errorProps | undefined>(undefined);
+    const [error, setError] = useState<ErrorProps | undefined>(undefined);
 
     const [, login] = useLoginMutation();
     const router = useRouter();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: FormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await login(values);

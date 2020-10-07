@@ -1,40 +1,58 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Typography, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useRegisterMutation } from '../generated/graphql';
-import { useRouter } from 'next/router';
-
-import '../styles/components/register.less';
+import { Button, Form, Input, Tooltip, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useRegisterMutation } from '../generated/graphql';
+import '../styles/components/register.less';
+import { ErrorProps } from '../types/types';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import { errorProps } from '../types/types';
 
 const { Title } = Typography;
 
-type formProps = {
+type FormProps = {
     username: string;
     email: string;
     password: string;
     confirm: string;
 };
 
+const formItemLayout = {
+    labelCol: {
+        xs: {
+            span: 24,
+        },
+        sm: {
+            span: 8,
+        },
+    },
+    wrapperCol: {
+        xs: {
+            span: 24,
+        },
+        sm: {
+            span: 16,
+        },
+    },
+};
+
 const Register = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<errorProps | undefined>(undefined);
+    const [error, setError] = useState<ErrorProps | undefined>(undefined);
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: FormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await register({ options: values });
         // On error
-        console.log(response);
+        // console.log(response);
         if (response.data?.register.errors) {
             setLoading(false);
-            console.log(response.data.register.errors);
+            // console.log(response.data.register.errors);
             setError(response.data.register.errors[0]);
             // TODO: setFields error (username taken, password length too short, etc)
             // On success
@@ -135,7 +153,7 @@ const Register = () => {
                                 }
 
                                 return Promise.reject(
-                                    'Les deux mots de passe que vous avez saisis ne correspondent pas !',
+                                    new Error('Les deux mots de passe que vous avez saisis ne correspondent pas !'),
                                 );
                             },
                         }),
@@ -152,25 +170,6 @@ const Register = () => {
             </Form>
         </>
     );
-};
-
-const formItemLayout = {
-    labelCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 8,
-        },
-    },
-    wrapperCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 16,
-        },
-    },
 };
 
 export default withUrqlClient(createUrqlClient)(Register);

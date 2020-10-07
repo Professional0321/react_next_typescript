@@ -14,12 +14,10 @@ import {
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
-import NextLink from 'next/link';
-
 const { Title } = Typography;
 // const { Meta } = Card;
 
-type voteLoad = 'upvote-loading' | 'downvote-loading' | 'not-loading';
+type VoteLoad = 'upvote-loading' | 'downvote-loading' | 'not-loading';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -37,7 +35,7 @@ const Index = () => {
     const [{ data: meData }] = useMeQuery();
     const trackCreator = meData?.me?.id;
 
-    const [voteLoading, setVoteLoading] = useState<voteLoad>('not-loading');
+    const [voteLoading, setVoteLoading] = useState<VoteLoad>('not-loading');
     const [, vote] = useVoteMutation();
 
     const [, deleteTrack] = useDeleteTrackMutation();
@@ -54,7 +52,12 @@ const Index = () => {
 
     return (
         <div>
-            <Title style={{ color: '#f3f5f9' }}>🔥 Derniers partages</Title>
+            <Title style={{ color: '#f3f5f9' }}>
+                <span role="img" aria-label="fire">
+                    🔥
+                </span>{' '}
+                Derniers partages
+            </Title>
             <div className="home-track-container">
                 {!data && fetching ? (
                     <Spin indicator={loadingIcon} />
@@ -103,9 +106,9 @@ const Index = () => {
                                     />,
                                     <>
                                         {track.creator.id === trackCreator ? (
-                                            <NextLink href="/track/edit/[id]" as={`/track/edit/${track.id}`}>
+                                            <Link href="/track/edit/[id]" as={`/track/edit/${track.id}`}>
                                                 <EditOutlined key="edit" />
-                                            </NextLink>
+                                            </Link>
                                         ) : (
                                             ''
                                         )}
@@ -116,7 +119,7 @@ const Index = () => {
                                                 placement="top"
                                                 title="Êtes-vous sûr de vouloir supprimer cette musique ?"
                                                 onConfirm={async () => {
-                                                    deleteTrack({ id: track.id });
+                                                    await deleteTrack({ id: track.id });
                                                 }}
                                                 okText="Supprimer"
                                                 cancelText="Non"
@@ -131,9 +134,7 @@ const Index = () => {
                             >
                                 <ReactPlayer url={track.url} width="100%" height="100%" controls />
                                 <Link href="/track/[id]" as={`/track/${track.id}`}>
-                                    <a>
-                                        <strong>{track.name}</strong>
-                                    </a>
+                                    <strong>{track.name}</strong>
                                 </Link>
                                 {/* <Meta description={`Ajouté par ${track.creator.username}`} /> */}
                             </Card>

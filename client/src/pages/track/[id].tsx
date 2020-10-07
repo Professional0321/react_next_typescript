@@ -5,7 +5,6 @@ import Link from 'next/link';
 import React from 'react';
 import ReactPlayer from 'react-player/lazy';
 import { useRouter } from 'next/dist/client/router';
-import NextLink from 'next/link';
 import { useDeleteTrackMutation } from '../../generated/graphql';
 import '../../styles/components/track.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
@@ -117,11 +116,11 @@ const Track = () => {
                         </div>
                         <div className="cta-actions">
                             <Space>
-                                <NextLink href="/track/edit/[id]" as={`/track/edit/${intId}`}>
+                                <Link href="/track/edit/[id]" as={`/track/edit/${intId}`}>
                                     <Button>
                                         <EditOutlined key="edit" />
                                     </Button>
-                                </NextLink>
+                                </Link>
                                 <Popconfirm
                                     placement="top"
                                     title={text}
