@@ -8,8 +8,8 @@ import {
     BaseEntity,
     OneToMany,
 } from 'typeorm';
-import { Track } from './Track.ts';
-import { Upvote } from './Upvote.ts';
+import { Track } from './Track';
+import { Upvote } from './Upvote';
 
 @ObjectType()
 @Entity()

@@ -8,14 +8,14 @@ import connectRedis from 'connect-redis';
 import cors from 'cors';
 import { createConnection } from 'typeorm';
 import path from 'path';
-import { Track } from './entities/Track.ts';
-import { User } from './entities/User.ts';
-import { UserResolver } from './resolvers/user.ts';
-import { TrackResolver } from './resolvers/track.ts';
-import { __prod__, COOKIE_NAME } from './constants.ts';
-import { Upvote } from './entities/Upvote.ts';
-import { createUserLoader } from './utils/createUserLoader.ts';
-import { createUpvoteLoader } from './utils/createUpvoteLoader.ts';
+import { Track } from './entities/Track';
+import { User } from './entities/User';
+import { UserResolver } from './resolvers/user';
+import { TrackResolver } from './resolvers/track';
+import { __prod__, COOKIE_NAME } from './constants';
+import { Upvote } from './entities/Upvote';
+import { createUserLoader } from './utils/createUserLoader';
+import { createUpvoteLoader } from './utils/createUpvoteLoader';
 
 const main = async () => {
     const connection = await createConnection({

@@ -2,12 +2,12 @@ import { Resolver, Arg, Field, Mutation, Ctx, ObjectType, Query, FieldResolver, 
 import argon2 from 'argon2';
 import { v4 } from 'uuid';
 import { getConnection } from 'typeorm';
-import { MyContext } from '../types.ts';
-import { User } from '../entities/User.ts';
-import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants.ts';
-import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput.ts';
-import { validateRegister } from '../utils/validateRegister.ts';
-import { sendEmail } from '../utils/sendEmail.ts';
+import { MyContext } from '../types';
+import { User } from '../entities/User';
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
+import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput';
+import { validateRegister } from '../utils/validateRegister';
+import { sendEmail } from '../utils/sendEmail';
 
 @ObjectType()
 class FieldError {

@@ -9,8 +9,8 @@ import {
     ManyToOne,
     OneToMany,
 } from 'typeorm';
-import { User } from './User.ts';
-import { Upvote } from './Upvote.ts';
+import { User } from './User';
+import { Upvote } from './Upvote';
 
 @ObjectType()
 @Entity()

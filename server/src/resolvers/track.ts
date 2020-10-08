@@ -13,11 +13,11 @@ import {
     Root,
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
-import { Track } from '../entities/Track.ts';
-import { MyContext } from '../types.ts';
-import { isAuth } from '../middleware/isAuth.ts';
-import { Upvote } from '../entities/Upvote.ts';
-import { User } from '../entities/User.ts';
+import { Track } from '../entities/Track';
+import { MyContext } from '../types';
+import { isAuth } from '../middleware/isAuth';
+import { Upvote } from '../entities/Upvote';
+import { User } from '../entities/User';
 
 @InputType()
 class TrackInput {

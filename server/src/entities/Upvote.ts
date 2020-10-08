@@ -1,7 +1,7 @@
 // import { ObjectType, Field } from "type-graphql";
 import { Entity, Column, BaseEntity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { User } from './User.ts';
-import { Track } from './Track.ts';
+import { User } from './User';
+import { Track } from './Track';
 
 @Entity()
 export class Upvote extends BaseEntity {
