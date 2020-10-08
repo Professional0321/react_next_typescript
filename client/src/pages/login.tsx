@@ -92,6 +92,7 @@ const Login = () => {
                     />
                 </Form.Item>
                 <Form.Item>
+                    {/* TODO: Implant longer exp. cookies */}
                     {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                         <Checkbox>Se souvenir de moi</Checkbox>
                     </Form.Item> */}

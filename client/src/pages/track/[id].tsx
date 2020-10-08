@@ -15,12 +15,12 @@ import { useGetIntId } from '../../utils/useGetIntId';
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-const fakeData = [
-    {
-        name: 'Jimi Hendrix - Purple Haze (Live at the Atlanta Pop Festival)',
-        url: 'https://www.youtube.com/watch?v=cJunCsrhJjg',
-    },
-];
+// const fakeData = [
+//     {
+//         name: 'Jimi Hendrix - Purple Haze (Live at the Atlanta Pop Festival)',
+//         url: 'https://www.youtube.com/watch?v=cJunCsrhJjg',
+//     },
+// ];
 
 const Track = () => {
     const router = useRouter();
@@ -36,38 +36,38 @@ const Track = () => {
 
     const text = 'Êtes-vous sûr de vouloir supprimer cette musique ?';
 
-    const columns = [
-        {
-            title: '',
-            key: 'action',
-            render: () => (
-                <Space>
-                    <Button type="text">
-                        <PlayCircleOutlined style={{ fontSize: '1.5rem' }} />
-                    </Button>
-                    <Button type="text">
-                        <HeartOutlined style={{ fontSize: '1.5rem' }} />
-                    </Button>
-                </Space>
-            ),
-        },
-        {
-            title: 'Cover',
-            dataIndex: 'url',
-            render: (url: string) => (
-                <img
-                    className="table-cover"
-                    alt={url}
-                    src={data?.track?.url ? `https://img.youtube.com/vi/${getYouTubeId(data.track.url)}/0.jpg` : ''}
-                />
-            ),
-        },
-        {
-            title: 'Titre',
-            dataIndex: 'name',
-            key: 'title',
-        },
-    ];
+    // const columns = [
+    //     {
+    //         title: '',
+    //         key: 'action',
+    //         render: () => (
+    //             <Space>
+    //                 <Button type="text">
+    //                     <PlayCircleOutlined style={{ fontSize: '1.5rem' }} />
+    //                 </Button>
+    //                 <Button type="text">
+    //                     <HeartOutlined style={{ fontSize: '1.5rem' }} />
+    //                 </Button>
+    //             </Space>
+    //         ),
+    //     },
+    //     {
+    //         title: 'Cover',
+    //         dataIndex: 'url',
+    //         render: (url: string) => (
+    //             <img
+    //                 className="table-cover"
+    //                 alt={url}
+    //                 src={data?.track?.url ? `https://img.youtube.com/vi/${getYouTubeId(data.track.url)}/0.jpg` : ''}
+    //             />
+    //         ),
+    //     },
+    //     {
+    //         title: 'Titre',
+    //         dataIndex: 'name',
+    //         key: 'title',
+    //     },
+    // ];
 
     if (!fetching && !data) {
         return <div>Une erreur est survenue dans la requête.</div>;

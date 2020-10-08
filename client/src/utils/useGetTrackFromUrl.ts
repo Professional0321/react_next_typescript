@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useTrackQuery } from '../generated/graphql';
 import { useGetIntId } from './useGetIntId';
 
