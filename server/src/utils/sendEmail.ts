@@ -21,7 +21,7 @@ export async function sendEmail(to: string, html: string) {
     // send mail with defined transport object
     const info = await transporter.sendMail({
         from: '"Dylt 💿" <email@dylt.fr>', // sender address
-        to: to, // list of receivers
+        to, // list of receivers
         subject: 'Réinitialiser votre mot de passe', // Subject line
         html,
     });

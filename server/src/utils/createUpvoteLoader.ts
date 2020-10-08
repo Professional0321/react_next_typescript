@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { Upvote } from '../entities/Upvote';
+import { Upvote } from '../entities/Upvote.ts';
 
 // Fetch individual fields
 // [{postId: 1, userId: 1}] => [{postId: 1, userId: 1, value: 1}]

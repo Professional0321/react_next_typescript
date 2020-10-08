@@ -12,12 +12,12 @@ import {
     FieldResolver,
     Root,
 } from 'type-graphql';
-import { Track } from '../entities/Track';
-import { MyContext } from '../types';
-import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
-import { Upvote } from '../entities/Upvote';
-import { User } from '../entities/User';
+import { Track } from '../entities/Track.ts';
+import { MyContext } from '../types.ts';
+import { isAuth } from '../middleware/isAuth.ts';
+import { Upvote } from '../entities/Upvote.ts';
+import { User } from '../entities/User.ts';
 
 @InputType()
 class TrackInput {
@@ -171,15 +171,13 @@ export class TrackResolver {
     // Create new track
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
-    async createTrack(
-        @Arg('input') input: TrackInput,
-        @Ctx() { req }: MyContext
-        ): Promise<Track> {
-            // TODO: Check if YouTube video ID already exists in DB before saving
-        return Track.create({
+    async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
+        // TODO: Check if YouTube video ID already exists in DB before saving
+        const track = await Track.create({
             ...input,
             creatorId: req.session.userId,
         }).save();
+        return track;
     }
 
     // Update track by id
@@ -208,10 +206,7 @@ export class TrackResolver {
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(
-        @Arg('id', () => Int) id: number,
-        @Ctx() { req }: MyContext
-        ): Promise<boolean> {
+    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
         const track = await Track.findOne(id);
         if (!track) {
             return false;

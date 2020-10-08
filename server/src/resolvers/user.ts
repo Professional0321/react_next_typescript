@@ -1,23 +1,13 @@
-import {
-    Resolver,
-    Arg,
-    Field,
-    Mutation,
-    Ctx,
-    ObjectType,
-    Query,
-    FieldResolver,
-    Root,
-} from 'type-graphql';
-import { MyContext } from '../types';
-import { User } from '../entities/User';
+import { Resolver, Arg, Field, Mutation, Ctx, ObjectType, Query, FieldResolver, Root } from 'type-graphql';
 import argon2 from 'argon2';
-import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
-import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput';
-import { validateRegister } from '../utils/validateRegister';
-import { sendEmail } from '../utils/sendEmail';
 import { v4 } from 'uuid';
 import { getConnection } from 'typeorm';
+import { MyContext } from '../types.ts';
+import { User } from '../entities/User.ts';
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants.ts';
+import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput.ts';
+import { validateRegister } from '../utils/validateRegister.ts';
+import { sendEmail } from '../utils/sendEmail.ts';
 
 @ObjectType()
 class FieldError {
@@ -137,7 +127,9 @@ export class UserResolver {
             return null;
         }
 
-        return User.findOne(req.session.userId);
+        const user = await User.findOne(req.session.userId);
+
+        return user;
     }
 
     @Mutation(() => UserResponse)
@@ -174,18 +166,18 @@ export class UserResolver {
                     errors: [
                         {
                             field: 'email',
-                            message: "Cet email existe déjà.",
+                            message: 'Cet email existe déjà.',
                         },
                     ],
                 };
-            };
+            }
             // ERROR: Duplicate username
             if (error.code === '23505' && error.detail.includes('username')) {
                 return {
                     errors: [
                         {
                             field: 'username',
-                            message: 'Ce nom d\'utilisateur existe déjà.',
+                            message: "Ce nom d'utilisateur existe déjà.",
                         },
                     ],
                 };

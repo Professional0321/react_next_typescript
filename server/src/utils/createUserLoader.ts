@@ -1,5 +1,5 @@
 import DataLoader from 'dataloader';
-import { User } from '../entities/User';
+import { User } from '../entities/User.ts';
 
 // Fetch individual fields
 // Group creatorIds in 1 array to make it only 2 queries in TrackResolver
