@@ -134,7 +134,7 @@ const Index = () => {
                             >
                                 <ReactPlayer url={track.url} width="100%" height="100%" controls />
                                 <Link href="/track/[id]" as={`/track/${track.id}`}>
-                                    <strong>{track.name}</strong>
+                                    <a><strong>{track.name}</strong></a>
                                 </Link>
                                 {/* <Meta description={`Ajouté par ${track.creator.username}`} /> */}
                             </Card>
