@@ -41,6 +41,8 @@ class PaginatedTracks {
 export class TrackResolver {
     @FieldResolver(() => User)
 
+    // https://github.com/graphql/dataloader
+    // Group/batch requests
     // DataLoader
     // Run only if query contains "creator"
     creator(@Root() track: Track, @Ctx() { userLoader }: MyContext) {
@@ -66,6 +68,7 @@ export class TrackResolver {
     // Upvote
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
+    // Vote
     async vote(
         @Arg('trackId', () => Int) trackId: number,
         @Arg('value', () => Int) value: number,
@@ -99,6 +102,7 @@ export class TrackResolver {
                     [2 * realValue, trackId],
                 );
             });
+
             // Never voted
         } else if (!upvote) {
             await getConnection().transaction(async (transManager) => {
@@ -131,7 +135,7 @@ export class TrackResolver {
         @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
         // @Ctx() { req }: MyContext,
     ): Promise<PaginatedTracks> {
-        // Fetch 1 more track
+        // Fetch 1 more track (useful to know if end of data or not)
         const realLimit = Math.min(50, limit);
         const realLimitPlusOne = realLimit + 1;
 
