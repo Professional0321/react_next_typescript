@@ -7,6 +7,7 @@ import { useCreateTrackMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useIsAuth } from '../utils/useIsAuth';
 import '../styles/components/createTrack.less';
+import { cleanYouTubeUrl } from '../utils/cleanYouTubeUrl';
 
 const { Title } = Typography;
 
@@ -15,7 +16,7 @@ type TrackInput = {
     url: string;
 };
 
-const CreateTrack: React.FC<{}> = ({ }) => {
+const CreateTrack = () => {
     const router = useRouter();
     useIsAuth();
 
@@ -28,7 +29,12 @@ const CreateTrack: React.FC<{}> = ({ }) => {
     const onFinish = async (values: TrackInput) => {
         setLoading(true);
         console.log('Received values of form: ', values);
-        const { error } = await createTrack({ input: values });
+        const { error } = await createTrack({
+            input: {
+                name: values.name,
+                url: cleanYouTubeUrl(values.url),
+            },
+        });
 
         if (!error) {
             setLoading(false);
@@ -48,26 +54,26 @@ const CreateTrack: React.FC<{}> = ({ }) => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix)"
+                    label="Nom - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
                             message:
-                                'Veuillez entrer le nom et titre de la musique séparé par un " - " (comme titré ou copier/collé du lien). !',
+                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique" />
+                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{ required: true, message: 'Veuillez entre un lien Youtube vers la musique !' }]}
+                    rules={[{ required: true, message: 'Veuillez entre un lien vers la musique !' }]}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube/Soundcloud)"
+                        placeholder="Lien de la musique (YouTube/SoundCloud)"
                     />
                 </Form.Item>
 

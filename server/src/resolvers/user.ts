@@ -1,13 +1,13 @@
 import { Resolver, Arg, Field, Mutation, Ctx, ObjectType, Query, FieldResolver, Root } from 'type-graphql';
+import argon2 from 'argon2';
+import { v4 } from 'uuid';
+import { getConnection } from 'typeorm';
 import { MyContext } from '../types';
 import { User } from '../entities/User';
-import argon2 from 'argon2';
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
 import { UsernameEmailPasswordInput } from './UsernameEmailPasswordInput';
 import { validateRegister } from '../utils/validateRegister';
 import { sendEmail } from '../utils/sendEmail';
-import { v4 } from 'uuid';
-import { getConnection } from 'typeorm';
 
 @ObjectType()
 class FieldError {
@@ -38,6 +38,7 @@ export class UserResolver {
         return '';
     }
 
+    // Change password
     @Mutation(() => UserResponse)
     async changePassword(
         @Arg('token') token: string,
@@ -99,6 +100,7 @@ export class UserResolver {
         return { user };
     }
 
+    // Forgotpassword
     @Mutation(() => Boolean)
     async forgotPassword(@Arg('email') email: string, @Ctx() { redis }: MyContext) {
         const user = await User.findOne({ where: { email } });
@@ -110,6 +112,7 @@ export class UserResolver {
         const token = v4();
 
         // Store in redis
+        // PasswordPrefix + UUID token, userId, 'expiration', seconds
         await redis.set(FORGET_PASSWORD_PREFIX + token, user.id, 'ex', 1000 * 60 * 60 * 24);
 
         await sendEmail(
@@ -120,6 +123,7 @@ export class UserResolver {
         return true;
     }
 
+    // Fetch current user
     @Query(() => User, { nullable: true })
     async me(@Ctx() { req }: MyContext) {
         // Not logged in
@@ -127,9 +131,12 @@ export class UserResolver {
             return null;
         }
 
-        return User.findOne(req.session.userId);
+        const user = await User.findOne(req.session.userId);
+
+        return user;
     }
 
+    // Register
     @Mutation(() => UserResponse)
     async register(
         @Arg('options') options: UsernameEmailPasswordInput,
@@ -157,9 +164,20 @@ export class UserResolver {
             user = result.raw[0];
         } catch (error) {
             console.log(error);
-            // ERROR: Duplicate username
-            if (error.code === '23505') {
+            // ERROR: Duplicate email
+            if (error.code === '23505' && error.detail.includes('email')) {
                 // || error.detail.includes('already exists') {
+                return {
+                    errors: [
+                        {
+                            field: 'email',
+                            message: 'Cet email existe déjà.',
+                        },
+                    ],
+                };
+            }
+            // ERROR: Duplicate username
+            if (error.code === '23505' && error.detail.includes('username')) {
                 return {
                     errors: [
                         {
@@ -171,12 +189,13 @@ export class UserResolver {
             }
         }
 
-        // Login after register (store userId in session - set cookie of user)
+        // Login after register (store userId in session + set cookie of user)
         req.session.userId = user.id;
 
         return { user };
     }
 
+    // Login
     @Mutation(() => UserResponse)
     async login(
         @Arg('usernameOrEmail') usernameOrEmail: string,
@@ -215,6 +234,7 @@ export class UserResolver {
         return { user };
     }
 
+    // Logout
     @Mutation(() => Boolean)
     logout(@Ctx() { req, res }: MyContext) {
         return new Promise((resolve) =>

@@ -1,19 +1,18 @@
 import 'reflect-metadata';
-import { __prod__, COOKIE_NAME } from './constants';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { HelloResolver } from './resolvers/hello';
-import { TrackResolver } from './resolvers/track';
-import { UserResolver } from './resolvers/user';
 import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
 import { createConnection } from 'typeorm';
+import path from 'path';
 import { Track } from './entities/Track';
 import { User } from './entities/User';
-import path from 'path';
+import { UserResolver } from './resolvers/user';
+import { TrackResolver } from './resolvers/track';
+import { __prod__, COOKIE_NAME } from './constants';
 import { Upvote } from './entities/Upvote';
 import { createUserLoader } from './utils/createUserLoader';
 import { createUpvoteLoader } from './utils/createUpvoteLoader';
@@ -67,7 +66,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, TrackResolver, UserResolver],
+            resolvers: [TrackResolver, UserResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({

@@ -12,10 +12,10 @@ import {
     FieldResolver,
     Root,
 } from 'type-graphql';
+import { getConnection } from 'typeorm';
 import { Track } from '../entities/Track';
 import { MyContext } from '../types';
 import { isAuth } from '../middleware/isAuth';
-import { getConnection } from 'typeorm';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
 
@@ -41,11 +41,15 @@ class PaginatedTracks {
 export class TrackResolver {
     @FieldResolver(() => User)
 
+    // https://github.com/graphql/dataloader
+    // Group/batch requests
+    // DataLoader
     // Run only if query contains "creator"
     creator(@Root() track: Track, @Ctx() { userLoader }: MyContext) {
         return userLoader.load(track.creatorId);
     }
 
+    // DataLoader
     // Run only if query contains "voteStatus"
     @FieldResolver(() => Int, { nullable: true })
     async voteStatus(@Root() track: Track, @Ctx() { upvoteLoader, req }: MyContext) {
@@ -64,6 +68,7 @@ export class TrackResolver {
     // Upvote
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
+    // Vote
     async vote(
         @Arg('trackId', () => Int) trackId: number,
         @Arg('value', () => Int) value: number,
@@ -97,6 +102,7 @@ export class TrackResolver {
                     [2 * realValue, trackId],
                 );
             });
+
             // Never voted
         } else if (!upvote) {
             await getConnection().transaction(async (transManager) => {
@@ -129,7 +135,7 @@ export class TrackResolver {
         @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
         // @Ctx() { req }: MyContext,
     ): Promise<PaginatedTracks> {
-        // Fetch 1 more track
+        // Fetch 1 more track (useful to know if end of data or not)
         const realLimit = Math.min(50, limit);
         const realLimitPlusOne = realLimit + 1;
 
@@ -170,10 +176,12 @@ export class TrackResolver {
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
     async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
-        return Track.create({
+        // TODO: Check if YouTube video ID already exists in DB before saving
+        const track = await Track.create({
             ...input,
             creatorId: req.session.userId,
         }).save();
+        return track;
     }
 
     // Update track by id

@@ -1,45 +1,38 @@
-import React, { useState } from 'react';
-import {
-    Form,
-    Input,
-    Button,
-    Typography,
-    // Checkbox,
-} from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useLoginMutation } from '../generated/graphql';
-import { useRouter } from 'next/router';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Typography } from 'antd';
+import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useLoginMutation } from '../generated/graphql';
+import '../styles/components/login.less';
+import { ErrorProps } from '../types/types';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 const { Title } = Typography;
 
-import '../styles/components/login.less';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../utils/createUrqlClient';
-
-type formProps = {
+type FormProps = {
     usernameOrEmail: string;
     password: string;
 };
 
-const Login: React.FC<{}> = () => {
+const Login = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    // const [errors, setErrors] = useState<Array>([]);
+    const [error, setError] = useState<ErrorProps | undefined>(undefined);
 
     const [, login] = useLoginMutation();
     const router = useRouter();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: FormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await login(values);
-        console.log(response);
+        // console.log(response);
         // On error
         if (response.data?.login.errors) {
             setLoading(false);
-            console.log(response.data.login.errors);
-            // TODO: setFields error (username taken, password length too short, etc)
+            setError(response.data.login.errors[0]);
             // On success
         } else if (response.data?.login.user) {
             setLoading(false);
@@ -63,14 +56,35 @@ const Login: React.FC<{}> = () => {
             >
                 <Form.Item
                     name="usernameOrEmail"
-                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !" }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Veuillez entrer votre nom d'utilisateur !",
+                        },
+                    ]}
+                    {...(error?.field === 'username' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input
                         prefix={<UserOutlined className="site-form-item-icon" />}
                         placeholder="Nom d'utilisateur ou e-mail"
                     />
                 </Form.Item>
-                <Form.Item name="password" rules={[{ required: true, message: 'Veuillez entre votre mot de passe !' }]}>
+                <Form.Item
+                    name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entre votre mot de passe !',
+                        },
+                    ]}
+                    {...(error?.field === 'password' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
+                >
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
                         type="password"
@@ -78,6 +92,7 @@ const Login: React.FC<{}> = () => {
                     />
                 </Form.Item>
                 <Form.Item>
+                    {/* TODO: Implant longer exp. cookies */}
                     {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                         <Checkbox>Se souvenir de moi</Checkbox>
                     </Form.Item> */}

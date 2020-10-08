@@ -1,6 +1,8 @@
 import { cacheExchange, Resolver, Cache } from '@urql/exchange-graphcache';
 import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql';
 import { pipe, tap } from 'wonka';
+import Router from 'next/router';
+import gql from 'graphql-tag';
 import {
     LoginMutation,
     LogoutMutation,
@@ -11,8 +13,6 @@ import {
     DeleteTrackMutationVariables,
 } from '../generated/graphql';
 import { cachingUpdateQuery } from './cachingUpdateQuery';
-import Router from 'next/router';
-import gql from 'graphql-tag';
 import { isServer } from './isServer';
 
 const errorExchange: Exchange = ({ forward }) => (ops$) => {
@@ -26,6 +26,8 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
     );
 };
 
+
+// Invalidate caching all tracks
 const invalidateAllTracks = (cache: Cache) => {
     const allFields = cache.inspectFields('Query');
     const fieldInfos = allFields.filter((info) => info.fieldName === 'tracks');
@@ -154,11 +156,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                                 (result, query) => {
                                     if (result.login.errors) {
                                         return query;
-                                    } else {
-                                        return {
-                                            me: result.login.user,
-                                        };
                                     }
+                                    return {
+                                        me: result.login.user,
+                                    };
                                 },
                             );
                             invalidateAllTracks(cache);
@@ -171,11 +172,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                                 (result, query) => {
                                     if (result.register.errors) {
                                         return query;
-                                    } else {
-                                        return {
-                                            me: result.register.user,
-                                        };
                                     }
+                                    return {
+                                        me: result.register.user,
+                                    };
                                 },
                             );
                         },

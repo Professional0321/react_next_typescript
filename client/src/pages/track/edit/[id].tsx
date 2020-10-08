@@ -1,11 +1,5 @@
 import { LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import {
-    Button,
-    Form,
-    Input,
-    Spin,
-    Typography,
-} from 'antd';
+import { Button, Form, Input, Spin, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
@@ -16,8 +10,6 @@ import '../../../styles/components/editTrack.less';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-
-
 const { Title } = Typography;
 
 type EditTrackProps = {
@@ -25,7 +17,7 @@ type EditTrackProps = {
     url: string;
 };
 
-const EditTrack = ({ }) => {
+const EditTrack = () => {
     const router = useRouter();
     const intId = useGetIntId();
 
@@ -41,13 +33,12 @@ const EditTrack = ({ }) => {
     const [, updateTrack] = useUpdateTrackMutation();
     // const [errors, setErrors] = useState<Array>([]);
 
-
     const onFinish = async (values: EditTrackProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const { error } = await updateTrack({
             id: intId,
-            ...values
+            ...values,
         });
 
         if (!error) {
@@ -57,15 +48,11 @@ const EditTrack = ({ }) => {
     };
 
     if (fetching) {
-        return (
-            <Spin indicator={loadingIcon} />
-        )
-    };
+        return <Spin indicator={loadingIcon} />;
+    }
 
     if (!data?.track) {
-        return (
-            <div>Musique introuvable.</div>
-        )
+        return <div>Musique introuvable.</div>;
     }
 
     return (
@@ -84,21 +71,26 @@ const EditTrack = ({ }) => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix)"
+                    label="Nom - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
                             message:
-                                'Veuillez entrer le nom et titre de la musique séparé par un " - " (comme titré ou copier/collé du lien). !',
+                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique" />
+                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{ required: true, message: 'Veuillez entre un lien Youtube vers la musique !' }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entre un lien Youtube/SoundCloud vers la musique !',
+                        },
+                    ]}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
@@ -117,4 +109,4 @@ const EditTrack = ({ }) => {
     );
 };
 
-export default withUrqlClient(createUrqlClient)(EditTrack)
+export default withUrqlClient(createUrqlClient)(EditTrack);

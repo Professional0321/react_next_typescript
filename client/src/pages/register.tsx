@@ -1,39 +1,59 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Typography, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useRegisterMutation } from '../generated/graphql';
+import { Button, Form, Input, Tooltip, Typography } from 'antd';
+import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useRegisterMutation } from '../generated/graphql';
+import '../styles/components/register.less';
+import { ErrorProps } from '../types/types';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 const { Title } = Typography;
 
-import '../styles/components/register.less';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../utils/createUrqlClient';
-
-type formProps = {
+type FormProps = {
     username: string;
     email: string;
     password: string;
     confirm: string;
 };
 
-const Register: React.FC<formProps> = () => {
+const formItemLayout = {
+    labelCol: {
+        xs: {
+            span: 24,
+        },
+        sm: {
+            span: 8,
+        },
+    },
+    wrapperCol: {
+        xs: {
+            span: 24,
+        },
+        sm: {
+            span: 16,
+        },
+    },
+};
+
+const Register = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    // const [errors, setErrors] = useState<Array>([]);
+    const [error, setError] = useState<ErrorProps | undefined>(undefined);
 
     const [, register] = useRegisterMutation();
     const router = useRouter();
 
-    const onFinish = async (values: formProps) => {
+    const onFinish = async (values: FormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await register({ options: values });
         // On error
-        console.log(response);
+        // console.log(response);
         if (response.data?.register.errors) {
             setLoading(false);
-            console.log(response.data.register.errors);
+            // console.log(response.data.register.errors);
+            setError(response.data.register.errors[0]);
             // TODO: setFields error (username taken, password length too short, etc)
             // On success
         } else if (response.data?.register.user) {
@@ -63,7 +83,17 @@ const Register: React.FC<formProps> = () => {
                             </Tooltip>
                         </span>
                     }
-                    rules={[{ required: true, message: "Veuillez entrer votre nom d'utilisateur !", whitespace: true }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Veuillez entrer votre nom d'utilisateur !",
+                            whitespace: true,
+                        },
+                    ]}
+                    {...(error?.field === 'username' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input />
                 </Form.Item>
@@ -80,6 +110,10 @@ const Register: React.FC<formProps> = () => {
                             message: 'Veuillez saisir votre adresse e-mail !',
                         },
                     ]}
+                    {...(error?.field === 'email' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input />
                 </Form.Item>
@@ -94,6 +128,10 @@ const Register: React.FC<formProps> = () => {
                         },
                     ]}
                     hasFeedback
+                    {...(error?.field === 'password' && {
+                        validateStatus: 'error',
+                        help: error?.message,
+                    })}
                 >
                     <Input.Password />
                 </Form.Item>
@@ -115,7 +153,7 @@ const Register: React.FC<formProps> = () => {
                                 }
 
                                 return Promise.reject(
-                                    'Les deux mots de passe que vous avez saisis ne correspondent pas !',
+                                    new Error('Les deux mots de passe que vous avez saisis ne correspondent pas !'),
                                 );
                             },
                         }),
@@ -132,25 +170,6 @@ const Register: React.FC<formProps> = () => {
             </Form>
         </>
     );
-};
-
-const formItemLayout = {
-    labelCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 8,
-        },
-    },
-    wrapperCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 16,
-        },
-    },
 };
 
 export default withUrqlClient(createUrqlClient)(Register);
