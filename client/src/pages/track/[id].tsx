@@ -1,73 +1,78 @@
 import { DeleteOutlined, EditOutlined, HeartOutlined, LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Result, Spin, Typography, Space } from 'antd';
+import { Button, Popconfirm, Result, Space, Spin, Table, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
-import Link from 'next/link';
-import React from 'react';
-import ReactPlayer from 'react-player/lazy';
 import { useRouter } from 'next/dist/client/router';
-import { useDeleteTrackMutation } from '../../generated/graphql';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import ReactPlayer from 'react-player/lazy';
+import {
+    Track as TrackProps,
+    useDeleteTrackMutation,
+    useTrackByIdAndSameArtistTracksQuery,
+} from '../../generated/graphql';
 import '../../styles/components/track.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
-import { useGetTrackFromUrl } from '../../utils/useGetTrackFromUrl';
 import { useGetIntId } from '../../utils/useGetIntId';
 
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-// const fakeData = [
-//     {
-//         name: 'Jimi Hendrix - Purple Haze (Live at the Atlanta Pop Festival)',
-//         url: 'https://www.youtube.com/watch?v=cJunCsrhJjg',
-//     },
-// ];
-
 const Track = () => {
     const router = useRouter();
     const intId = useGetIntId();
-    const [{ data, fetching, error }] = useGetTrackFromUrl();
+    const [{ data, fetching, error }] = useTrackByIdAndSameArtistTracksQuery({
+        variables: {
+            id: intId,
+        },
+    });
     const [, deleteTrack] = useDeleteTrackMutation();
 
-    // const [playingTrack, setPlayingTrack] = useState<string>();
+    const [playingTrack, setPlayingTrack] = useState<string | undefined>('');
+    const [initStatePlayer, setInitStatePlayer] = useState<boolean>(false);
 
-    // useEffect(() =>
-    // setPlayingTrack(data?.track?.url)
-    // , [data, fetching]);
+    useEffect(() => setPlayingTrack(data?.trackByIdAndSameArtistTracks?.track?.url), [data, fetching]);
 
     const text = 'Êtes-vous sûr de vouloir supprimer cette musique ?';
 
-    // const columns = [
-    //     {
-    //         title: '',
-    //         key: 'action',
-    //         render: () => (
-    //             <Space>
-    //                 <Button type="text">
-    //                     <PlayCircleOutlined style={{ fontSize: '1.5rem' }} />
-    //                 </Button>
-    //                 <Button type="text">
-    //                     <HeartOutlined style={{ fontSize: '1.5rem' }} />
-    //                 </Button>
-    //             </Space>
-    //         ),
-    //     },
-    //     {
-    //         title: 'Cover',
-    //         dataIndex: 'url',
-    //         render: (url: string) => (
-    //             <img
-    //                 className="table-cover"
-    //                 alt={url}
-    //                 src={data?.track?.url ? `https://img.youtube.com/vi/${getYouTubeId(data.track.url)}/0.jpg` : ''}
-    //             />
-    //         ),
-    //     },
-    //     {
-    //         title: 'Titre',
-    //         dataIndex: 'name',
-    //         key: 'title',
-    //     },
-    // ];
+    const columns = [
+        {
+            title: '',
+            key: 'action',
+            render: (track: TrackProps) => (
+                <Space>
+                    <Button type="text">
+                        <PlayCircleOutlined
+                            style={{ fontSize: '1.5rem' }}
+                            onClick={() => {
+                                setPlayingTrack(track.url);
+                            }}
+                        />
+                    </Button>
+                    <Button type="text">
+                        <HeartOutlined style={{ fontSize: '1.5rem' }} />
+                    </Button>
+                </Space>
+            ),
+        },
+        {
+            title: 'Cover',
+            dataIndex: 'url',
+            render: (url: string) => (
+                <img
+                    className="table-cover"
+                    alt={url}
+                    src={data ? `https://img.youtube.com/vi/${getYouTubeId(url)}/0.jpg` : ''}
+                />
+            ),
+        },
+
+        {
+            title: 'Titre',
+            dataIndex: 'name',
+            key: 'title',
+        },
+    ];
 
     if (!fetching && !data) {
         return <div>Une erreur est survenue dans la requête.</div>;
@@ -77,7 +82,7 @@ const Track = () => {
         return <div>{error.message}</div>;
     }
 
-    if (!data?.track) {
+    if (!data?.trackByIdAndSameArtistTracks?.track) {
         return (
             <Result
                 status="404"
@@ -98,21 +103,35 @@ const Track = () => {
                 <Spin indicator={loadingIcon} />
             ) : (
                 <>
-                    <Title style={{ color: '#f3f5f9' }}>{data.track.name}</Title>
+                    <Title style={{ color: '#f3f5f9' }}>
+                        <Button type="text">
+                            <PlayCircleOutlined
+                                style={{ fontSize: '2rem' }}
+                                onClick={() => {
+                                    setPlayingTrack(data.trackByIdAndSameArtistTracks.track.url);
+                                    setInitStatePlayer(true);
+                                }}
+                            />
+                        </Button>
+                        {data.trackByIdAndSameArtistTracks.track.name}
+                    </Title>
                     <div className="track-container">
                         <div className="header">
                             <div className="player-wrapper">
                                 <ReactPlayer
                                     className="react-wrapper"
-                                    url={data.track.url}
+                                    url={playingTrack}
                                     width="100%"
                                     height="100%"
                                     controls
+                                    playing={
+                                        initStatePlayer || playingTrack !== data.trackByIdAndSameArtistTracks.track.url
+                                    }
                                 />
                             </div>
                         </div>
                         <div className="creator-info">
-                            <p>Posté par{data.track.creator.username}.</p>
+                            <p>Posté par {data.trackByIdAndSameArtistTracks.track.creator.username}.</p>
                         </div>
                         <div className="cta-actions">
                             <Space>
@@ -139,15 +158,17 @@ const Track = () => {
                                 </Popconfirm>
                             </Space>
                         </div>
-                        {/* <div className="list">
-                            <Title level={2}>Même artiste</Title>
-                            <Table
-                                columns={columns}
-                                dataSource={fakeData}
-                                pagination={{ pageSize: 10 }}
-                                scroll={{ y: 240 }}
-                            />
-                        </div> */}
+                        {data && (
+                            <div className="list">
+                                <Title level={2}>Même artiste</Title>
+                                <Table
+                                    columns={columns}
+                                    dataSource={data.trackByIdAndSameArtistTracks.tracks}
+                                    pagination={{ pageSize: 10 }}
+                                    scroll={{ y: 240 }}
+                                />
+                            </div>
+                        )}
                     </div>
                 </>
             )}
