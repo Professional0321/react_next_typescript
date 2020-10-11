@@ -66,7 +66,7 @@ const Register = () => {
         <>
             <Title style={{ textAlign: 'center', color: '#f3f5f9' }}>Inscription</Title>
             <Form
-                {...formItemLayout}
+                // {...formItemLayout}
                 form={form}
                 layout="vertical"
                 className="register-form"
