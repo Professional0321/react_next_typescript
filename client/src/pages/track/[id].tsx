@@ -1,9 +1,22 @@
-import { DeleteOutlined, EditOutlined, HeartOutlined, LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Result, Space, Spin, Table, Typography } from 'antd';
+import {
+    BackwardOutlined,
+    CaretRightOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    ForwardOutlined,
+    HeartOutlined,
+    LoadingOutlined,
+    PauseOutlined,
+    PauseCircleOutlined,
+    PlayCircleOutlined,
+    RetweetOutlined,
+    SoundOutlined,
+} from '@ant-design/icons';
+import { Button, Popconfirm, Slider, Space, Spin, Table, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 import {
     Track as TrackProps,
@@ -13,10 +26,34 @@ import {
 import '../../styles/components/track.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { getYouTubeId } from '../../utils/getYouTubeId';
+import { secondsToTime } from '../../utils/secondsToTime';
 import { useGetIntId } from '../../utils/useGetIntId';
+import Player from '../../components/Player';
 
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+type PlayerProps = {
+    id: number | null | undefined;
+    url: string | null | undefined;
+    name: string | null | undefined;
+    image: string | null | undefined;
+    playing: boolean;
+    volume: number;
+    seeking: boolean;
+    played: number;
+    playedSeconds: number;
+    loaded: number;
+    duration: number;
+    loop: boolean;
+};
+
+type ProgressProps = {
+    played: number;
+    playedSeconds: number;
+    loaded: number;
+    loadedSeconds: number;
+};
 
 const Track = () => {
     const router = useRouter();
@@ -26,15 +63,22 @@ const Track = () => {
             id: intId,
         },
     });
+
+    // Mutations
     const [, deleteTrack] = useDeleteTrackMutation();
-
-    const [playingTrack, setPlayingTrack] = useState<string | undefined>('');
-    const [initStatePlayer, setInitStatePlayer] = useState<boolean>(false);
-
-    useEffect(() => setPlayingTrack(data?.trackByIdAndSameArtistTracks?.track?.url), [data, fetching]);
-
+    // Delete Popover
     const text = 'Êtes-vous sûr de vouloir supprimer cette musique ?';
 
+    // Player
+    // const ref = useRef();
+    const [openPlayer, setOpenPlayer] = useState<boolean>(false);
+    const [track, setTrack] = useState<TrackProps | null>(null);
+
+    const handleTrack = (track: TrackProps) => {
+        setTrack(track);
+    };
+
+    // List
     const columns = [
         {
             title: '',
@@ -45,12 +89,23 @@ const Track = () => {
                         <PlayCircleOutlined
                             style={{ fontSize: '1.5rem' }}
                             onClick={() => {
-                                setPlayingTrack(track.url);
+                                if (!openPlayer) {
+                                    setOpenPlayer(true);
+                                } else if (track.id !== data?.trackByIdAndSameArtistTracks.track.id) {
+                                    handleTrack(track);
+                                }
                             }}
                         />
                     </Button>
+                    {/* <Button type="text">
+                                        <PauseCircleOutlined
+                                            style={{ fontSize: '1.5rem' }}
+                                            // onClick={() => {
+                                            // }}
+                                        />
+                                    </Button> */}
                     <Button type="text">
-                        <HeartOutlined style={{ fontSize: '1.5rem' }} />
+                        <HeartOutlined style={{ fontSize: '1.5rem', color: '#606060' }} />
                     </Button>
                 </Space>
             ),
@@ -82,21 +137,6 @@ const Track = () => {
         return <div>{error.message}</div>;
     }
 
-    if (!data?.trackByIdAndSameArtistTracks?.track) {
-        return (
-            <Result
-                status="404"
-                title="404"
-                subTitle="Oups, cette page n'existe pas."
-                extra={
-                    <Link href="/">
-                        <Button type="primary">Accueil</Button>
-                    </Link>
-                }
-            />
-        );
-    }
-
     return (
         <div>
             {!data && fetching ? (
@@ -108,30 +148,22 @@ const Track = () => {
                             <PlayCircleOutlined
                                 style={{ fontSize: '2rem' }}
                                 onClick={() => {
-                                    setPlayingTrack(data.trackByIdAndSameArtistTracks.track.url);
-                                    setInitStatePlayer(true);
+                                    if (!openPlayer) {
+                                        setOpenPlayer(true);
+                                    }
+                                    handleTrack(data?.trackByIdAndSameArtistTracks.track);
                                 }}
                             />
                         </Button>
                         {data.trackByIdAndSameArtistTracks.track.name}
                     </Title>
                     <div className="track-container">
-                        <div className="header">
-                            <div className="player-wrapper">
-                                <ReactPlayer
-                                    className="react-wrapper"
-                                    url={playingTrack}
-                                    width="100%"
-                                    height="100%"
-                                    controls
-                                    playing={
-                                        initStatePlayer || playingTrack !== data.trackByIdAndSameArtistTracks.track.url
-                                    }
-                                />
-                            </div>
-                        </div>
+                        <div className="header" />
                         <div className="creator-info">
-                            <p>Posté par {data.trackByIdAndSameArtistTracks.track.creator.username}.</p>
+                            <p>
+                                Posté par{' '}
+                                {data?.trackByIdAndSameArtistTracks.track.creator.username}.
+                            </p>
                         </div>
                         <div className="cta-actions">
                             <Space>
@@ -158,6 +190,12 @@ const Track = () => {
                                 </Popconfirm>
                             </Space>
                         </div>
+                        {openPlayer && (
+                            <Player
+                                track={track || data?.trackByIdAndSameArtistTracks.track}
+                                tracks={data?.trackByIdAndSameArtistTracks.tracks}
+                            />
+                        )}
                         {data && (
                             <div className="list">
                                 <Title level={2}>Même artiste</Title>

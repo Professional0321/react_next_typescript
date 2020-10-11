@@ -73,7 +73,7 @@ const CreateTrack = () => {
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube/SoundCloud)"
+                        placeholder="Lien de la musique (YouTube)"
                     />
                 </Form.Item>
 

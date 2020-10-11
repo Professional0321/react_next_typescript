@@ -26,7 +26,6 @@ const errorExchange: Exchange = ({ forward }) => (ops$) => {
     );
 };
 
-
 // Invalidate caching all tracks
 const invalidateAllTracks = (cache: Cache) => {
     const allFields = cache.inspectFields('Query');

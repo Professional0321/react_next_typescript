@@ -24,9 +24,135 @@
 
   .list {
     margin-top: 2rem;
+
     .table-cover {
       width: 2rem;
       height: 2rem;
+    }
+  }
+
+  .video-wrapper {
+    position: fixed;
+    z-index: 99;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+
+    .video .video__actions,
+    .video__volume,
+    .video__preview {
+      width: 150px;
+    }
+
+    .video {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position: relative;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+      bottom: 0;
+      left: 0;
+      background: #141819;
+      // background: @black;
+
+      .video__slider {
+        position: absolute;
+        top: -1rem;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        height: 10px;
+      }
+
+      .video__preview {
+        width: 150px;
+
+        .video__player {
+          display: flex;
+          position: fixed;
+          left: 0;
+          bottom: 0;
+          // background: #000;
+          width: auto;
+          height: auto;
+
+          .video-player {}
+
+          .video__player-thumbnail {
+            img {
+              height: 4rem;
+              // width: 4rem;
+              width: auto;
+              // border-radius: 50%;
+            }
+          }
+        }
+
+        .video__infos {
+              width: 300px;
+              height: 100%;
+              display: -webkit-box;
+              display: flex;
+              font-size: 0.75rem;
+              padding: 0.25rem;
+              margin-left: 7.5rem;
+              text-align: left;
+              flex-direction: column;
+              justify-content: center;
+              // background: #141819;
+              color: @grey;
+          a {
+            div {
+              span.video__player-link {}
+            }
+          }
+
+          div {
+            span.video__player-text {
+              font-size: 0.75rem;
+
+            }
+          }
+        }
+      }
+
+      .video__actions,
+      .video__actions-buttons {
+        height: 100%;
+        display: -webkit-box;
+        display: flex;
+        align-items: center;
+      }
+
+      .video__actions {
+        width: 150px;
+
+        .video__actions-buttons {
+          width: 100%;
+          justify-content: center;
+
+          span {
+            font-size: 2.5rem;
+          }
+        }
+      }
+
+      .video__volume {
+        display: flex;
+        align-items: center;
+        span {
+          font-size: 2rem;
+        }
+        .ant-slider {
+          width: 100%;
+              margin-left: 1rem;
+              margin-right: 1rem;
+        }
+
+      }
     }
   }
 

@@ -1,18 +1,28 @@
-import React, { useState } from 'react';
-import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import React, { useState, useRef } from 'react';
+import {
+    ArrowDownOutlined,
+    ArrowUpOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    LoadingOutlined,
+    PlayCircleOutlined,
+    // PauseCircleOutlined,
+} from '@ant-design/icons';
 import { Button, Card, Spin, Typography, Popconfirm } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
-import ReactPlayer from 'react-player/lazy';
 import {
     useTracksQuery,
     useMeQuery,
     useVoteMutation,
     TrackSnippetFragment,
     useDeleteTrackMutation,
+    Track,
 } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { getYouTubeId } from '../utils/getYouTubeId';
+import Player from '../components/Player';
 
 const { Title } = Typography;
 // const { Meta } = Card;
@@ -39,6 +49,16 @@ const Index = () => {
     const [, vote] = useVoteMutation();
 
     const [, deleteTrack] = useDeleteTrackMutation();
+
+    // Player
+    // const ref = useRef();
+    const [openPlayer, setOpenPlayer] = useState<boolean>(false);
+    // const [playing, setPlaying] = useState<boolean>(false);
+    const [track, setTrack] = useState<Track | null>(null);
+
+    const handleTrack = (track: Track) => {
+        setTrack(track);
+    };
 
     if (!fetching && !data) {
         return (
@@ -132,7 +152,30 @@ const Index = () => {
                                     // <DeleteOutlined key="delete" />,
                                 ]}
                             >
-                                <ReactPlayer url={track.url} width="100%" height="100%" controls />
+                                <div className="video-thumbnail">
+                                    <div className="player-actions">
+                                        <Button type="text">
+                                            <PlayCircleOutlined
+                                                onClick={() => {
+                                                    setOpenPlayer(true);
+                                                    handleTrack(track);
+                                                }}
+                                            />
+                                        </Button>
+                                        {/* <Button type="text">
+                                                <PauseCircleOutlined
+                                                    onClick={() => {
+                                                        setPlaying(false);
+                                                    }}
+                                                />
+                                            </Button> */}
+                                    </div>
+                                    <img
+                                        src={`https://img.youtube.com/vi/${getYouTubeId(track.url)}/0.jpg`}
+                                        alt={track.url}
+                                        className="video-thumbnail-image"
+                                    />
+                                </div>
                                 <Link href="/track/[id]" as={`/track/${track.id}`}>
                                     <a>
                                         <strong>{track.name}</strong>
@@ -144,8 +187,9 @@ const Index = () => {
                     )
                 )}
             </div>
+            {openPlayer && <Player track={track} />}
             {data?.tracks.hasMore ? (
-                <div className="load-more">
+                <div className="load-more" style={{ paddingBottom: openPlayer ? '4rem' : '' }}>
                     <Button
                         type="primary"
                         loading={fetching}

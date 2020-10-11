@@ -17,10 +17,10 @@ function MyApp({ Component, pageProps }: AppProps) {
                 breakpoint="lg"
                 collapsedWidth="0"
                 onBreakpoint={(broken) => {
-                    console.log(broken);
+                    // console.log(broken);
                 }}
                 onCollapse={(collapsed, type) => {
-                    console.log(collapsed, type);
+                    // console.log(collapsed, type);
                 }}
             >
                 {/* <div className="logo" /> */}
@@ -39,6 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                         {/* Page */}
                         <Component {...pageProps} />
+                        {/* Player */}
                     </div>
                 </Content>
             </LayoutAD>

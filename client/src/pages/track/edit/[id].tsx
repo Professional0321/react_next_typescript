@@ -88,14 +88,14 @@ const EditTrack = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Veuillez entre un lien Youtube/SoundCloud vers la musique !',
+                            message: 'Veuillez entre un lien Youtube vers la musique !',
                         },
                     ]}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube/Soundcloud)"
+                        placeholder="Lien de la musique (YouTube)"
                     />
                 </Form.Item>
 

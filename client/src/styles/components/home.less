@@ -15,6 +15,76 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .ant-card-body {
+      a {
+        margin-top: 1rem;
+      }
+
+      .video-thumbnail:hover {
+        .player-actions {
+          display: block;
+        }
+      }
+
+      .video-thumbnail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .video-thumbnail-image {
+          width: 100%;
+          height: 100%;
+          // background-size: cover;
+          // background-position: center center;
+          // cursor: pointer;
+          // display: flex;
+          // align-items: center;
+          // justify-content: center;
+          background: rgba(0, 0, 0, 0.3);
+          margin-bottom: 1rem;
+        }
+
+        .player-actions {
+          position: absolute;
+          // background: radial-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 60%);
+          // border-radius: 64px;
+          // width: 64px;
+          // height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          display: none;
+
+
+          button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            span {
+              font-size: 2.5rem;
+            }
+          }
+
+
+          .player-actions {}
+        }
+      }
+
+      .player-actions-container {
+        background: radial-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 60%);
+        border-radius: 64px;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+
+        .player-actions {}
+      }
+    }
   }
 }
 
