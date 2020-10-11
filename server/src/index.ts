@@ -16,13 +16,12 @@ import { __prod__, COOKIE_NAME } from './constants';
 import { Upvote } from './entities/Upvote';
 import { createUserLoader } from './utils/createUserLoader';
 import { createUpvoteLoader } from './utils/createUpvoteLoader';
+import 'dotenv-safe/config';
 
 const main = async () => {
     const connection = await createConnection({
         type: 'postgres',
-        database: 'dylt2',
-        username: 'etudiant',
-        password: 'postgres',
+        url: process.env.DATABASE_URL,
         logging: true,
         synchronize: true,
         migrations: [path.join(__dirname, './migrations/*')],
@@ -36,11 +35,11 @@ const main = async () => {
     const app = express();
 
     const RedisStore = connectRedis(session);
-    const redis = new Redis();
+    const redis = new Redis(process.env.REDIS_URL);
 
     app.use(
         cors({
-            origin: 'http://localhost:3000',
+            origin: process.env.CORS_ORIGIN,
             credentials: true,
         }),
     );
@@ -57,9 +56,10 @@ const main = async () => {
                 httpOnly: true,
                 sameSite: 'lax', // CSRF
                 secure: __prod__, // cookie only works in https
+                domain: __prod__ ? 'dylt.vercel.app' : undefined, // Cookie domain
             },
             saveUninitialized: false,
-            secret: 'Sh3naN/g*ns2899',
+            secret: process.env.SESSION_SECRET,
             resave: false,
         }),
     );
@@ -83,8 +83,8 @@ const main = async () => {
         cors: false,
     });
 
-    app.listen(4000, () => {
-        console.log('Server started on localhost:4000');
+    app.listen(parseInt(process.env.PORT), () => {
+        console.log(`Server started on localhost:${process.env.PORT}`);
     });
 };
 
