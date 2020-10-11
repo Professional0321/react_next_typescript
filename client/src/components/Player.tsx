@@ -58,7 +58,7 @@ const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
                 playing: true,
                 seeking: false,
             }),
-            // TODO: if tracks state.url => [track.url, tracks.url]
+        // TODO: if tracks state.url => [track.url, tracks.url]
         [track, tracks],
     );
 

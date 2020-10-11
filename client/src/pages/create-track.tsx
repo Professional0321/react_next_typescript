@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useCreateTrackMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useIsAuth } from '../utils/useIsAuth';
+import { validateYouTubeUrl } from '../utils/validateYouTubeUrl';
 import '../styles/components/createTrack.less';
 import { cleanYouTubeUrl } from '../utils/cleanYouTubeUrl';
 
@@ -22,7 +23,7 @@ const CreateTrack = () => {
 
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
-    // const [errors, setErrors] = useState<Array>([]);
+    const [error, setError] = useState<string | undefined>(undefined);
 
     const [, createTrack] = useCreateTrackMutation();
 
@@ -35,6 +36,13 @@ const CreateTrack = () => {
                 url: cleanYouTubeUrl(values.url),
             },
         });
+
+        const isValidUrl = validateYouTubeUrl(values.url);
+        if (!isValidUrl) {
+            setLoading(false);
+            setError('Url non valide. Seuls les liens YouTube sont acceptés.');
+            return;
+        }
 
         if (!error) {
             setLoading(false);
@@ -68,7 +76,14 @@ const CreateTrack = () => {
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{ required: true, message: 'Veuillez entre un lien vers la musique !' }]}
+                    rules={[{
+                        required: true,
+                        message: 'Veuillez entre un lien vers la musique !',
+                    }]}
+                    {...(error && {
+                        validateStatus: 'error',
+                        help: error,
+                    })}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
