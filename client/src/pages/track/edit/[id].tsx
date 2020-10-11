@@ -1,5 +1,5 @@
 import { LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Spin, Typography } from 'antd';
+import { Button, Form, Input, Spin, Typography, Space } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
@@ -100,9 +100,27 @@ const EditTrack = () => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="edit-track-form-button" loading={loading}>
+                    <Space size="large">
+                    <Button
+                        type="default"
+                        htmlType="button"
+                        className="edit-track-form-button"
+                        loading={loading}
+                        onClick={() => {
+                            router.back();
+                        }}
+                    >
+                        Retour
+                    </Button>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="edit-track-form-button"
+                        loading={loading}
+                    >
                         Modifier la musique
                     </Button>
+                    </Space>
                 </Form.Item>
             </Form>
         </>
