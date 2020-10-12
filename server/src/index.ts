@@ -58,7 +58,7 @@ const main = async () => {
                 httpOnly: true,
                 sameSite: 'lax', // CSRF
                 secure: __prod__, // cookie only works in https
-                domain: __prod__ ? 'dylt.vercel.app' : undefined, // Cookie domain
+                domain: __prod__ ? 'ec2-54-234-61-225.compute-1.amazonaws.com' : undefined, // Cookie domain
             },
             saveUninitialized: false,
             secret: process.env.SESSION_SECRET,
