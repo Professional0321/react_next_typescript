@@ -1,5 +1,5 @@
 import { LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Spin, Typography } from 'antd';
+import { Button, Form, Input, Spin, Typography, Space } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react';
@@ -7,6 +7,7 @@ import { useTrackQuery, useUpdateTrackMutation } from '../../../generated/graphq
 import { createUrqlClient } from '../../../utils/createUrqlClient';
 import { useGetIntId } from '../../../utils/useGetIntId';
 import '../../../styles/components/editTrack.less';
+import { validateYouTubeUrl } from '../../../utils/validateYouTubeUrl';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -31,7 +32,8 @@ const EditTrack = () => {
         },
     });
     const [, updateTrack] = useUpdateTrackMutation();
-    // const [errors, setErrors] = useState<Array>([]);
+    
+    const [error, setError] = useState<string | undefined>(undefined);
 
     const onFinish = async (values: EditTrackProps) => {
         setLoading(true);
@@ -40,6 +42,13 @@ const EditTrack = () => {
             id: intId,
             ...values,
         });
+
+        const isValidUrl = validateYouTubeUrl(values.url);
+        if (!isValidUrl) {
+            setLoading(false);
+            setError('Url non valide. Seuls les liens YouTube sont acceptés.');
+            return;
+        }
 
         if (!error) {
             setLoading(false);
@@ -88,21 +97,43 @@ const EditTrack = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Veuillez entre un lien Youtube/SoundCloud vers la musique !',
+                            message: 'Veuillez entre un lien Youtube vers la musique !',
                         },
                     ]}
+                    {...(error && {
+                        validateStatus: 'error',
+                        help: error,
+                    })}
                 >
                     <Input
                         prefix={<LinkOutlined className="site-form-item-icon" />}
                         type="text"
-                        placeholder="Lien de la musique (YouTube/Soundcloud)"
+                        placeholder="Lien de la musique (YouTube)"
                     />
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="edit-track-form-button" loading={loading}>
+                    <Space size="large">
+                    <Button
+                        type="default"
+                        htmlType="button"
+                        className="edit-track-form-button"
+                        loading={loading}
+                        onClick={() => {
+                            router.back();
+                        }}
+                    >
+                        Retour
+                    </Button>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="edit-track-form-button"
+                        loading={loading}
+                    >
                         Modifier la musique
                     </Button>
+                    </Space>
                 </Form.Item>
             </Form>
         </>

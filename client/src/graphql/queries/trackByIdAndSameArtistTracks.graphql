@@ -1,0 +1,10 @@
+query TrackByIdAndSameArtistTracks($id: Int!) {
+    trackByIdAndSameArtistTracks(id: $id) {
+        track {
+            ...TrackSnippet
+        }
+        tracks {
+            ...TrackSnippet
+        }
+    }
+}

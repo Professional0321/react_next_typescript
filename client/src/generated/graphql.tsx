@@ -15,10 +15,11 @@ export type Scalars = {
 
 export type Query = {
     __typename?: 'Query';
-    hello: Scalars['String'];
-    tracks: PaginatedTracks;
-    track?: Maybe<Track>;
     me?: Maybe<User>;
+    tracks: PaginatedTracks;
+    getTracksByName: SearchTracks;
+    trackByIdAndSameArtistTracks: IdAndArtistTracks;
+    track: Track;
 };
 
 export type QueryTracksArgs = {
@@ -26,8 +27,26 @@ export type QueryTracksArgs = {
     limit: Scalars['Int'];
 };
 
+export type QueryGetTracksByNameArgs = {
+    name: Scalars['String'];
+};
+
+export type QueryTrackByIdAndSameArtistTracksArgs = {
+    id: Scalars['Int'];
+};
+
 export type QueryTrackArgs = {
     id: Scalars['Int'];
+};
+
+export type User = {
+    __typename?: 'User';
+    id: Scalars['Float'];
+    username: Scalars['String'];
+    email: Scalars['String'];
+    password: Scalars['String'];
+    createdAt: Scalars['String'];
+    updatedAt: Scalars['String'];
 };
 
 export type PaginatedTracks = {
@@ -49,27 +68,46 @@ export type Track = {
     updatedAt: Scalars['String'];
 };
 
-export type User = {
-    __typename?: 'User';
-    id: Scalars['Float'];
-    username: Scalars['String'];
-    email: Scalars['String'];
-    password: Scalars['String'];
-    createdAt: Scalars['String'];
-    updatedAt: Scalars['String'];
+export type SearchTracks = {
+    __typename?: 'SearchTracks';
+    tracks: Array<Track>;
+};
+
+export type IdAndArtistTracks = {
+    __typename?: 'IdAndArtistTracks';
+    track: Track;
+    tracks: Array<Track>;
 };
 
 export type Mutation = {
     __typename?: 'Mutation';
-    vote: Scalars['Boolean'];
-    createTrack: Track;
-    updateTrack?: Maybe<Track>;
-    deleteTrack: Scalars['Boolean'];
     changePassword: UserResponse;
     forgotPassword: Scalars['Boolean'];
     register: UserResponse;
     login: UserResponse;
     logout: Scalars['Boolean'];
+    vote: Scalars['Boolean'];
+    createTrack: Track;
+    updateTrack?: Maybe<Track>;
+    deleteTrack: Scalars['Boolean'];
+};
+
+export type MutationChangePasswordArgs = {
+    newPassword: Scalars['String'];
+    token: Scalars['String'];
+};
+
+export type MutationForgotPasswordArgs = {
+    email: Scalars['String'];
+};
+
+export type MutationRegisterArgs = {
+    options: UsernameEmailPasswordInput;
+};
+
+export type MutationLoginArgs = {
+    password: Scalars['String'];
+    usernameOrEmail: Scalars['String'];
 };
 
 export type MutationVoteArgs = {
@@ -91,29 +129,6 @@ export type MutationDeleteTrackArgs = {
     id: Scalars['Int'];
 };
 
-export type MutationChangePasswordArgs = {
-    newPassword: Scalars['String'];
-    token: Scalars['String'];
-};
-
-export type MutationForgotPasswordArgs = {
-    email: Scalars['String'];
-};
-
-export type MutationRegisterArgs = {
-    options: UsernameEmailPasswordInput;
-};
-
-export type MutationLoginArgs = {
-    password: Scalars['String'];
-    usernameOrEmail: Scalars['String'];
-};
-
-export type TrackInput = {
-    name: Scalars['String'];
-    url: Scalars['String'];
-};
-
 export type UserResponse = {
     __typename?: 'UserResponse';
     errors?: Maybe<Array<FieldError>>;
@@ -131,6 +146,11 @@ export type UsernameEmailPasswordInput = {
     email: Scalars['String'];
     password: Scalars['String'];
     confirm: Scalars['String'];
+};
+
+export type TrackInput = {
+    name: Scalars['String'];
+    url: Scalars['String'];
 };
 
 export type RegularErrorFragment = { __typename?: 'FieldError' } & Pick<FieldError, 'field' | 'message'>;
@@ -217,6 +237,16 @@ export type VoteMutationVariables = Exact<{
 
 export type VoteMutation = { __typename?: 'Mutation' } & Pick<Mutation, 'vote'>;
 
+export type GetTracksByNameQueryVariables = Exact<{
+    name: Scalars['String'];
+}>;
+
+export type GetTracksByNameQuery = { __typename?: 'Query' } & {
+    getTracksByName: { __typename?: 'SearchTracks' } & {
+        tracks: Array<{ __typename?: 'Track' } & TrackSnippetFragment>;
+    };
+};
+
 export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MeQuery = { __typename?: 'Query' } & { me?: Maybe<{ __typename?: 'User' } & RegularUserFragment> };
@@ -226,12 +256,21 @@ export type TrackQueryVariables = Exact<{
 }>;
 
 export type TrackQuery = { __typename?: 'Query' } & {
-    track?: Maybe<
-        { __typename?: 'Track' } & Pick<
-            Track,
-            'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt' | 'voteStatus'
-        > & { creator: { __typename?: 'User' } & Pick<User, 'username' | 'id' | 'email' | 'createdAt'> }
-    >;
+    track: { __typename?: 'Track' } & Pick<
+        Track,
+        'id' | 'name' | 'url' | 'votes' | 'creatorId' | 'createdAt' | 'updatedAt' | 'voteStatus'
+    > & { creator: { __typename?: 'User' } & Pick<User, 'username' | 'id' | 'email' | 'createdAt'> };
+};
+
+export type TrackByIdAndSameArtistTracksQueryVariables = Exact<{
+    id: Scalars['Int'];
+}>;
+
+export type TrackByIdAndSameArtistTracksQuery = { __typename?: 'Query' } & {
+    trackByIdAndSameArtistTracks: { __typename?: 'IdAndArtistTracks' } & {
+        track: { __typename?: 'Track' } & TrackSnippetFragment;
+        tracks: Array<{ __typename?: 'Track' } & TrackSnippetFragment>;
+    };
 };
 
 export type TracksQueryVariables = Exact<{
@@ -389,6 +428,20 @@ export const VoteDocument = gql`
 export function useVoteMutation() {
     return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument);
 }
+export const GetTracksByNameDocument = gql`
+    query GetTracksByName($name: String!) {
+        getTracksByName(name: $name) {
+            tracks {
+                ...TrackSnippet
+            }
+        }
+    }
+    ${TrackSnippetFragmentDoc}
+`;
+
+export function useGetTracksByNameQuery(options: Omit<Urql.UseQueryArgs<GetTracksByNameQueryVariables>, 'query'> = {}) {
+    return Urql.useQuery<GetTracksByNameQuery>({ query: GetTracksByNameDocument, ...options });
+}
 export const MeDocument = gql`
     query Me {
         me {
@@ -424,6 +477,28 @@ export const TrackDocument = gql`
 
 export function useTrackQuery(options: Omit<Urql.UseQueryArgs<TrackQueryVariables>, 'query'> = {}) {
     return Urql.useQuery<TrackQuery>({ query: TrackDocument, ...options });
+}
+export const TrackByIdAndSameArtistTracksDocument = gql`
+    query TrackByIdAndSameArtistTracks($id: Int!) {
+        trackByIdAndSameArtistTracks(id: $id) {
+            track {
+                ...TrackSnippet
+            }
+            tracks {
+                ...TrackSnippet
+            }
+        }
+    }
+    ${TrackSnippetFragmentDoc}
+`;
+
+export function useTrackByIdAndSameArtistTracksQuery(
+    options: Omit<Urql.UseQueryArgs<TrackByIdAndSameArtistTracksQueryVariables>, 'query'> = {},
+) {
+    return Urql.useQuery<TrackByIdAndSameArtistTracksQuery>({
+        query: TrackByIdAndSameArtistTracksDocument,
+        ...options,
+    });
 }
 export const TracksDocument = gql`
     query Tracks($limit: Int!, $cursor: String) {

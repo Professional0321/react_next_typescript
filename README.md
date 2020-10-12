@@ -40,3 +40,5 @@ I'm building this project to learn TypeScript and NextJS.
 - TypeORM
 
 - PostreSQL
+
+![](dylt.png)

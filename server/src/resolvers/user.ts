@@ -117,7 +117,7 @@ export class UserResolver {
 
         await sendEmail(
             email,
-            `<a href="http://localhost:3000/change-password/${token}">Réinitialiser le mot de passe</a>`,
+            `<a href="http://localhost:${process.env.PORT}/change-password/${token}">Réinitialiser le mot de passe</a>`,
         );
 
         return true;

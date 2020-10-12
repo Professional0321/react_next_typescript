@@ -18,6 +18,7 @@ import { MyContext } from '../types';
 import { isAuth } from '../middleware/isAuth';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
+import { getArtistName } from '../utils/getArtistName';
 
 @InputType()
 class TrackInput {
@@ -35,6 +36,21 @@ class PaginatedTracks {
 
     @Field()
     hasMore!: boolean;
+}
+
+@ObjectType()
+class SearchTracks {
+    @Field(() => [Track])
+    tracks!: Track[];
+}
+
+@ObjectType()
+class IdAndArtistTracks {
+    @Field(() => Track)
+    track!: Track;
+
+    @Field(() => [Track])
+    tracks!: Track[];
 }
 
 @Resolver(Track)
@@ -166,10 +182,72 @@ export class TrackResolver {
         };
     }
 
+    // Find all tracks by %name%
+    @Query(() => SearchTracks)
+    async getTracksByName(@Arg('name', () => String!) name: string): Promise<SearchTracks | undefined> {
+        const tracks = await getConnection().query(
+            `
+    select t.*
+    from track t
+    where t."name" LIKE '%${name}%'
+    order by t."createdAt" DESC
+    `,
+        );
+
+        // console.log('name: ', name);
+        // console.log('tracks: ', tracks);
+
+        if (!tracks.tracks) {
+            throw new Error('Pas de résultat pour cette recherche.');
+        }
+        return { tracks };
+    }
+
+    // Find track by id + same artist tracks
+    @Query(() => IdAndArtistTracks)
+    async trackByIdAndSameArtistTracks(@Arg('id', () => Int) id: number): Promise<IdAndArtistTracks | undefined> {
+        const track = await Track.findOne(id);
+
+        if (!track) {
+            throw new Error('Pas de musique avec cet ID.');
+        }
+        const name = getArtistName(track.name);
+
+        const tracks = await getConnection().query(
+            `
+        select t.*
+        from track t
+        where t."name" LIKE '%${name}%'
+        order by t."createdAt" DESC
+        `,
+        );
+
+        // console.log('name: ', name);
+        // console.log('tracks: ', tracks);
+
+        if (!tracks) {
+            throw new Error('Pas de résultat pour cette recherche.');
+        }
+
+        // Filter track from query Id
+        const tracksFiltered = tracks.filter((t: Track) => track.id !== t.id);
+        // console.log(tracksFiltered);
+
+        return {
+            track: track,
+            tracks: tracksFiltered,
+        };
+    }
+
     // Find track by id
-    @Query(() => Track, { nullable: true })
-    track(@Arg('id', () => Int) id: number): Promise<Track | undefined> {
-        return Track.findOne(id);
+    @Query(() => Track)
+    async track(@Arg('id', () => Int) id: number): Promise<Track | undefined> {
+        const track = await Track.findOne(id);
+
+        if (!track) {
+            throw new Error('Pas de musique avec cet ID.');
+        }
+        return track;
     }
 
     // Create new track

@@ -1,0 +1,7 @@
+query GetTracksByName($name: String!) {
+    getTracksByName(name: $name) {
+        tracks {
+            ...TrackSnippet
+        }
+    }
+}
