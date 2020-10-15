@@ -64,7 +64,6 @@ const Index: React.FC = () => {
         return (
             <div>
                 <div>Une erreur est survenue dans la requête.</div>
-                );
                 <div>{error?.message}</div>
             </div>
         );

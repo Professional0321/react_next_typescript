@@ -58,16 +58,16 @@ const CreateTrack = () => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix) [Réf]"
+                    label="Artiste(s) - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
                             message:
-                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
+                                'Veuillez entrer le nom de l\'artiste et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
+                    <Input placeholder="Artiste(s) - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
