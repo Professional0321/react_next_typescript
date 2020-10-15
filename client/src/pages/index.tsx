@@ -31,7 +31,7 @@ type VoteLoad = 'upvote-loading' | 'downvote-loading' | 'not-loading';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-const Index = () => {
+const Index: React.FC = () => {
     const [variables, setVariables] = useState({
         limit: 8,
         cursor: null as null | string,

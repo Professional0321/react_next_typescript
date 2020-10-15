@@ -5,10 +5,7 @@ const regex = new RegExp(
 
 export const validateYouTubeUrl = (url: string) => {
     if (url.match(regex)) {
-        console.log('true');
         return true;
     }
-    console.log('false');
     return false;
-
-}
+};

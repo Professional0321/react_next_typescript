@@ -8,15 +8,11 @@ import { createUrqlClient } from '../../../utils/createUrqlClient';
 import { useGetIntId } from '../../../utils/useGetIntId';
 import '../../../styles/components/editTrack.less';
 import { validateYouTubeUrl } from '../../../utils/validateYouTubeUrl';
+import { TTrackFormProps } from '../../../types';
 
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const { Title } = Typography;
-
-type EditTrackProps = {
-    name: string;
-    url: string;
-};
 
 const EditTrack = () => {
     const router = useRouter();
@@ -32,10 +28,10 @@ const EditTrack = () => {
         },
     });
     const [, updateTrack] = useUpdateTrackMutation();
-    
+
     const [error, setError] = useState<string | undefined>(undefined);
 
-    const onFinish = async (values: EditTrackProps) => {
+    const onFinish = async (values: TTrackFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const { error } = await updateTrack({
@@ -114,25 +110,20 @@ const EditTrack = () => {
 
                 <Form.Item>
                     <Space size="large">
-                    <Button
-                        type="default"
-                        htmlType="button"
-                        className="edit-track-form-button"
-                        loading={loading}
-                        onClick={() => {
-                            router.back();
-                        }}
-                    >
-                        Retour
-                    </Button>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="edit-track-form-button"
-                        loading={loading}
-                    >
-                        Modifier la musique
-                    </Button>
+                        <Button
+                            type="default"
+                            htmlType="button"
+                            className="edit-track-form-button"
+                            loading={loading}
+                            onClick={() => {
+                                router.back();
+                            }}
+                        >
+                            Retour
+                        </Button>
+                        <Button type="primary" htmlType="submit" className="edit-track-form-button" loading={loading}>
+                            Modifier la musique
+                        </Button>
                     </Space>
                 </Form.Item>
             </Form>

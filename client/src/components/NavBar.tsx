@@ -3,9 +3,12 @@ import { Menu } from 'antd';
 import Link from 'next/link';
 import { HomeFilled, SearchOutlined, UserOutlined, PlusCircleOutlined, BarsOutlined } from '@ant-design/icons';
 import { useMeQuery } from '../generated/graphql';
+import { isServer } from '../utils/isServer';
 
-const NavBar = () => {
-    const [{ data, fetching }] = useMeQuery();
+const NavBar: React.FC = () => {
+    const [{ data, fetching }] = useMeQuery({
+        pause: isServer(),
+    });
     let body = null;
 
     // Data is loading
@@ -26,18 +29,18 @@ const NavBar = () => {
                 <Menu.Item key="1" icon={<HomeFilled />}>
                     <Link href="/">Accueil</Link>
                 </Menu.Item>
-                <Menu.Item key="2" icon={<SearchOutlined />}>
+                {/* <Menu.Item key="2" icon={<SearchOutlined />}>
                     <Link href="/explore">Explorer</Link>
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item key="3" icon={<PlusCircleOutlined />}>
                     <Link href="/create-track">Ajouter une musique</Link>
                 </Menu.Item>
-                <Menu.Item key="4" icon={<BarsOutlined />}>
+                {/* <Menu.Item key="4" icon={<BarsOutlined />}>
                     <Link href="/playlists">Playlists</Link>
                 </Menu.Item>
                 <Menu.Item key="5" icon={<UserOutlined />}>
                     <Link href="/profile">Mon profil</Link>
-                </Menu.Item>
+                </Menu.Item> */}
             </Menu>
         );
     }

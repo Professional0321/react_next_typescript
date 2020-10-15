@@ -38,7 +38,10 @@ const main = async () => {
     const redis = new Redis(process.env.REDIS_URL);
 
     // Proxy env / Nginx
-    app.set('proxy', 1);
+    app.set('trust proxy', 1);
+    // TODO: Install + config helmet
+    // https://expressjs.com/en/advanced/best-practice-security.html
+    app.disable('x-powered-by');
     app.use(
         cors({
             origin: process.env.CORS_ORIGIN,
@@ -55,12 +58,12 @@ const main = async () => {
             }),
             cookie: {
                 maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
-                httpOnly: true,
+                httpOnly: true, // client JS can't access cookie
                 sameSite: 'lax', // CSRF
                 secure: __prod__, // cookie only works in https
-                domain: __prod__ ? 'ec2-54-234-61-225.compute-1.amazonaws.com' : undefined, // Cookie domain
+                domain: __prod__ ? '.quentinbrohan.dev' : undefined, // Cookie domain
             },
-            saveUninitialized: false,
+            saveUninitialized: false, // don't create session by default
             secret: process.env.SESSION_SECRET,
             resave: false,
         }),

@@ -9,13 +9,9 @@ import { useIsAuth } from '../utils/useIsAuth';
 import { validateYouTubeUrl } from '../utils/validateYouTubeUrl';
 import '../styles/components/createTrack.less';
 import { cleanYouTubeUrl } from '../utils/cleanYouTubeUrl';
+import { TTrackFormProps } from '../types';
 
 const { Title } = Typography;
-
-type TrackInput = {
-    name: string;
-    url: string;
-};
 
 const CreateTrack = () => {
     const router = useRouter();
@@ -27,7 +23,7 @@ const CreateTrack = () => {
 
     const [, createTrack] = useCreateTrackMutation();
 
-    const onFinish = async (values: TrackInput) => {
+    const onFinish = async (values: TTrackFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const { error } = await createTrack({
@@ -76,10 +72,12 @@ const CreateTrack = () => {
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{
-                        required: true,
-                        message: 'Veuillez entre un lien vers la musique !',
-                    }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entre un lien vers la musique !',
+                        },
+                    ]}
                     {...(error && {
                         validateStatus: 'error',
                         help: error,

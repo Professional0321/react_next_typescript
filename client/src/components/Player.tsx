@@ -12,34 +12,21 @@ import { Slider } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { ReactPlayerProps } from 'react-player/lazy';
-import { Track } from '../generated/graphql';
 import '../styles/components/player.less';
 import { getYouTubeId } from '../utils/getYouTubeId';
 import { secondsToTime } from '../utils/secondsToTime';
+import { IPlayer } from '../interfaces';
+import { TProgressProps, TPlayerStateProps } from '../types';
 
-type PlayerProps = {
-    track: Track;
-    tracks: Array<Track>;
-    playing: boolean;
-};
-
-type ProgressProps = {
-    played: number;
-    playedSeconds: number;
-    loaded: number;
-    loadedSeconds: number;
-};
-
-// TODO: Transform to HOC
-const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
+// TODO:
+const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
     // console.log('track: ', track);
     // console.log('tracks: ', tracks);
-    const ref = useRef();
-    const [isReady, setIsReady] = useState<boolean>(false);
-    const [state, setState] = useState<ReactPlayerProps>({
+    const ref = useRef<ReactPlayer>(null);
+    // const [isReady, setIsReady] = useState<boolean>(false);
+    const [state, setState] = useState<TPlayerStateProps>({
         url: null,
-        name: null,
+        name: '',
         playing: false,
         volume: 1,
         seeking: true,
@@ -58,7 +45,7 @@ const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
                 playing: true,
                 seeking: false,
             }),
-        // TODO: if tracks state.url => [track.url, tracks.url]
+        // TODO: if tracks state.url => [track.url, ...tracks.url]
         [track, tracks],
     );
 
@@ -84,12 +71,12 @@ const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
     };
     const handleSeekMouseUp = (value: number) => {
         setState({ ...state, seeking: false });
-        if (ref) {
+        if (ref.current) {
             ref.current.seekTo(value);
         }
     };
     //
-    const handleProgress = (progress: ProgressProps) => {
+    const handleProgress = (progress: TProgressProps) => {
         // console.log('onProgress', progress);
         // Update only time slider if not seeking
         if (!state.seeking) {
@@ -106,7 +93,7 @@ const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
         setState({ ...state, duration });
     };
 
-    const formatter = (value?: number | undefined) => {
+    const formatter = (value: number) => {
         return `${value * 100}%`;
     };
 
@@ -141,12 +128,12 @@ const Player: React.FC<PlayerProps> = ({ track, tracks }) => {
                                 onPause={handlePause}
                                 onProgress={handleProgress}
                                 onDuration={handleDuration}
-                                onReady={() => setIsReady(true)}
+                                // onReady={() => setIsReady(true)}
                             />
                             <div className="video__player-thumbnail">
                                 <img
                                     src={
-                                        state.url?.length > 1
+                                        state?.url
                                             ? `https://img.youtube.com/vi/${getYouTubeId(state.url)}/0.jpg`
                                             : ''
                                     }

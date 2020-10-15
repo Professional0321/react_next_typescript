@@ -1,23 +1,23 @@
 import {
-    BackwardOutlined,
-    CaretRightOutlined,
     DeleteOutlined,
     EditOutlined,
-    ForwardOutlined,
     HeartOutlined,
     LoadingOutlined,
-    PauseOutlined,
     PauseCircleOutlined,
     PlayCircleOutlined,
-    RetweetOutlined,
-    SoundOutlined,
 } from '@ant-design/icons';
-import { Button, Popconfirm, Slider, Space, Spin, Table, Typography } from 'antd';
+import {
+    Button,
+    Popconfirm,
+    Space,
+    Spin,
+    Table,
+    Typography,
+} from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import ReactPlayer from 'react-player/lazy';
 import {
     Track as TrackProps,
     useDeleteTrackMutation,
@@ -32,28 +32,6 @@ import Player from '../../components/Player';
 
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-
-type PlayerProps = {
-    id: number | null | undefined;
-    url: string | null | undefined;
-    name: string | null | undefined;
-    image: string | null | undefined;
-    playing: boolean;
-    volume: number;
-    seeking: boolean;
-    played: number;
-    playedSeconds: number;
-    loaded: number;
-    duration: number;
-    loop: boolean;
-};
-
-type ProgressProps = {
-    played: number;
-    playedSeconds: number;
-    loaded: number;
-    loadedSeconds: number;
-};
 
 const Track = () => {
     const router = useRouter();
@@ -160,10 +138,7 @@ const Track = () => {
                     <div className="track-container">
                         <div className="header" />
                         <div className="creator-info">
-                            <p>
-                                Posté par{' '}
-                                {data?.trackByIdAndSameArtistTracks.track.creator.username}.
-                            </p>
+                            <p>Posté par {data?.trackByIdAndSameArtistTracks.track.creator.username}.</p>
                         </div>
                         <div className="cta-actions">
                             <Space>
