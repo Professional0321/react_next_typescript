@@ -1,6 +1,11 @@
 # Dylt - Client
 
-Using:
+## How to run
 
-- Next.js
-- Ant Design
+```
+yarn
+```
+
+```
+yarn dev
+```

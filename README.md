@@ -1,8 +1,10 @@
-# Dylt,discover new music
+# Dylt, discover new music
 
 Streaming platform for discovering music.
 
 I'm building this project to learn TypeScript and NextJS as well as updating my playlists with good sound.
+
+**[Live version :rocket: ](https://dylt.quentinbrohan.dev)**
 
 ## :sparkles: Features
 
@@ -62,22 +64,23 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 
 **You need PostgresQL installed with root access !**
 
-# In the server folder:
+#### In the server folder
 
 Changes .env with
 ```
 postgresql:/<YOURNAME>:<YOURPASSWORD>@localhost:5432/<YOURDBNAME>
 ```
 
-Install dependencies
 ```
 yarn
 ```
-1st terminal tab
+
+First terminal tab
 ```
 yarn watch
 ```
-2nd terminal tab
+
+Second terminal tab
 ```
 yarn dev
 ```
@@ -86,7 +89,7 @@ Server should be started and migration (InitialDB) runs with a clean database.
 
 ### Front
 
-In the client folder
+#### In the client folder
 
 ```
 yarn
