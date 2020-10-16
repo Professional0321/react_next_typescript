@@ -33,6 +33,11 @@ const CreateTrack = () => {
             },
         });
 
+        if (error) {
+            setError(error?.graphQLErrors[0].message);
+            setLoading(false);
+        }
+
         const isValidUrl = validateYouTubeUrl(values.url);
         if (!isValidUrl) {
             setLoading(false);
@@ -62,8 +67,7 @@ const CreateTrack = () => {
                     rules={[
                         {
                             required: true,
-                            message:
-                                'Veuillez entrer le nom de l\'artiste et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
+                            message: "Veuillez entrer le nom de l'artiste et le titre de la musique !",
                         },
                     ]}
                 >

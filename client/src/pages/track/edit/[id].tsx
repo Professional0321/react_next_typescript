@@ -80,8 +80,7 @@ const EditTrack = () => {
                     rules={[
                         {
                             required: true,
-                            message:
-                                'Veuillez entrer le nom de l\'artiste et le titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
+                            message: "Veuillez entrer le nom de l'artiste et le titre de la musique !",
                         },
                     ]}
                 >

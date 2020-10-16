@@ -19,6 +19,7 @@ import { isAuth } from '../middleware/isAuth';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
 import { getArtistName } from '../utils/getArtistName';
+import { getYouTubeId } from '../utils/getYouTubeId';
 
 @InputType()
 class TrackInput {
@@ -267,12 +268,27 @@ export class TrackResolver {
         @Arg('input') input: TrackInput,
         @Ctx() { req }: MyContext,
         ): Promise<Track> {
-        // TODO: Check if YouTube video ID already exists in DB before saving
-        const track = await Track.create({
-            ...input,
-            creatorId: req.session.userId,
-        }).save();
-        return track;
+        // Check if YouTube video ID already exists in DB before saving
+        const youtubeId = getYouTubeId(input.url);
+        const trackAlreadyExists = await getConnection().query(
+            `
+    select t.*
+    from track t
+    where t."url" LIKE '%${youtubeId}%'
+    `,
+        );
+
+
+        if (trackAlreadyExists) {
+            throw new Error('Lien déjà posté !');
+        } else {
+            //
+            const track = await Track.create({
+                ...input,
+                creatorId: req.session.userId,
+            }).save();
+            return track;
+        }
     }
 
     // Update track by id
