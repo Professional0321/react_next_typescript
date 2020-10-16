@@ -10,7 +10,7 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 - Show track page and same artist results
 - Custom Audio player
 - Add/Delete*/Edit* track (*if creator)
-- Upvote/Downvote
+- Upvote/Downvote track
 - Cookies session
 
 ## :construction: WIP
@@ -50,7 +50,48 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 
 - PostreSQL
 
-![](dylt.png)
+![](dylt-home.png)
+![](dylt-track.png)
 
 
 ## How to run
+
+### Back
+
+(I'll simplify this soon with a docker composer)
+
+**You need PostgresQL installed with root access !**
+
+# In the server folder:
+
+Changes .env with
+```
+postgresql:/<YOURNAME>:<YOURPASSWORD>@localhost:5432/<YOURDBNAME>
+```
+
+Install dependencies
+```
+yarn
+```
+1st terminal tab
+```
+yarn watch
+```
+2nd terminal tab
+```
+yarn dev
+```
+
+Server should be started and migration (InitialDB) runs with a clean database.
+
+### Front
+
+In the client folder
+
+```
+yarn
+```
+
+```
+yarn dev
+```

@@ -1,5 +1,5 @@
 {
-  "name": "dylt",
+  "name": "dylt-server",
   "description": "Discover new music",
   "version": "1.0.0",
   "main": "index.js",

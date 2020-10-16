@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo What should the version be?
+echo What should the version be ?
 read VERSION
 
 docker build -t quentinbrohan/dylt:$VERSION .
