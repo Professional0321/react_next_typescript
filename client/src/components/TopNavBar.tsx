@@ -2,11 +2,10 @@ import React from 'react';
 import { Button, Space } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 import { useMeQuery, useLogoutMutation } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
 
-const TopNavBar = () => {
+const TopNavBar: React.FC = () => {
     const router = useRouter();
     const [{ data, fetching }] = useMeQuery({
         pause: isServer(),

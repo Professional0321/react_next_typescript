@@ -5,17 +5,10 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useRegisterMutation } from '../generated/graphql';
 import '../styles/components/register.less';
-import { ErrorProps } from '../types/types';
+import { ErrorProps, TRegisterFormProps } from '../types';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
 const { Title } = Typography;
-
-type FormProps = {
-    username: string;
-    email: string;
-    password: string;
-    confirm: string;
-};
 
 const formItemLayout = {
     labelCol: {
@@ -36,7 +29,7 @@ const formItemLayout = {
     },
 };
 
-const Register = () => {
+const Register: React.FC = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorProps | undefined>(undefined);
@@ -44,7 +37,7 @@ const Register = () => {
     const [, register] = useRegisterMutation();
     const router = useRouter();
 
-    const onFinish = async (values: FormProps) => {
+    const onFinish = async (values: TRegisterFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await register({ options: values });

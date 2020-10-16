@@ -75,16 +75,15 @@ const cursorPagination = (): Resolver => {
 
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
     let cookie = '';
-    // console.log('ctx req: ', ctx.req.headers.cookie);
     if (isServer()) {
-        cookie = (typeof window === 'undefined' ? ctx?.req?.headers.cookie : undefined) || '';
+        cookie = ctx?.req?.headers?.cookie;
     }
 
     return {
-        url: 'http://localhost:4000/graphql',
+        url: process.env.NEXT_PUBLIC_API_URL as string,
         fetchOptions: {
             credentials: 'include' as const,
-            // headers: (typeof window === 'undefined' ? ctx?.req?.headers.cookie : undefined) || '',
+            headers: cookie ?  { cookie } : undefined,
         },
         exchanges: [
             dedupExchange,
@@ -143,9 +142,11 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                             invalidateAllTracks(cache);
                         },
                         logout: (_result, args, cache, info) => {
-                            cachingUpdateQuery<LogoutMutation, MeQuery>(cache, { query: MeDocument }, _result, () => ({
-                                me: null,
-                            }));
+                            cachingUpdateQuery<LogoutMutation, MeQuery>(
+                                cache, { query: MeDocument },
+                                _result,
+                                () => ({ me: null })
+                            );
                         },
                         login: (_result, args, cache, info) => {
                             cachingUpdateQuery<LoginMutation, MeQuery>(

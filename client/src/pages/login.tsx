@@ -6,17 +6,12 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useLoginMutation } from '../generated/graphql';
 import '../styles/components/login.less';
-import { ErrorProps } from '../types/types';
+import { ErrorProps, TLoginFormProps } from '../types';
 import { createUrqlClient } from '../utils/createUrqlClient';
 
 const { Title } = Typography;
 
-type FormProps = {
-    usernameOrEmail: string;
-    password: string;
-};
-
-const Login = () => {
+const Login: React.FC = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<ErrorProps | undefined>(undefined);
@@ -24,7 +19,7 @@ const Login = () => {
     const [, login] = useLoginMutation();
     const router = useRouter();
 
-    const onFinish = async (values: FormProps) => {
+    const onFinish = async (values: TLoginFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await login(values);

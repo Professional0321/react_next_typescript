@@ -7,13 +7,9 @@ import React, { useState } from 'react';
 import { useChangePasswordMutation } from '../../generated/graphql';
 import '../../styles/components/changePassword.less';
 import { createUrqlClient } from '../../utils/createUrqlClient';
+import { TChangePasswordForm } from '../../types';
 
 const { Title } = Typography;
-
-type FormProps = {
-    newPassword: string;
-    confirm: string;
-};
 
 export const ChangePassword: NextPage = () => {
     const [form] = Form.useForm();
@@ -24,7 +20,7 @@ export const ChangePassword: NextPage = () => {
     const [, changePassword] = useChangePasswordMutation();
     const router = useRouter();
 
-    const onFinish = async (values: FormProps) => {
+    const onFinish = async (values: TChangePasswordForm) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const response = await changePassword({

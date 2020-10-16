@@ -19,6 +19,7 @@ import { isAuth } from '../middleware/isAuth';
 import { Upvote } from '../entities/Upvote';
 import { User } from '../entities/User';
 import { getArtistName } from '../utils/getArtistName';
+import { getYouTubeId } from '../utils/getYouTubeId';
 
 @InputType()
 class TrackInput {
@@ -153,6 +154,7 @@ export class TrackResolver {
     ): Promise<PaginatedTracks> {
         // Fetch 1 more track (useful to know if end of data or not)
         const realLimit = Math.min(50, limit);
+        console.log('realLimit: ', realLimit);
         const realLimitPlusOne = realLimit + 1;
 
         const replacements: any[] = [realLimitPlusOne];
@@ -173,6 +175,9 @@ export class TrackResolver {
         );
 
         // console.log('tracks: ', tracks);
+        console.log('tracks.length: ', tracks.length);
+        console.log('realLimitPlusOne: ', realLimitPlusOne);
+        console.log('hasMore: ', tracks.length === realLimitPlusOne);
 
         // Fetch 1 more track to check if hasMore === true
         // else end of tracks
@@ -184,7 +189,9 @@ export class TrackResolver {
 
     // Find all tracks by %name%
     @Query(() => SearchTracks)
-    async getTracksByName(@Arg('name', () => String!) name: string): Promise<SearchTracks | undefined> {
+    async getTracksByName(
+        @Arg('name', () => String!) name: string,
+        ): Promise<SearchTracks | undefined> {
         const tracks = await getConnection().query(
             `
     select t.*
@@ -205,7 +212,9 @@ export class TrackResolver {
 
     // Find track by id + same artist tracks
     @Query(() => IdAndArtistTracks)
-    async trackByIdAndSameArtistTracks(@Arg('id', () => Int) id: number): Promise<IdAndArtistTracks | undefined> {
+    async trackByIdAndSameArtistTracks(
+        @Arg('id', () => Int) id: number,
+        ): Promise<IdAndArtistTracks | undefined> {
         const track = await Track.findOne(id);
 
         if (!track) {
@@ -241,7 +250,9 @@ export class TrackResolver {
 
     // Find track by id
     @Query(() => Track)
-    async track(@Arg('id', () => Int) id: number): Promise<Track | undefined> {
+    async track(
+        @Arg('id', () => Int) id: number,
+        ): Promise<Track | undefined> {
         const track = await Track.findOne(id);
 
         if (!track) {
@@ -253,13 +264,31 @@ export class TrackResolver {
     // Create new track
     @Mutation(() => Track)
     @UseMiddleware(isAuth)
-    async createTrack(@Arg('input') input: TrackInput, @Ctx() { req }: MyContext): Promise<Track> {
-        // TODO: Check if YouTube video ID already exists in DB before saving
-        const track = await Track.create({
-            ...input,
-            creatorId: req.session.userId,
-        }).save();
-        return track;
+    async createTrack(
+        @Arg('input') input: TrackInput,
+        @Ctx() { req }: MyContext,
+        ): Promise<Track> {
+        // Check if YouTube video ID already exists in DB before saving
+        const youtubeId = getYouTubeId(input.url);
+        const trackAlreadyExists = await getConnection().query(
+            `
+    select t.*
+    from track t
+    where t."url" LIKE '%${youtubeId}%'
+    `,
+        );
+
+
+        if (trackAlreadyExists) {
+            throw new Error('Lien déjà posté !');
+        } else {
+            //
+            const track = await Track.create({
+                ...input,
+                creatorId: req.session.userId,
+            }).save();
+            return track;
+        }
     }
 
     // Update track by id
@@ -288,7 +317,10 @@ export class TrackResolver {
     // Delete track by id
     @Mutation(() => Boolean)
     @UseMiddleware(isAuth)
-    async deleteTrack(@Arg('id', () => Int) id: number, @Ctx() { req }: MyContext): Promise<boolean> {
+    async deleteTrack(
+        @Arg('id', () => Int) id: number,
+        @Ctx() { req }: MyContext,
+        ): Promise<boolean> {
         const track = await Track.findOne(id);
         if (!track) {
             return false;

@@ -7,14 +7,11 @@ import React, { useState } from 'react';
 import { useForgotPasswordMutation } from '../generated/graphql';
 import '../styles/components/login.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { TForgotPasswordFormProps } from '../types';
 
 const { Title } = Typography;
 
-type FormProps = {
-    email: string;
-};
-
-export const ForgotPassword = () => {
+export const ForgotPassword: React.FC = () => {
     const [form] = Form.useForm();
     const [complete, setComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -23,7 +20,7 @@ export const ForgotPassword = () => {
     const [, forgotPassword] = useForgotPasswordMutation();
     const router = useRouter();
 
-    const onFinish = async (values: FormProps) => {
+    const onFinish = async (values: TForgotPasswordFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         await forgotPassword(values);

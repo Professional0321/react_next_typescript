@@ -9,15 +9,11 @@ import { useIsAuth } from '../utils/useIsAuth';
 import { validateYouTubeUrl } from '../utils/validateYouTubeUrl';
 import '../styles/components/createTrack.less';
 import { cleanYouTubeUrl } from '../utils/cleanYouTubeUrl';
+import { TTrackFormProps } from '../types';
 
 const { Title } = Typography;
 
-type TrackInput = {
-    name: string;
-    url: string;
-};
-
-const CreateTrack = () => {
+const CreateTrack: React.FC = () => {
     const router = useRouter();
     useIsAuth();
 
@@ -27,7 +23,7 @@ const CreateTrack = () => {
 
     const [, createTrack] = useCreateTrackMutation();
 
-    const onFinish = async (values: TrackInput) => {
+    const onFinish = async (values: TTrackFormProps) => {
         setLoading(true);
         console.log('Received values of form: ', values);
         const { error } = await createTrack({
@@ -36,6 +32,11 @@ const CreateTrack = () => {
                 url: cleanYouTubeUrl(values.url),
             },
         });
+
+        if (error) {
+            setError(error?.graphQLErrors[0].message);
+            setLoading(false);
+        }
 
         const isValidUrl = validateYouTubeUrl(values.url);
         if (!isValidUrl) {
@@ -62,24 +63,25 @@ const CreateTrack = () => {
             >
                 <Form.Item
                     name="name"
-                    label="Nom - Titre (Remix) [Réf]"
+                    label="Artiste(s) - Titre (Remix) [Réf]"
                     rules={[
                         {
                             required: true,
-                            message:
-                                'Veuillez entrer le nom et titre de la musique séparé par un " - "; suivi du (remix) et de la [référence] si nécessaire !',
+                            message: "Veuillez entrer le nom de l'artiste et le titre de la musique !",
                         },
                     ]}
                 >
-                    <Input placeholder="Nom - Titre de la musique (Remix) [Référence]" />
+                    <Input placeholder="Artiste(s) - Titre de la musique (Remix) [Référence]" />
                 </Form.Item>
                 <Form.Item
                     name="url"
                     label="Lien"
-                    rules={[{
-                        required: true,
-                        message: 'Veuillez entre un lien vers la musique !',
-                    }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez entre un lien vers la musique !',
+                        },
+                    ]}
                     {...(error && {
                         validateStatus: 'error',
                         help: error,
