@@ -13,7 +13,7 @@ import { TTrackFormProps } from '../types';
 
 const { Title } = Typography;
 
-const CreateTrack = () => {
+const CreateTrack: React.FC = () => {
     const router = useRouter();
     useIsAuth();
 

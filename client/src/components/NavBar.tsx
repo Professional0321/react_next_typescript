@@ -16,7 +16,7 @@ const NavBar: React.FC = () => {
         // User not logged in
     } else if (!data?.me) {
         body = (
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="dark" mode="inline">
                 <Menu.Item key="1" icon={<HomeFilled />}>
                     <Link href="/">Accueil</Link>
                 </Menu.Item>
@@ -25,7 +25,7 @@ const NavBar: React.FC = () => {
         // User is logged in
     } else {
         body = (
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="dark" mode="inline">
                 <Menu.Item key="1" icon={<HomeFilled />}>
                     <Link href="/">Accueil</Link>
                 </Menu.Item>

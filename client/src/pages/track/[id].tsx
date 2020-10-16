@@ -6,14 +6,7 @@ import {
     PauseCircleOutlined,
     PlayCircleOutlined,
 } from '@ant-design/icons';
-import {
-    Button,
-    Popconfirm,
-    Space,
-    Spin,
-    Table,
-    Typography,
-} from 'antd';
+import { Button, Popconfirm, Space, Spin, Table, Typography } from 'antd';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
@@ -133,7 +126,7 @@ const Track = () => {
                                 }}
                             />
                         </Button>
-                        {data.trackByIdAndSameArtistTracks.track.name}
+                        {data?.trackByIdAndSameArtistTracks.track.name}
                     </Title>
                     <div className="track-container">
                         <div className="header" />
