@@ -50,7 +50,7 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 
 - TypeORM
 
-- PostreSQL
+- PostgresQL
 
 ![](dylt-home.png)
 ![](dylt-track.png)
