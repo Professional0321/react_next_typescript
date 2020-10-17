@@ -2,7 +2,7 @@
 
 Streaming platform for discovering music.
 
-I'm building this project to learn TypeScript and NextJS as well as updating my playlists with good sound.
+I'm building this project to learn TypeScript and NextJS as well as updating my playlists with good songs.
 
 **[Live version :rocket: ](https://dylt.quentinbrohan.dev)**
 
