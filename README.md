@@ -55,7 +55,6 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 ![](dylt-home.png)
 ![](dylt-track.png)
 
-
 ## How to run
 
 ### Back
@@ -67,21 +66,24 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 #### In the server folder
 
 Changes .env with
-```
+
+```shell
 postgresql:/<YOURNAME>:<YOURPASSWORD>@localhost:5432/<YOURDBNAME>
 ```
 
-```
+```shell
 yarn
 ```
 
 First terminal tab
-```
+
+```shell
 yarn watch
 ```
 
 Second terminal tab
-```
+
+```shell
 yarn dev
 ```
 
@@ -91,10 +93,10 @@ Server should be started and migration (InitialDB) runs with a clean database.
 
 #### In the client folder
 
-```
+```shell
 yarn
 ```
 
-```
+```shell
 yarn dev
 ```

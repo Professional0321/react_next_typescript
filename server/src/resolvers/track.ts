@@ -279,16 +279,16 @@ export class TrackResolver {
         );
 
 
-        if (trackAlreadyExists) {
+        if (trackAlreadyExists.length > 1) {
             throw new Error('Lien déjà posté !');
         } else {
-            //
             const track = await Track.create({
                 ...input,
                 creatorId: req.session.userId,
             }).save();
             return track;
         }
+
     }
 
     // Update track by id
