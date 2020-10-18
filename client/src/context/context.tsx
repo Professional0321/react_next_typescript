@@ -1,3 +1,4 @@
+import React from 'react';
 import { createContext, useReducer, Dispatch } from 'react';
 import {
     playerReducer,
@@ -28,7 +29,7 @@ const initialState = {
 
 const AppContext = createContext<{
     state: TInitialState,
-    dispatch: React.Dispatch<TPlayerActions | TTrackActions | TTracksActions>;
+    dispatch: Dispatch<TPlayerActions | TTrackActions | TTracksActions>;
 }>({
     state: initialState,
     dispatch: () => null,
