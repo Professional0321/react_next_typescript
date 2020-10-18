@@ -21,7 +21,7 @@ import { AppContext } from '../context/context';
 import { TypesPlayer } from '../reducers/reducers';
 
 // TODO:
-const Player: React.FC<IPlayer> = ({}) => {
+const Player: React.FC<IPlayer> = () => {
     const { state, dispatch } = useContext(AppContext);
 
     const ref = useRef<ReactPlayer>(null);
