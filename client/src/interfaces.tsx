@@ -1,4 +1,6 @@
 import { Track } from './generated/graphql';
+import { ReactPlayerProps } from 'react-player';
+import { TInitialStatePlayer } from './types';
 
 export interface ISiteLayout {
     children: React.ReactNode;
@@ -10,6 +12,7 @@ export interface IgetLayout {
 
 export interface IPlayer {
     track: Track;
-    tracks: Array<Track>;
-    playing: boolean;
+    tracks: Track[];
+    player: TInitialStatePlayer,
 }
+

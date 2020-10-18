@@ -10,87 +10,84 @@ import {
 } from '@ant-design/icons';
 import { Slider } from 'antd';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import ReactPlayer from 'react-player';
 import '../styles/components/player.less';
 import { getYouTubeId } from '../utils/getYouTubeId';
 import { secondsToTime } from '../utils/secondsToTime';
 import { IPlayer } from '../interfaces';
 import { TProgressProps, TPlayerStateProps } from '../types';
+import { AppContext } from '../context/context';
+import { TypesPlayer } from '../reducers/reducers';
 
 // TODO:
-const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
-    // console.log('track: ', track);
-    // console.log('tracks: ', tracks);
+const Player: React.FC<IPlayer> = ({}) => {
+    const { state, dispatch } = useContext(AppContext);
+
     const ref = useRef<ReactPlayer>(null);
-    // const [isReady, setIsReady] = useState<boolean>(false);
-    const [state, setState] = useState<TPlayerStateProps>({
-        url: null,
-        name: '',
-        playing: false,
-        volume: 1,
-        seeking: true,
-        played: 0,
-        playedSeconds: 0,
-        loaded: 0,
-        duration: 0,
-        loop: false,
-    });
-    useEffect(
-        () =>
-            setState({
-                ...state,
-                url: track.url,
-                name: track.name,
-                playing: true,
-                seeking: false,
-            }),
-        // TODO: if tracks state.url => [track.url, ...tracks.url]
-        [track, tracks],
-    );
+    const [isReady, setIsReady] = useState<boolean>(false);
 
     // ReactPlayer Functions
     const handlePlayPause = () => {
-        setState({ ...state, playing: !state.playing });
+    dispatch({
+        type: TypesPlayer.PlayPause,
+    });
     };
     const handlePlay = () => {
-        setState({ ...state, playing: true });
+        dispatch({
+            type: TypesPlayer.Play,
+        });
     };
     const handlePause = () => {
-        setState({ ...state, playing: false });
+        dispatch({
+            type: TypesPlayer.Pause,
+        });
     };
     const toggleLoop = () => {
-        setState({ ...state, loop: !state.loop });
+    dispatch({
+        type: TypesPlayer.ToggleLoop,
+    });
     };
-    const handleVolumeChange = (value: number) => {
-        setState({ ...state, volume: value });
+    const handleVolumeChange = (volume: number) => {
+    dispatch({
+        type: TypesPlayer.VolumeChange,
+        payload: volume,
+    });
     };
-    //
+
     const handleSeekChange = (value: number) => {
-        setState({ ...state, played: value });
+        dispatch({
+            type: TypesPlayer.SeekChange,
+            payload: value,
+        });
     };
     const handleSeekMouseUp = (value: number) => {
-        setState({ ...state, seeking: false });
+        dispatch({
+            type: TypesPlayer.SeekingChange,
+            payload: value,
+        });
         if (ref.current) {
             ref.current.seekTo(value);
         }
     };
     //
     const handleProgress = (progress: TProgressProps) => {
-        // console.log('onProgress', progress);
-        // Update only time slider if not seeking
-        if (!state.seeking) {
-            setState({
-                ...state,
-                played: progress.played,
-                playedSeconds: progress.playedSeconds,
-            });
+    //     // console.log('onProgress', progress);
+    //     // Update only time slider if not seeking
+        if (!state.player.seeking) {
+        dispatch({
+            type: TypesPlayer.ProgressChange,
+            payload: progress,
+        });
         }
     };
 
     const handleDuration = (duration: number) => {
         // console.log('onDuration', duration);
-        setState({ ...state, duration });
+        dispatch({
+            type: TypesPlayer.SaveDuration,
+            payload: duration,
+        });
     };
 
     const formatter = (value: number) => {
@@ -107,7 +104,7 @@ const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
                         max={0.999999}
                         step={0.01}
                         tipFormatter={null}
-                        value={state.played}
+                        value={state.player.played}
                         onChange={handleSeekChange}
                         onAfterChange={handleSeekMouseUp}
                     />
@@ -118,41 +115,41 @@ const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
                             {/* Iframe */}
                             <ReactPlayer
                                 ref={ref}
-                                url={state.url}
+                                url={state.track.url}
                                 width="0px"
                                 height="0px"
-                                playing={state.playing}
-                                loop={state.loop}
-                                volume={state.volume}
+                                playing={state.player.playing}
+                                loop={state.player.loop}
+                                volume={state.player.volume}
                                 onPlay={handlePlay}
                                 onPause={handlePause}
                                 onProgress={handleProgress}
                                 onDuration={handleDuration}
-                                // onReady={() => setIsReady(true)}
+                                onReady={() => setIsReady(true)}
                             />
                             <div className="video__player-thumbnail">
                                 <img
                                     src={
-                                        state?.url
-                                            ? `https://img.youtube.com/vi/${getYouTubeId(state.url)}/0.jpg`
+                                        state?.track?.url
+                                            ? `https://img.youtube.com/vi/${getYouTubeId(state.track.url)}/0.jpg`
                                             : ''
                                     }
-                                    alt={state.url}
+                                    alt={state.track.url}
                                 />
                             </div>
                         </div>
                         <div className="video__infos">
-                            <Link href="/track/[id]" as={`/track/${track.id}`}>
+                            <Link href="/track/[id]" as={`/track/${state.track.id}`}>
                                 <a>
-                                    <strong>{state.name}</strong>
+                                    <strong>{state.track.name}</strong>
                                 </a>
                             </Link>
                             <div>
                                 {/* Start */}
                                 {/* <span className="video__player-text">--:-- / </span> */}
-                                <span className="video__player-text">{secondsToTime(state.playedSeconds)} / </span>
+                                <span className="video__player-text">{secondsToTime(state.player.playedSeconds)} / </span>
                                 {/* Total */}
-                                <span className="video__player-text">{secondsToTime(state.duration)}</span>
+                                <span className="video__player-text">{secondsToTime(state.player.duration)}</span>
                                 {/* Genre */}
                                 {/* <span className="video__player-text"> - N/A</span> */}
                             </div>
@@ -164,11 +161,11 @@ const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
                         <HeartOutlined style={{ color: '#606060' }} />
                         {/* <HeartFilled /> */}
                         <BackwardOutlined style={{ color: '#606060' }} />
-                        {!state.playing && <CaretRightOutlined onClick={handlePlayPause} />}
-                        {state.playing && <PauseOutlined onClick={handlePlayPause} />}
+                        {!state.player.playing && <CaretRightOutlined onClick={handlePlayPause} />}
+                        {state.player.playing && <PauseOutlined onClick={handlePlayPause} />}
                         <ForwardOutlined style={{ color: '#606060' }} />
                         <RetweetOutlined
-                            style={{ color: state.loop ? 'inherit' : '#606060' }}
+                            style={{ color: state.player.loop ? 'inherit' : '#606060' }}
                             onClick={() => toggleLoop()}
                         />
                     </div>
@@ -179,7 +176,7 @@ const Player: React.FC<IPlayer> = ({ track, tracks }: IPlayer) => {
                         defaultValue={1}
                         min={0}
                         max={1}
-                        value={state.volume}
+                        value={state.player.volume}
                         tipFormatter={null}
                         step={0.01}
                         onChange={handleVolumeChange}

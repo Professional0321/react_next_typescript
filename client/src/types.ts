@@ -1,3 +1,5 @@
+import { Track } from './generated/graphql';
+
 export type ErrorProps = {
     field?: string;
     message?: string;
@@ -50,3 +52,21 @@ export type TForgotPasswordFormProps = {
 };
 
 // Player
+
+export type TInitialStatePlayer = {
+        isOpen: boolean,
+        url: string | string[] | null | undefined;
+        playing: boolean;
+        volume: number;
+        seeking: boolean;
+        played: number;
+        playedSeconds: number;
+        loaded: number;
+        duration: number;
+        loop: boolean;
+}
+export type TInitialState = {
+    player: TInitialStatePlayer;
+    track: Track;
+    tracks: Track[];
+};
