@@ -23,7 +23,6 @@ import { useGetIntId } from '../../utils/useGetIntId';
 import { AppContext } from '../../context/context';
 import { TypesPlayer, TypesTrack, TypesTracks } from '../../reducers/reducers';
 
-
 const { Title } = Typography;
 const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -48,7 +47,7 @@ const Track = () => {
         dispatch({
             type: TypesTrack.SaveTrack,
             payload: track,
-        })
+        });
     };
 
     // List
@@ -65,12 +64,12 @@ const Track = () => {
                                 if (!state?.player.isOpen) {
                                     dispatch({
                                         type: TypesPlayer.OpenClosePlayer,
-                                    })
+                                    });
                                 }
-                                    dispatch({
-                                        type: TypesTrack.SaveTrack,
-                                        payload: track,
-                                    })
+                                dispatch({
+                                    type: TypesTrack.SaveTrack,
+                                    payload: track,
+                                });
                             }}
                         />
                     </Button>
@@ -90,6 +89,7 @@ const Track = () => {
         {
             title: 'Cover',
             dataIndex: 'url',
+            key: 'cover',
             render: (url: string) => (
                 <img
                     className="table-cover"
@@ -119,97 +119,97 @@ const Track = () => {
             {!data && fetching ? (
                 <Spin indicator={loadingIcon} />
             ) : (
-                    <>
-                        <Title style={{ color: '#f3f5f9' }}>
-                            <Button type="text">
-                                <PlayCircleOutlined
-                                    style={{ fontSize: '2rem' }}
-                                    onClick={() => {
-                                        if (!state?.player.isOpen) {
-                                            dispatch({
-                                                type: TypesPlayer.OpenClosePlayer,
-                                            })
-                                            dispatch({
-                                                type: TypesTrack.SaveTrack,
-                                                payload: data?.trackByIdAndSameArtistTracks.track,
-                                            })
-                                        }
+                <>
+                    <Title style={{ color: '#f3f5f9' }}>
+                        <Button type="text">
+                            <PlayCircleOutlined
+                                style={{ fontSize: '2rem' }}
+                                onClick={() => {
+                                    if (!state?.player.isOpen) {
+                                        dispatch({
+                                            type: TypesPlayer.OpenClosePlayer,
+                                        });
                                         dispatch({
                                             type: TypesTrack.SaveTrack,
                                             payload: data?.trackByIdAndSameArtistTracks.track,
-                                        })
+                                        });
+                                    }
+                                    dispatch({
+                                        type: TypesTrack.SaveTrack,
+                                        payload: data?.trackByIdAndSameArtistTracks.track,
+                                    });
+                                }}
+                            />
+                        </Button>
+                        {data?.trackByIdAndSameArtistTracks.track.name}
+                    </Title>
+                    <div className="track-container">
+                        <div className="header" />
+                        <div className="creator-info">
+                            <p>Posté par {data?.trackByIdAndSameArtistTracks.track.creator.username}.</p>
+                        </div>
+                        <div className="cta-actions">
+                            <Space>
+                                <Link href="/track/edit/[id]" as={`/track/edit/${intId}`}>
+                                    <Button>
+                                        <EditOutlined key="edit" />
+                                    </Button>
+                                </Link>
+                                <Popconfirm
+                                    placement="top"
+                                    title={text}
+                                    onConfirm={async () => {
+                                        const { error: er } = await deleteTrack({ id: intId });
+                                        if (!er) {
+                                            router.push('/');
+                                        }
                                     }}
-                                />
-                            </Button>
-                            {data?.trackByIdAndSameArtistTracks.track.name}
-                        </Title>
-                        <div className="track-container">
-                            <div className="header" />
-                            <div className="creator-info">
-                                <p>Posté par {data?.trackByIdAndSameArtistTracks.track.creator.username}.</p>
-                            </div>
-                            <div className="cta-actions">
-                                <Space>
-                                    <Link href="/track/edit/[id]" as={`/track/edit/${intId}`}>
-                                        <Button>
-                                            <EditOutlined key="edit" />
-                                        </Button>
-                                    </Link>
-                                    <Popconfirm
-                                        placement="top"
-                                        title={text}
-                                        onConfirm={async () => {
-                                            const { error: er } = await deleteTrack({ id: intId });
-                                            if (!er) {
-                                                router.push('/');
-                                            }
-                                        }}
-                                        okText="Supprimer"
-                                        cancelText="Non"
-                                    >
-                                        <Button>
-                                            <DeleteOutlined />
-                                        </Button>
-                                    </Popconfirm>
-                                </Space>
-                            </div>
-                            {data && (
-                                <div className="list">
-                                    <Title level={2}>
-                                        <Button type="text">
-                                            <PlayCircleOutlined
-                                                style={{ fontSize: '1.5rem', color: '#606060' }}
-                                                onClick={() => {
-                                                    if (!state?.player.isOpen) {
-                                                        dispatch({
-                                                            type: TypesPlayer.OpenClosePlayer,
-                                                        })
-                                                        dispatch({
-                                                            type: TypesTracks.SaveTracks,
-                                                            payload: data?.trackByIdAndSameArtistTracks.tracks,
-                                                        })
-                                                    }
-
+                                    okText="Supprimer"
+                                    cancelText="Non"
+                                >
+                                    <Button>
+                                        <DeleteOutlined />
+                                    </Button>
+                                </Popconfirm>
+                            </Space>
+                        </div>
+                        {data && (
+                            <div className="list">
+                                <Title level={2}>
+                                    <Button type="text">
+                                        <PlayCircleOutlined
+                                            style={{ fontSize: '1.5rem', color: '#606060' }}
+                                            onClick={() => {
+                                                if (!state?.player.isOpen) {
+                                                    dispatch({
+                                                        type: TypesPlayer.OpenClosePlayer,
+                                                    });
                                                     dispatch({
                                                         type: TypesTracks.SaveTracks,
                                                         payload: data?.trackByIdAndSameArtistTracks.tracks,
-                                                    })
-                                                }}
-                                            />
-                                        </Button>
+                                                    });
+                                                }
+
+                                                dispatch({
+                                                    type: TypesTracks.SaveTracks,
+                                                    payload: data?.trackByIdAndSameArtistTracks.tracks,
+                                                });
+                                            }}
+                                        />
+                                    </Button>
                                     Même artiste
-                                    </Title>
-                                    <Table
-                                        columns={columns}
-                                        dataSource={data.trackByIdAndSameArtistTracks.tracks}
-                                        pagination={{ pageSize: 10 }}
-                                        scroll={{ y: 240 }}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
+                                </Title>
+                                <Table
+                                    columns={columns}
+                                    dataSource={data.trackByIdAndSameArtistTracks.tracks}
+                                    pagination={{ pageSize: 10 }}
+                                    scroll={{ y: 240 }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

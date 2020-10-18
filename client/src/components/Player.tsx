@@ -15,13 +15,12 @@ import ReactPlayer from 'react-player';
 import '../styles/components/player.less';
 import { getYouTubeId } from '../utils/getYouTubeId';
 import { secondsToTime } from '../utils/secondsToTime';
-import { IPlayer } from '../interfaces';
 import { TProgressProps, TPlayerStateProps } from '../types';
 import { AppContext } from '../context/context';
 import { TypesPlayer } from '../reducers/reducers';
 
 // TODO:
-const Player: React.FC<IPlayer> = () => {
+const Player: React.FC = () => {
     const { state, dispatch } = useContext(AppContext);
 
     const ref = useRef<ReactPlayer>(null);
@@ -29,9 +28,9 @@ const Player: React.FC<IPlayer> = () => {
 
     // ReactPlayer Functions
     const handlePlayPause = () => {
-    dispatch({
-        type: TypesPlayer.PlayPause,
-    });
+        dispatch({
+            type: TypesPlayer.PlayPause,
+        });
     };
     const handlePlay = () => {
         dispatch({
@@ -44,15 +43,15 @@ const Player: React.FC<IPlayer> = () => {
         });
     };
     const toggleLoop = () => {
-    dispatch({
-        type: TypesPlayer.ToggleLoop,
-    });
+        dispatch({
+            type: TypesPlayer.ToggleLoop,
+        });
     };
     const handleVolumeChange = (volume: number) => {
-    dispatch({
-        type: TypesPlayer.VolumeChange,
-        payload: volume,
-    });
+        dispatch({
+            type: TypesPlayer.VolumeChange,
+            payload: volume,
+        });
     };
 
     const handleSeekChange = (value: number) => {
@@ -72,13 +71,13 @@ const Player: React.FC<IPlayer> = () => {
     };
     //
     const handleProgress = (progress: TProgressProps) => {
-    //     // console.log('onProgress', progress);
-    //     // Update only time slider if not seeking
+        //     // console.log('onProgress', progress);
+        //     // Update only time slider if not seeking
         if (!state.player.seeking) {
-        dispatch({
-            type: TypesPlayer.ProgressChange,
-            payload: progress,
-        });
+            dispatch({
+                type: TypesPlayer.ProgressChange,
+                payload: progress,
+            });
         }
     };
 
@@ -135,6 +134,7 @@ const Player: React.FC<IPlayer> = () => {
                                             : ''
                                     }
                                     alt={state.track.url}
+                                    className={state.player.playing ? '' : 'is-paused'}
                                 />
                             </div>
                         </div>
@@ -147,7 +147,9 @@ const Player: React.FC<IPlayer> = () => {
                             <div>
                                 {/* Start */}
                                 {/* <span className="video__player-text">--:-- / </span> */}
-                                <span className="video__player-text">{secondsToTime(state.player.playedSeconds)} / </span>
+                                <span className="video__player-text">
+                                    {secondsToTime(state.player.playedSeconds)} /{' '}
+                                </span>
                                 {/* Total */}
                                 <span className="video__player-text">{secondsToTime(state.player.duration)}</span>
                                 {/* Genre */}

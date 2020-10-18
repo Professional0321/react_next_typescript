@@ -58,9 +58,24 @@
 
           img {
             height: 4rem;
-            // width: 4rem;
-            width: auto;
-            // border-radius: 50%;
+            width: 4rem;
+            padding: 0.25rem;
+            border-radius: 50%;
+            object-fit: cover;
+            overflow: hidden;
+            box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.15);
+            animation: imgRotate 15s linear infinite;
+          }
+            .is-paused {
+              animation-play-state: paused! important;
+            }
+          @keyframes imgRotate {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
           }
         }
       }
