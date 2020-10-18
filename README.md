@@ -16,7 +16,7 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 - Cookies session
 
 ## :construction: WIP
-
+- Testing
 - Search function | V2 - includes BPM, genre, label, etc
 - Favorite track function
 - Improve audio player (fav/prev/next buttons)
