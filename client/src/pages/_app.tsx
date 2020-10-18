@@ -6,14 +6,18 @@ import React from 'react';
 import '../styles/index.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import SiteLayout from '../components/Layout';
+import { AppProvider } from '../context/context';
 
+// ??
 const { Header, Content, Sider } = LayoutAD;
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
-        <SiteLayout>
-            <Component {...pageProps} />
-        </SiteLayout>
+        <AppProvider>
+            <SiteLayout>
+                <Component {...pageProps} />
+            </SiteLayout>
+        </AppProvider>
     );
 }
 

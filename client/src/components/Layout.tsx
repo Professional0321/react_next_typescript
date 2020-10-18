@@ -1,15 +1,21 @@
 import { Layout } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppContext } from '../context/context';
 import { ISiteLayout } from '../interfaces';
 import '../styles/index.less';
-import NavBar from './NavBar';
+import Menu from './Menu';
+import Player from './Player';
 import TopNavBar from './TopNavBar';
+
 
 const { Header, Content, Sider } = Layout;
 
 const SiteLayout: React.FC<ISiteLayout> = ({ children }: ISiteLayout) => {
+    const { state, dispatch } = useContext(AppContext);
+
     return (
         <Layout style={{ minHeight: '100vh', overflow: 'auto' }}>
+            {state.player.isOpen && <Player />}
             <Sider
                 breakpoint="lg"
                 collapsedWidth="0"
@@ -24,8 +30,8 @@ const SiteLayout: React.FC<ISiteLayout> = ({ children }: ISiteLayout) => {
                 <div className="logo" style={{ color: 'white', fontSize: '2rem', textAlign: 'center' }}>
                     Dylt
                 </div>
-                {/* Left NavBar component */}
-                <NavBar />
+                {/* Left Menu component */}
+                <Menu />
             </Sider>
             <Layout>
                 <Header className="site-layout-sub-header-background">

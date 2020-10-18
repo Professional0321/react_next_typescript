@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     ArrowDownOutlined,
     ArrowUpOutlined,
@@ -15,14 +15,17 @@ import {
     useTracksQuery,
     useMeQuery,
     useVoteMutation,
-    TrackSnippetFragment,
     useDeleteTrackMutation,
     Track,
+    TrackSnippetFragment,
 } from '../generated/graphql';
 import '../styles/components/home.less';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { getYouTubeId } from '../utils/getYouTubeId';
 import Player from '../components/Player';
+import { AppContext } from '../context/context';
+import { TypesPlayer, TypesTrack } from '../reducers/reducers';
+
 
 const { Title } = Typography;
 // const { Meta } = Card;
@@ -50,14 +53,15 @@ const Index: React.FC = () => {
 
     const [, deleteTrack] = useDeleteTrackMutation();
 
-    // Player
-    // const ref = useRef();
-    const [openPlayer, setOpenPlayer] = useState<boolean>(false);
-    // const [playing, setPlaying] = useState<boolean>(false);
-    const [track, setTrack] = useState<Track | null>(null);
+    // Context
+    const { state, dispatch } = useContext(AppContext);
+
 
     const handleTrack = (track: Track) => {
-        setTrack(track);
+        dispatch({
+            type: TypesTrack.SaveTrack,
+            payload: track,
+        })
     };
 
     if (!fetching && !data) {
@@ -156,8 +160,18 @@ const Index: React.FC = () => {
                                         <Button type="text">
                                             <PlayCircleOutlined
                                                 onClick={() => {
-                                                    setOpenPlayer(true);
+                                                    if (!state.player.isOpen) {
+                                                        dispatch({
+                                                            type: TypesPlayer.OpenClosePlayer,
+                                                        });
+                                                        handleTrack(track);
+                                                    }
                                                     handleTrack(track);
+                                                    if (!state.player.playing) {
+                                                        dispatch({
+                                                            type: TypesPlayer.Play,
+                                                        });
+                                                    };
                                                 }}
                                             />
                                         </Button>
@@ -186,9 +200,9 @@ const Index: React.FC = () => {
                     )
                 )}
             </div>
-            {openPlayer && <Player track={track} />}
+            {/* {state.player.isOpen && <Player />} */}
             {data?.tracks.hasMore ? (
-                <div className="load-more" style={{ paddingBottom: openPlayer ? '4rem' : '' }}>
+                <div className="load-more" style={{ paddingBottom: state.player.isOpen ? '4rem' : '' }}>
                     <Button
                         type="primary"
                         loading={fetching}
