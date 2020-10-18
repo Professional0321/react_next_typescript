@@ -19,7 +19,7 @@ I'm building this project to learn TypeScript and NextJS as well as updating my 
 
 - Search function | V2 - includes BPM, genre, label, etc
 - Favorite track function
-- Improve audio player (avoid cut on page change, + fav/prev/next buttons)
+- Improve audio player (fav/prev/next buttons)
 - Playlist on track/search page if multiple results
 - Profile page, used to show your infos and favorites
 - Roles admin/user for managing content
